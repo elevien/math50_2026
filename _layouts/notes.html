@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ page.title }} &middot; Math 50</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="{{ '/public/css/palette.css' | relative_url }}">
+<link rel="stylesheet" href="{{ '/public/css/notes.css' | relative_url }}">
+<link rel="stylesheet" href="{{ '/public/css/syntax.css' | relative_url }}">
+<script>
+window.MathJax = {
+  tex: {
+    inlineMath: [['$', '$'], ['\\(', '\\)']],
+    displayMath: [['$$', '$$'], ['\\[', '\\]']]
+  },
+  chtml: {
+    // The body face is a sans with a large x-height; MathJax's serif math
+    // renders visibly bigger than the surrounding text at scale 1.
+    scale: 0.94
+  },
+  options: {
+    skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+  }
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" async></script>
+<script src="{{ '/public/js/notes-utils.js' | relative_url }}"></script>
+</head>
+<body>
+
+<div class="topbar">
+  <a href="{{ '/' | relative_url }}">Math 50</a>
+  <span class="unit-label">Interactive Notes</span>
+</div>
+
+<div class="layout">
+
+<nav class="toc">
+  <div class="toc-title">Contents</div>
+  {% for item in page.toc %}
+  <a href="{{ item.href }}">{{ item.label }}{% if item.optional %} <span class="optional-badge">(optional)</span>{% endif %}</a>
+  {% endfor %}
+</nav>
+
+<div class="page">
+
+<h1>{{ page.unit_title }}<span class="subtitle">{{ page.unit_subtitle }}</span></h1>
+
+{{ content }}
+
+</div>
+
+</div>
+
+<footer class="page-footer">
+  <p>Math 50 &mdash; Regression Modeling, Dartmouth College. <a href="{{ '/' | relative_url }}">Course home</a>.</p>
+</footer>
+
+</body>
+</html>

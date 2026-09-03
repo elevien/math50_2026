@@ -1,0 +1,30 @@
+# Setup
+title:               Math 50
+tagline:             'Linear regression modeling'
+description:         'A course on linear regression modeling techniques and applications.'
+url: "https://elevien.github.io"   # no trailing slash
+baseurl: "/math50_2026"   # empty so `jekyll serve` previews at http://localhost:4000/ directly; set back to a "/<repo-name>" prefix if this ever gets hosted as a GitHub Pages project site
+permalink:           pretty
+
+# About/contact
+author:
+  name:              Ethan Levien
+  email:             ethanlevien@gmail.com
+
+
+# Build settings
+remote_theme: pages-themes/minimal@v0.2.0
+plugins:
+- jekyll-remote-theme
+- jekyll-seo-tag
+
+# Files/folders Jekyll should never build (local-only, not for the public site)
+exclude:
+- CLAUDE.md
+- claude_memory
+
+
+
+# # Custom vars
+# version:             1.1.0
+# google_analytics_id: #UA-XXXX-Y

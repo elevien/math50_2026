@@ -1,0 +1,41 @@
+<!-- Target for toggling the sidebar `.sidebar-checkbox` is for regular
+     styles, `#sidebar-checkbox` for behavior. -->
+<input type="checkbox" class="sidebar-checkbox" id="sidebar-checkbox">
+
+<!-- Toggleable sidebar -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-item">
+    <p>{{ site.description }}</p>
+  </div>
+
+  <nav class="sidebar-nav">
+    <!-- <a class="sidebar-nav-item{% if page.title == 'Home' %} active{% endif %}" href="{{ '/' | absolute_url }}">Home</a> -->
+
+    {% comment %}
+      The sidebar is an explicit allowlist rather than an auto-discovered
+      list of every `layout: page` file, so that new/experimental pages
+      (e.g. scratch folders) don't show up here unintentionally. Add new
+      top-level nav entries as additional lines below.
+    {% endcomment %}
+
+    <a class="sidebar-nav-item{% if page.url == '/' %} active{% endif %}" href="{{ '/' | absolute_url }}">Course overview</a>
+    <a class="sidebar-nav-item{% if page.url == '/exams/' %} active{% endif %}" href="{{ '/exams/' | relative_url }}">Exam study guide</a>
+    <a class="sidebar-nav-item{% if page.url == '/schedule/' %} active{% endif %}" href="{{ '/schedule/' | relative_url }}">Schedule</a>
+
+    <div class="sidebar-nav-item" style="font-weight:bold;">Course Material</div>
+    <div style="margin-left:1em;">
+      {% for unit in site.data.units %}
+        <a class="sidebar-nav-item{% if page.url == unit.url %} active{% endif %}" href="{{ unit.url | relative_url }}">{{ unit.title }}</a>
+      {% endfor %}
+    </div>
+
+
+    <!-- <span class="sidebar-nav-item">Currently v{{ site.version }}</span> -->
+  </nav>
+
+  <div class="sidebar-item">
+    <p>
+      &copy; {{ site.time | date: '%Y' }}. All rights reserved. This site was based on the <a href="https://github.com/poole/lanyon">Lanyon</a> theme.
+    </p>
+  </div>
+</div>

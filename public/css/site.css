@@ -1,0 +1,315 @@
+/* Main-site skin: overrides Poole/Lanyon so the course pages (overview,
+   schedule, exams) match the interactive notes.
+
+   Loaded after poole.css and lanyon.css, and after palette.css, which supplies
+   every colour and both font stacks. Nothing here should hardcode a colour --
+   if a value is missing, add a token to palette.css so the notes get it too. */
+
+body {
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.7;
+  color: var(--text);
+  background: var(--paper);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Poole's default measure is narrow enough that the syllabus paragraphs run to
+   a dozen lines each; widen it toward the notes' 760px. */
+.container { max-width: 34rem; }
+@media (min-width: 38em) { .container { max-width: 40rem; } }
+@media (min-width: 56em) { .container { max-width: 46rem; } }
+
+/* --- masthead: plain text, no bar, matching the notes' .topbar ---------- */
+
+.masthead {
+  padding: 1.5rem 0 0.8rem;
+  margin-bottom: 2.5rem;
+  background: transparent;
+  border-bottom: 1px solid var(--rule);
+}
+
+/* The sidebar toggle is position:fixed at top-left, so the title needs room
+   to clear it. */
+.masthead .container { max-width: none; padding: 0 1.4rem 0 5.2rem; }
+
+.masthead-title,
+.masthead-title a { color: var(--heading); }
+
+.masthead-title {
+  font-family: var(--font-body);
+  font-weight: 700;
+  font-size: 1.15rem;
+  letter-spacing: 0.02em;
+}
+
+.masthead-title a { text-decoration: none; }
+.masthead-title a:hover { text-decoration: underline; }
+
+.masthead-title small {
+  color: var(--muted);
+  font-size: 70%;
+  margin-left: 0.5em;
+}
+
+/* --- headings: rust, exactly as in the notes --------------------------- */
+
+h1, h2, h3, h4, h5, h6,
+.page-title, .post-title, .post-title a {
+  font-family: var(--font-body);
+  color: var(--heading);
+  font-weight: 600;
+  line-height: 1.28;
+  letter-spacing: -0.005em;
+}
+
+h1, .page-title, .post-title { font-size: 1.95rem; font-weight: 700; }
+
+h2 {
+  font-size: 1.35rem;
+  margin-top: 2.1rem;
+  padding-bottom: 0.25rem;
+  border-bottom: 2px solid var(--heading-rule);
+}
+
+h3 { font-size: 1.1rem; color: var(--heading-2); margin-top: 1.6rem; }
+h4 { font-size: 1rem; color: var(--heading-2); }
+
+strong { font-weight: 600; color: inherit; }
+
+/* --- links ------------------------------------------------------------- */
+
+a, a:hover, a:focus { color: var(--link); }
+a { text-decoration-thickness: 1px; text-underline-offset: 2px; }
+a:hover { color: var(--link-hover); }
+
+/* --- sidebar ----------------------------------------------------------- */
+
+.sidebar {
+  font-family: var(--font-body);
+  background-color: var(--paper);
+  color: var(--text-soft);
+  border-right: 1px solid var(--rule);
+}
+
+.sidebar a { color: var(--text); text-decoration: none; }
+.sidebar a:hover { color: var(--link); }
+
+.sidebar-nav { border-bottom: 1px solid var(--rule); }
+
+.sidebar-nav-item {
+  border-top: 1px solid var(--rule);
+  border-left: 2px solid transparent;
+}
+
+.sidebar-nav-item.active {
+  color: var(--link);
+  font-weight: 600;
+  border-left-color: var(--link);
+  background: var(--paper);
+}
+
+.sidebar-item p { color: var(--text-soft); }
+.sidebar-item a { color: var(--link); }
+
+/* The bar is gone, so the toggle sits on the plain white page - dark icon
+   and border instead of the light ones it used against the old dark
+   masthead. The icon fill is hardcoded to match --text since a data-URI
+   background-image can't reference a CSS custom property. */
+.sidebar-toggle {
+  top: 0.55rem;
+  color: var(--text);
+  background-color: transparent;
+  border: 1px solid var(--rule-strong);
+  border-radius: 4px;
+  padding: 0.1rem 0.5rem;
+}
+
+.sidebar-toggle::before {
+  width: 26px;
+  height: 26px;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='%233c3836' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' d='M2.5 11.5A.5.5 0 013 11h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 7h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 3h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z' clip-rule='evenodd'/%3E%3C/svg%3E") no-repeat center;
+}
+
+.sidebar-toggle:hover { border-color: var(--muted); }
+
+.sidebar-toggle:active,
+#sidebar-checkbox:focus ~ .sidebar-toggle,
+#sidebar-checkbox:checked ~ .sidebar-toggle {
+  color: var(--text);
+  background-color: var(--panel-bg);
+}
+
+.sidebar-toggle:active::before,
+#sidebar-checkbox:focus ~ .sidebar-toggle::before,
+#sidebar-checkbox:checked ~ .sidebar-toggle::before {
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='%233c3836' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath fill-rule='evenodd' d='M2.5 11.5A.5.5 0 013 11h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 7h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5zm0-4A.5.5 0 013 3h10a.5.5 0 010 1H3a.5.5 0 01-.5-.5z' clip-rule='evenodd'/%3E%3C/svg%3E") no-repeat center;
+}
+
+/* --- sidebar pinned open on wide screens -------------------------------
+   Lanyon hides the sidebar off-canvas behind a hamburger. On anything wide
+   enough to hold it, show it permanently and shift the content across; the
+   toggle then has nothing to do, so it goes away. Below that width the
+   original slide-out behaviour is left untouched. */
+
+@media (min-width: 60em) {
+  .sidebar {
+    left: 0;
+    visibility: visible;
+    -webkit-transform: none;
+            transform: none;
+    -webkit-transition: none;
+            transition: none;
+  }
+
+  .wrap,
+  #sidebar-checkbox:checked ~ .wrap {
+    margin-left: 14rem;
+    /* Lanyon sets width:100%; with the margin that overflows by 14rem. */
+    width: auto;
+    -webkit-transform: none;
+            transform: none;
+    -webkit-transition: none;
+            transition: none;
+  }
+
+  /* Nothing left to toggle. */
+  .sidebar-toggle,
+  #sidebar-checkbox:checked ~ .sidebar-toggle {
+    display: none;
+  }
+
+  /* The masthead no longer has to leave room for the toggle. */
+  .masthead .container { padding-left: 1.4rem; }
+
+  /* Keep the drawer from sliding when the (now hidden) checkbox is toggled. */
+  #sidebar-checkbox:checked ~ .sidebar {
+    -webkit-transform: none;
+            transform: none;
+  }
+}
+
+/* --- code -------------------------------------------------------------- */
+
+code, pre, pre code {
+  font-family: var(--font-mono);
+}
+
+code {
+  color: var(--link);
+  background-color: var(--code-bg);
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+pre {
+  background-color: var(--code-bg);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  font-size: 0.85em;
+  line-height: 1.55;
+}
+
+pre code { color: inherit; background: transparent; padding: 0; }
+
+/* --- tables: the schedule page is one big table ------------------------ */
+
+table {
+  border-collapse: collapse;
+  width: 100%;
+  font-size: 0.92em;
+  margin: 1.4em 0;
+}
+
+th, td {
+  border: 1px solid var(--rule-strong);
+  padding: 0.45em 0.7em;
+  text-align: left;
+  vertical-align: top;
+}
+
+thead th, table th {
+  background: var(--panel-bg);
+  color: var(--heading-2);
+  font-weight: 600;
+}
+
+tbody tr:nth-child(even) td { background: #fcfbf8; }
+
+/* Date-style leading columns should not wrap; on the schedule the long Topics
+   column otherwise squeezes "Mon Sept 15" onto two lines. */
+table td:first-child,
+table th:first-child { white-space: nowrap; }
+
+/* The schedule's Unit column holds short links like "Unit 1"; without this
+   the wide Topics column breaks them across two lines. */
+.schedule-table td:nth-child(2),
+.schedule-table th:nth-child(2) { white-space: nowrap; }
+
+/* --- practice-problem boxes on the exam page ---------------------------
+   Same treatment as .exercise in the notes, so a practice problem looks the
+   same whether you meet it in a unit or on the study guide. */
+
+.page .exercise {
+  background: var(--paper);
+  border: 1.5px solid var(--exercise-border);
+  border-radius: 8px;
+  padding: 0.85em 1.2em 1em;
+  margin: 1.25em 0;
+}
+
+.page .exercise h4 {
+  font-size: 0.98em;
+  font-weight: 700;
+  margin: 0 0 0.45em;
+  color: var(--olive);
+}
+
+.page .exercise > *:last-child { margin-bottom: 0; }
+
+/* Problem parts are written as plain markdown ordered lists, so the math
+   inside them renders, and are labelled (a), (b), (c) to match how parts are
+   referred to in the problem text and how they appear in the unit PDFs. */
+.page .exercise ol {
+  list-style: none;
+  counter-reset: part;
+  padding-left: 2em;
+}
+
+.page .exercise ol li {
+  counter-increment: part;
+  position: relative;
+  margin: 0.35em 0;
+}
+
+.page .exercise ol li::before {
+  content: "(" counter(part, lower-alpha) ")";
+  position: absolute;
+  left: -2em;
+  width: 1.7em;
+  text-align: right;
+  color: var(--muted);
+}
+.page .exercise pre { font-size: 0.82em; }
+
+/* --- misc -------------------------------------------------------------- */
+
+blockquote {
+  border-left: 3px solid var(--rule-strong);
+  color: var(--text-soft);
+  font-style: normal;
+}
+
+hr { border-top-color: var(--rule); border-bottom-color: var(--paper); }
+
+.message {
+  background-color: var(--panel-bg);
+  color: var(--text-soft);
+  border-radius: 4px;
+}
+
+/* MathJax on the syllabus pages, matched to the notes */
+mjx-container { overflow-x: auto; overflow-y: hidden; max-width: 100%; }
+mjx-container:not([display="true"]) { display: inline-block; }
+html mjx-assistive-mml { position: fixed !important; }

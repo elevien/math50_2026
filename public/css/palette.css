@@ -1,0 +1,99 @@
+/* Course palette. Loaded by BOTH the main site (_includes/head.html) and the
+   interactive notes (_layouts/notes.html), so the two look like one site.
+   Load this before notes.css or site.css. */
+
+/* ---------------------------------------------------------------------------
+   COURSE PALETTE
+
+   Gruvbox-inspired hues, pushed more saturated than Gruvbox's own muted
+   "faded" tones, on a plain white page. Each hue still has a single job so
+   colour keeps meaning something even as there's more of it on the page.
+
+   Roles:
+     orange/red  section headings   - where am I in the document
+     teal        links               - what can I follow
+     purple      defined terms / Wikipedia links - what can I look up
+     olive       exercises, drills, problems - your turn
+     gold        demos, optional     - interactive or skippable
+     ink         body text
+     grey/tint   panel fills
+
+   Every colour below clears WCAG AA (4.5:1) against the surface it sits on
+   (most sit around 5.3:1 on white, with margin) - see the contrast notes
+   inline where a value isn't self-evidently safe.
+
+   These are mirrored definecolor-for-definecolor in each unit's
+   build_latex.rb, so the site and the printed PDFs look like one document.
+   Change a value here and change it there too.
+   --------------------------------------------------------------------------- */
+
+:root {
+  /* ink: body copy and surfaces */
+  --text: #3c3836;
+  --text-soft: #504945;
+  --muted: #665c54;       /* 7.5:1 on white */
+  --paper: #ffffff;
+
+  /* headings: vivid orange for h1/h2, a vivid red for h3, so section and
+     subsection read as two related but distinct hues rather than one flat
+     colour repeated at every level. */
+  --heading: #bc430a;     /* 5.3:1 on white */
+  --heading-2: #d70b13;   /* 5.3:1 on white */
+  --heading-rule: #f4dcc7;
+
+  /* links: vivid teal */
+  --link: #07758a;        /* 5.4:1 on white */
+  --link-hover: #0a7b4e;  /* 5.3:1 on white */
+
+  /* defined terms and Wikipedia links: vivid purple/magenta, kept apart from
+     both the heading and link hues so "look this up" reads as its own
+     thing. */
+  --term: #c52087;        /* 5.3:1 on white */
+  --term-underline: #eec3dd;
+
+  /* olive: exercises, drills, problems - the course's "your turn" voice */
+  --olive: #6e6f09;        /* 5.3:1 on white */
+  --olive-soft: #eef0d9;
+  --olive-rule: #6e6f09;
+
+  /* gold: interactive demos and optional material */
+  --gold-ink: #965f08;    /* 5.3:1 on white */
+  --gold-mark: #e0a323;
+  --gold-bg: #faecc8;
+  --gold-border: #d99a2b;
+  --demo-bg: #fdf3df;
+  --demo-border: #d99a2b;
+
+  /* panels, example fills, hairlines - light neutral/tinted fills that read
+     as a step up from plain white without competing with the vivid borders
+     drawn on top of them. */
+  --panel-bg: #f5f4f0;
+  --example-bg: #eaf5f6;
+  --example-border: #07758a;
+  --badge-border: #d99a2b;
+  --rule: #e7e5df;
+  --rule-strong: #d6d3c9;
+  --exercise-border: #6e6f09;
+  --exercise-mark: #bc430a;
+  --code-bg: #f2f1ec;
+
+  --topbar-bg: #282828;
+  --topbar-fg: #ffffff;
+
+  /* data series in demos and figures. Ordered by lightness as well as hue,
+     so the four still separate in greyscale and for colour-blind readers;
+     line style (solid / dashed / dotted) carries the same information again.
+     Mirrored by plotone..plotfour in each unit's build_latex.rb. */
+  --plot-1: #07758a;   /* primary: data, the main fit */
+  --plot-2: #bc430a;   /* reference: true value, fitted line */
+  --plot-3: #6e6f09;   /* contrast: a second series */
+  --plot-4: #c52087;   /* accent: highlights, annotations */
+  --plot-1-soft: #b9dfe3;
+  --grid: #dcdad2;
+
+  /* type */
+  --font-body: "IBM Plex Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  --font-mono: "IBM Plex Mono", Menlo, Monaco, "Courier New", monospace;
+
+  --max-width: 760px;
+}

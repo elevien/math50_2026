@@ -1,0 +1,568 @@
+/* Interactive course notes: each unit's index.md rendered through
+   _layouts/notes.html.
+
+   Colours come from public/css/palette.css, which the layout loads first.
+   Run `python3 tools/check_css.py` after editing. */
+
+* { box-sizing: border-box; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  color: var(--text);
+  background: var(--paper);
+  font-family: var(--font-body);
+  font-size: 17.5px;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+}
+
+.topbar {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 1.5em 1.25em 0.7em;
+  font-family: var(--font-body);
+  display: flex;
+  align-items: baseline;
+  gap: 0.9em;
+  flex-wrap: wrap;
+}
+
+.topbar a {
+  color: var(--heading);
+  font-weight: 700;
+  font-size: 1.05em;
+  text-decoration: none;
+}
+
+.topbar a:hover { text-decoration: underline; }
+
+.topbar .unit-label {
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  font-size: 0.9em;
+  color: var(--muted);
+}
+
+.layout {
+  display: flex;
+  align-items: flex-start;
+  gap: 2.5em;
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 1.25em;
+}
+
+.toc {
+  position: sticky;
+  top: 1.5em;
+  flex: 0 0 190px;
+  font-family: var(--font-body);
+  font-size: 0.86em;
+  padding-top: 2.2em;
+}
+
+.toc-title {
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  font-size: 0.8em;
+  color: var(--muted);
+  margin-bottom: 0.6em;
+}
+
+.toc a {
+  display: block;
+  color: var(--text);
+  text-decoration: none;
+  padding: 0.35em 0 0.35em 0.7em;
+  margin-left: -0.7em;
+  border-left: 2px solid transparent;
+  line-height: 1.35;
+}
+
+.toc a:hover { color: var(--link); border-left-color: var(--link); }
+
+.page {
+  flex: 1 1 auto;
+  min-width: 0;
+  max-width: var(--max-width);
+  margin: 0;
+  padding: 2.2em 0 5em;
+}
+
+@media (max-width: 860px) {
+  .layout { display: block; padding: 0 1.1em; }
+  .toc {
+    position: static;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 1.1em;
+    row-gap: 0.2em;
+    padding: 1em 0;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 0.3em;
+  }
+  .toc-title { display: none; }
+  .toc a { padding: 0.15em 0; margin: 0; border-left: none; }
+  .page { max-width: none; padding: 1em 0 4em; }
+}
+
+h1, h2, h3, h4 {
+  font-family: var(--font-body);
+  color: var(--heading);
+  font-weight: 600;
+  line-height: 1.28;
+  letter-spacing: -0.005em;
+}
+
+h1 {
+  font-size: 2em;
+  font-weight: 700;
+  margin: 0.1em 0 0.5em;
+  color: var(--heading);
+}
+
+h1 .subtitle {
+  display: block;
+  font-weight: 400;
+  font-size: 0.5em;
+  letter-spacing: 0;
+  color: var(--muted);
+  margin-top: 0.4em;
+  line-height: 1.4;
+}
+
+/* h2 = a numbered section. Rust plus a rule, so scanning the page for
+   "where does the next section start" needs no reading. */
+h2 {
+  font-size: 1.38em;
+  margin: 2.2em 0 0.7em;
+  padding-bottom: 0.25em;
+  border-bottom: 2px solid var(--heading-rule);
+  color: var(--heading);
+}
+
+/* h3 = a subsection inside a section: same hue, darker, no rule. */
+h3 {
+  font-size: 1.12em;
+  margin: 1.7em 0 0.5em;
+  color: var(--heading-2);
+}
+
+/* h4 = the title line of an example, drill or problem, coloured by whichever
+   box it sits in (see the box rules below). */
+h4 { font-size: 1em; }
+
+p { margin: 0.85em 0; }
+
+a {
+  color: var(--link);
+  text-decoration-thickness: 1px;
+  text-underline-offset: 2px;
+}
+
+a:hover { color: var(--link-hover); }
+
+/* Bold stays ink. Colour is reserved so each hue means exactly one thing:
+   orange/red = heading, teal = link, purple = defined term, olive =
+   exercise, gold = interactive. */
+strong { font-weight: 600; }
+
+mjx-container {
+  overflow-x: auto;
+  overflow-y: hidden;
+  max-width: 100%;
+}
+
+mjx-container[display="true"] { margin: 1.1em 0 !important; }
+
+/* Inline math defaults to display:inline (browser default for an unknown
+   element), on which max-width/overflow have no effect; inline-block makes
+   long inline equations shrink-wrap and scroll instead of blowing out the
+   line width. */
+mjx-container:not([display="true"]) {
+  display: inline-block;
+}
+
+/* MathJax's hidden screen-reader MathML copy is absolutely positioned inside
+   mjx-container; once that container scrolls (above), its un-clipped box
+   inflates the container's scrollable area. Pin it to the viewport instead
+   so it stays invisible without affecting layout. Extra `html` ancestor is
+   needed to out-specificity MathJax's own late-injected !important rule. */
+html mjx-assistive-mml {
+  position: fixed !important;
+}
+
+.intro { font-size: 1.02em; }
+
+/* A defined term (including Wikipedia links). Purple, kept apart from the
+   teal body-link colour, so a definition being introduced reads differently
+   from an ordinary link you might follow. */
+.term {
+  color: var(--term);
+  font-weight: 600;
+  text-decoration: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--term-underline);
+  text-underline-offset: 3px;
+}
+
+.term a { color: inherit; text-decoration: none; }
+.term a:hover { color: var(--link); }
+
+.refs {
+  font-family: var(--font-body);
+  font-size: 0.85em;
+  color: var(--muted);
+  margin: -0.2em 0 1em;
+}
+
+details {
+  margin: 1em 0;
+  font-size: 0.95em;
+}
+
+details summary {
+  cursor: pointer;
+  font-family: var(--font-body);
+  color: var(--link);
+  font-weight: 600;
+}
+
+details[open] summary { margin-bottom: 0.5em; }
+
+.optional-section,
+.practice-section {
+  margin: 1.6em 0;
+  font-size: 1em;
+}
+
+.optional-section > summary,
+.practice-section > summary {
+  cursor: pointer;
+  list-style: none;
+  color: inherit;
+  font-weight: inherit;
+}
+
+.optional-section > summary::-webkit-details-marker,
+.practice-section > summary::-webkit-details-marker { display: none; }
+
+.optional-section > summary::before,
+.practice-section > summary::before {
+  content: "▸";
+  display: inline-block;
+  width: 1em;
+  color: var(--muted);
+  font-size: 0.75em;
+  transition: transform 0.15s;
+}
+
+.optional-section[open] > summary::before,
+.practice-section[open] > summary::before { transform: rotate(90deg); }
+
+.optional-section > summary h2,
+.optional-section > summary h3,
+.practice-section > summary h2,
+.practice-section > summary h3 {
+  display: inline;
+  margin: 0;
+  border-bottom: none;
+}
+
+/* No chip - just the word "(optional)" inline, same font/size/colour as
+   whatever text it's attached to (a TOC entry, a heading). */
+.optional-badge {
+  margin-left: 0.4em;
+}
+
+.optional-body { margin-top: 0.7em; }
+
+.concepts-list {
+  background: var(--panel-bg);
+  border-radius: 4px;
+  padding: 0.9em 1.2em;
+  font-family: var(--font-body);
+  font-size: 0.92em;
+  color: var(--text-soft);
+}
+
+/* BOXES ------------------------------------------------------------------
+   Three boxed kinds, each with its own colour so the box itself says how to
+   read what is inside. Every box gets a single uniform border in its own
+   hue, not a thin frame plus a heavier accent rule, so the colour itself
+   does the work of standing out:
+
+     unit overview   sand panel, no border   orientation, once per unit
+     example         teal border             worked material, read it
+     exercise/drill  olive border            your turn
+
+   Demos are deliberately unboxed - they sit flush with the page, marked out
+   only by the gold label above them, so the interactive content itself is
+   what draws the eye rather than a frame around it.
+
+   Anything smaller than these (proofs, short asides) is a plain details
+   element with no box at all.
+   ------------------------------------------------------------------------- */
+
+.unit-overview {
+  background: var(--panel-bg);
+  border-radius: 8px;
+  padding: 1.2em 1.4em 1.3em;
+  margin: 1.2em 0 2em;
+}
+
+.unit-overview > p:first-child {
+  font-size: 1.04em;
+  color: var(--text);
+  margin-top: 0;
+}
+
+.unit-overview h4 {
+  margin: 1.2em 0 0.4em;
+  font-size: 0.72em;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--heading);
+}
+
+.unit-overview h4:first-of-type { margin-top: 0.9em; }
+
+.unit-overview p,
+.unit-overview ul {
+  font-family: var(--font-body);
+  font-size: 0.93em;
+  color: var(--text-soft);
+  margin: 0.35em 0;
+}
+
+.unit-overview ul { padding-left: 1.3em; }
+.unit-overview li { margin: 0.2em 0; }
+.unit-overview > p:last-child a { margin-right: 0.9em; white-space: nowrap; }
+
+/* Link to the unit's PDF, directly under the overview panel */
+.pdf-link {
+  font-family: var(--font-body);
+  font-size: 0.9em;
+  margin: -1.4em 0 2em;
+}
+
+.pdf-link a {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45em;
+  color: var(--link);
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid var(--rule-strong);
+  background: var(--paper);
+  border-radius: 4px;
+  padding: 0.35em 0.85em;
+}
+
+.pdf-link a:hover { border-color: var(--link); background: var(--example-bg); }
+.pdf-link a::before { content: "\2193"; font-weight: 700; }
+
+ul, ol { padding-left: 1.4em; }
+li { margin: 0.35em 0; }
+
+/* Worked material. Mirrored by the LaTeX 'examplebox': same sand fill, same
+   clay rule down the left edge, same clay title. */
+.example {
+  background: var(--example-bg);
+  border: 1.5px solid var(--example-border);
+  border-radius: 8px;
+  padding: 0.9em 1.2em 1em;
+  margin: 1.5em 0;
+}
+
+.example h4 {
+  font-family: var(--font-body);
+  font-size: 0.98em;
+  font-weight: 700;
+  margin: 0 0 0.45em;
+  color: var(--link);
+}
+
+.example > *:last-child { margin-bottom: 0; }
+
+/* Your turn: drills and problems. Olive rather than clay, so a page of
+   drills does not look like a page of examples. */
+.exercise {
+  background: var(--paper);
+  border: 1.5px solid var(--exercise-border);
+  border-radius: 8px;
+  padding: 0.85em 1.2em 1em;
+  margin: 1.25em 0;
+}
+
+.exercise h4 {
+  font-family: var(--font-body);
+  font-size: 0.98em;
+  font-weight: 700;
+  margin: 0 0 0.45em;
+  color: var(--olive);
+}
+
+.exercise ol { padding-left: 1.3em; }
+.exercise > *:last-child { margin-bottom: 0; }
+
+/* Interactive. No box - it sits right on the page like any other content;
+   the gold label and controls below are what mark it as a thing to play
+   with rather than a thing to read. Replaced by a static figure in the PDF. */
+.demo {
+  background: var(--paper);
+  padding: 0.8em 0 1em;
+  margin: 1.8em 0;
+}
+
+.demo-label {
+  font-family: var(--font-body);
+  font-size: 0.78em;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--gold-ink);
+  font-weight: 700;
+  margin-bottom: 0.6em;
+  display: flex;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.demo-label::before {
+  content: "";
+  display: inline-block;
+  width: 0.55em;
+  height: 0.55em;
+  border-radius: 50%;
+  background: var(--gold-mark);
+}
+
+.demo h4 {
+  margin-top: 0;
+  font-size: 1.02em;
+  color: var(--gold-ink);
+}
+
+.demo-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.6em 1.2em;
+  align-items: center;
+  font-family: var(--font-body);
+  font-size: 0.92em;
+  margin: 0.6em 0;
+}
+
+.demo-controls label {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.4em;
+}
+
+.demo button {
+  font-family: var(--font-body);
+  font-size: 0.9em;
+  font-weight: 600;
+  background: var(--gold-ink);
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.45em 0.9em;
+  cursor: pointer;
+}
+
+.demo button:hover { background: var(--heading); }
+.demo button:active { background: var(--heading-2); }
+.demo input[type="range"] { accent-color: var(--gold-mark); }
+
+.demo input[type="range"] { vertical-align: middle; width: 130px; max-width: 38vw; }
+
+/* A live value shown alongside the controls. Demos carry no prose; anything
+   that needs a sentence belongs in the notes around the demo. */
+.demo-value {
+  font-family: var(--font-body);
+  font-size: 0.92em;
+  color: var(--gold-ink);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.demo svg { max-width: 100%; height: auto; display: block; margin: 0.6em auto; }
+.demo .demo-caption {
+  font-family: var(--font-body);
+  font-size: 0.85em;
+  line-height: 1.5;
+  color: var(--text-soft);
+  text-align: center;
+  margin-top: 0.5em;
+}
+
+/* Code blocks */
+pre {
+  background: var(--code-bg);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+  padding: 0.9em 1em;
+  overflow-x: auto;
+  font-size: 0.84em;
+  line-height: 1.55;
+}
+
+pre code, code {
+  font-family: var(--font-mono);
+}
+
+p code, li code {
+  background: var(--code-bg);
+  padding: 0.1em 0.3em;
+  border-radius: 3px;
+  font-size: 0.9em;
+}
+
+table {
+  border-collapse: collapse;
+  margin: 1em 0;
+}
+
+table.prob-table td, table.prob-table th {
+  border: 1px solid var(--rule-strong);
+  padding: 0.4em 0.85em;
+  text-align: center;
+  font-family: var(--font-body);
+  font-variant-numeric: tabular-nums;
+}
+
+table.prob-table th {
+  background: var(--panel-bg);
+  color: var(--heading-2);
+  font-weight: 600;
+}
+
+.footnote-ref { font-size: 0.85em; vertical-align: super; }
+
+footer.page-footer {
+  max-width: var(--max-width);
+  margin: 3em auto 0;
+  padding: 1.5em 1.25em 2em;
+  border-top: 1px solid var(--rule);
+  font-family: var(--font-body);
+  font-size: 0.9em;
+  color: var(--muted);
+}
+
+footer.page-footer a { color: var(--link); }
+
+@media (max-width: 600px) {
+  body { font-size: 16.5px; }
+  .page { padding: 1.2em 1em 4em; }
+  h1 { font-size: 1.55em; }
+  h2 { font-size: 1.25em; }
+  .demo-controls { flex-direction: column; align-items: flex-start; }
+  table.prob-table { display: block; overflow-x: auto; max-width: 100%; }
+  table.prob-table td, table.prob-table th { padding: 0.3em 0.5em; font-size: 0.92em; }
+}
