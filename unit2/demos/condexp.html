@@ -1,0 +1,78 @@
+<div class="demo" id="demo-condexp">
+  <div class="demo-label">Interactive demo</div>
+  <h4>Conditional averages as filtered rows</h4>
+  <div class="demo-controls">
+    <button class="ce-btn" data-mode="y1_given_y2" data-value="2">$E[Y_1\mid Y_2=2]$</button>
+    <button class="ce-btn" data-mode="y2_given_y1" data-value="1">$E[Y_2\mid Y_1=1]$</button>
+    <button class="ce-btn" data-mode="y2_given_y1_gt" data-value="1">$E[Y_2\mid Y_1>1]$</button>
+  </div>
+  <table class="prob-table" id="ce-table">
+    <thead>
+      <tr><th>row</th><th>$Y_1$</th><th>$Y_2$</th></tr>
+    </thead>
+    <tbody></tbody>
+  </table>
+  <p id="ce-result" style="margin-top:0.75rem;"></p>
+</div>
+
+<script>
+(function () {
+  const data = [[1, 2], [1, 2], [3, 1], [1, 4], [3, 3], [2, 2], [1, 5]];
+  const tbody = document.querySelector('#ce-table tbody');
+  const result = document.getElementById('ce-result');
+  const buttons = Array.from(document.querySelectorAll('.ce-btn'));
+
+  function matches(row, mode, value) {
+    const y1 = row[0], y2 = row[1];
+    if (mode === 'y1_given_y2') return y2 === value;
+    if (mode === 'y2_given_y1') return y1 === value;
+    if (mode === 'y2_given_y1_gt') return y1 > value;
+    return false;
+  }
+
+  function targetColumn(mode) {
+    return mode === 'y1_given_y2' ? 0 : 1;
+  }
+
+  function labelFor(mode, value) {
+    if (mode === 'y1_given_y2') return `E[Y₁ | Y₂=${value}]`;
+    if (mode === 'y2_given_y1') return `E[Y₂ | Y₁=${value}]`;
+    return `E[Y₂ | Y₁>${value}]`;
+  }
+
+  function render(mode, value) {
+    buttons.forEach((btn) => btn.classList.toggle('active', btn.dataset.mode === mode && Number(btn.dataset.value) === value));
+    tbody.innerHTML = '';
+
+    const col = targetColumn(mode);
+    const kept = data.map((row, index) => ({ row, index })).filter((item) => matches(item.row, mode, value));
+    const values = kept.map((item) => item.row[col]);
+
+    data.forEach((row, index) => {
+      const keep = matches(row, mode, value);
+      const tr = document.createElement('tr');
+      if (!keep) tr.style.opacity = '0.35';
+
+      [index + 1, row[0], row[1]].forEach((entry, j) => {
+        const td = document.createElement(j === 0 ? 'th' : 'td');
+        td.textContent = entry;
+        if (keep && j === col + 1) {
+          td.style.background = '#f7e6dc';
+          td.style.color = '#8a3a1c';
+          td.style.fontWeight = '700';
+        }
+        tr.appendChild(td);
+      });
+      tbody.appendChild(tr);
+    });
+
+    const avg = NotesUtils.mean(values);
+    result.innerHTML = `<strong>${labelFor(mode, value)}</strong> = (${values.join(' + ')})/${values.length} = ${avg.toFixed(2)}`;
+  }
+
+  buttons.forEach((btn) => {
+    btn.addEventListener('click', () => render(btn.dataset.mode, Number(btn.dataset.value)));
+  });
+  render('y1_given_y2', 2);
+})();
+</script>

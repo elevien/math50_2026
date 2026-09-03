@@ -7,7 +7,7 @@ bibliography:
 
 Before going through Unit 1, please review [Unit 0]({{ '/unit0/' | relative_url }}). This material will not be covered in class, and it is expected that if you are not already familiar with it you will learn it by the end of the first week.
 
-**Note.** This schedule is subject to change throughout the term. Please check it weekly. Changes will affect exam dates only in rare circumstances. You can also watch the [commit history](https://github.com/elevien/math50_sandbox/commits/main/) to see exactly what changed and when.
+**Note.** This schedule is subject to change throughout the term. Please check it weekly. Changes will affect exam dates only in rare circumstances. You can also watch the [commit history](https://github.com/elevien/math50_2026/commits/main/) to see exactly what changed and when.
 
 Term dates follow the [Dartmouth Registrar's Fall 2026 academic calendar](https://registrar.dartmouth.edu/calendars/academic-institutional-calendars/2026-2027/fall-term-2026): classes begin September 14, classes end November 17, and scheduled final examinations run November 20&ndash;24.
 

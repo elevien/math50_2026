@@ -28,7 +28,7 @@ Expectation, variance and standard deviation, conditional expectation, empirical
 
 </div>
 
-<p class="pdf-link"><a href="unit2.pdf">Unit 2 notes pdf</a> <a href="unit2_slides.pdf">Unit 2 slides pdf</a> <a href="https://colab.research.google.com/github/elevien/math50_sandbox/blob/main/unit2/unit2.ipynb">Unit 2 notebook</a></p>
+<p class="pdf-link"><a href="unit2.pdf">Unit 2 notes pdf</a> <a href="unit2_slides.pdf">Unit 2 slides pdf</a> <a href="https://colab.research.google.com/github/elevien/math50_2026/blob/main/unit2/unit2.ipynb">Unit 2 notebook</a></p>
 
 ## 2.1 Expectation, variance and standard deviation {#sec-2-1}
 

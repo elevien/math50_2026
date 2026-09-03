@@ -1,0 +1,60 @@
+<div class="demo" id="demo-binomial">
+  <div class="demo-label">Interactive demo</div>
+  <h4>Binomial(N, q): exact PMF vs. Monte Carlo</h4>
+  <div class="demo-controls">
+    <label>N = <input id="binom-N" type="range" min="2" max="30" step="1" value="15"><span id="binom-N-val">15</span></label>
+    <label>q = <input id="binom-q" type="range" min="0.05" max="0.95" step="0.05" value="0.3"><span id="binom-q-val">0.30</span></label>
+    <button id="binom-mc">Draw 2000 Monte Carlo samples</button>
+    <button id="binom-clear">Clear samples</button>
+  </div>
+  <svg id="binom-chart"></svg>
+</div>
+
+<script>
+(function () {
+  const NSlider = document.getElementById('binom-N');
+  const qSlider = document.getElementById('binom-q');
+  const NVal = document.getElementById('binom-N-val');
+  const qVal = document.getElementById('binom-q-val');
+  const chart = document.getElementById('binom-chart');
+  let mcCounts = null;
+  let mcN = 0;
+
+  function N() { return parseInt(NSlider.value, 10); }
+  function q() { return parseFloat(qSlider.value); }
+
+  function drawSample() {
+    let s = 0;
+    for (let i = 0; i < N(); i++) s += NotesUtils.bernoulli(q());
+    return s;
+  }
+
+  function resetMC() { mcCounts = null; mcN = 0; }
+
+  function render() {
+    const n = N(), qq = q();
+    const exact = [];
+    for (let k = 0; k <= n; k++) exact.push({ k, v: NotesUtils.binomialPmf(n, qq, k) });
+    const series = [{ name: 'exact pmf', color: '#b08a2a', values: exact, opacity: 0.55 }];
+    if (mcCounts) {
+      const emp = [];
+      for (let k = 0; k <= n; k++) emp.push({ k, v: mcCounts[k] / mcN });
+      series.unshift({ name: 'Monte Carlo', color: '#1f5a6b', values: emp, opacity: 0.85 });
+    }
+    NotesUtils.barChart(chart, series, { legend: true, width: Math.max(480, n * 18) });
+  }
+
+  NSlider.addEventListener('input', () => { NVal.textContent = N(); resetMC(); render(); });
+  qSlider.addEventListener('input', () => { qVal.textContent = q().toFixed(2); resetMC(); render(); });
+  document.getElementById('binom-mc').addEventListener('click', () => {
+    const n = N();
+    if (!mcCounts || mcCounts.length !== n + 1) { mcCounts = new Array(n + 1).fill(0); mcN = 0; }
+    for (let i = 0; i < 2000; i++) mcCounts[drawSample()]++;
+    mcN += 2000;
+    render();
+  });
+  document.getElementById('binom-clear').addEventListener('click', () => { resetMC(); render(); });
+
+  render();
+})();
+</script>

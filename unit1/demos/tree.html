@@ -1,0 +1,156 @@
+<div class="demo" id="demo-tree">
+  <div class="demo-label">Interactive demo</div>
+  <h4>Probability tree for two cancer diagnoses</h4>
+  <div class="demo-controls">
+    <label>$P(\text{diagnosis}) = p$ = <input id="tree-p" type="range" min="0.1" max="0.9" step="0.05" value="0.5"><span id="tree-p-val">0.50</span></label>
+    <button id="tree-sim">Simulate one draw</button>
+    <button id="tree-sim100">Simulate 100 draws</button>
+    <button id="tree-reset">Reset</button>
+  </div>
+  <svg id="tree-svg" viewBox="0 0 480 380"></svg>
+</div>
+
+<script>
+(function () {
+  const svgEl = document.getElementById('tree-svg');
+  const pSlider = document.getElementById('tree-p');
+  const pVal = document.getElementById('tree-p-val');
+  const mk = NotesUtils.svg;
+
+  const rootX = 240, rootY = 20, l1Y = 100, l2Y = 180;
+  const l1X = [120, 360];
+  const l2X = [60, 180, 300, 420];
+  const histTop = 255, histBase = 345, barWidth = 42;
+  let counts = [0, 0, 0, 0];
+  let n = 0;
+
+  svgEl.appendChild(mk('circle', { cx: rootX, cy: rootY, r: 5, fill: '#3a3a34' }));
+
+  const edgesL1 = [];
+  for (let i = 0; i < 2; i++) {
+    const line = mk('line', { x1: rootX, y1: rootY, x2: l1X[i], y2: l1Y, stroke: '#9b9e91', 'stroke-width': 1.5 });
+    svgEl.appendChild(line);
+    const lbl = mk('text', { x: (rootX + l1X[i]) / 2 + (i === 0 ? -14 : 14), y: (rootY + l1Y) / 2, 'font-size': 11, fill: '#565a4e', 'text-anchor': 'middle' });
+    svgEl.appendChild(lbl);
+    svgEl.appendChild(mk('circle', { cx: l1X[i], cy: l1Y, r: 5, fill: '#1f5a6b' }));
+    const nlabel = mk('text', { x: l1X[i], y: l1Y - 10, 'font-size': 11, 'text-anchor': 'middle', fill: '#3a3d35' });
+    nlabel.textContent = 'X₁=' + i;
+    svgEl.appendChild(nlabel);
+    edgesL1.push({ lbl, i, line });
+  }
+
+  const edgesL2 = [];
+  const leafProbTexts = [];
+  const bars = [];
+  const freqTexts = [];
+  const countTexts = [];
+  for (let i = 0; i < 2; i++) {
+    for (let j = 0; j < 2; j++) {
+      const idx = i * 2 + j;
+      const line = mk('line', { x1: l1X[i], y1: l1Y, x2: l2X[idx], y2: l2Y, stroke: '#d8d2c5', 'stroke-width': 1.5 });
+      svgEl.appendChild(line);
+      const lbl = mk('text', { x: (l1X[i] + l2X[idx]) / 2 + (j === 0 ? -12 : 12), y: (l1Y + l2Y) / 2, 'font-size': 10, fill: '#7c7f72', 'text-anchor': 'middle' });
+      svgEl.appendChild(lbl);
+      const leafLabel = mk('text', { x: l2X[idx], y: l2Y + 16, 'font-size': 11, 'text-anchor': 'middle', fill: '#3a3d35' });
+      leafLabel.textContent = `(${i},${j})`;
+      svgEl.appendChild(leafLabel);
+      const probLabel = mk('text', { x: l2X[idx], y: l2Y + 30, 'font-size': 11, 'text-anchor': 'middle', fill: '#1f5a6b', 'font-weight': '700' });
+      svgEl.appendChild(probLabel);
+      svgEl.appendChild(mk('circle', { cx: l2X[idx], cy: l2Y, r: 5, fill: '#7c7f72' }));
+      edgesL2.push({ line, lbl, i, j, idx });
+      leafProbTexts.push(probLabel);
+    }
+  }
+
+  svgEl.appendChild(mk('line', { x1: 30, y1: histBase, x2: 450, y2: histBase, stroke: '#9b9e91', 'stroke-width': 1 }));
+  svgEl.appendChild(mk('line', { x1: 30, y1: histTop, x2: 30, y2: histBase, stroke: '#9b9e91', 'stroke-width': 1 }));
+  [0, 0.5, 1].forEach((v) => {
+    const y = histBase - v * (histBase - histTop);
+    svgEl.appendChild(mk('line', { x1: 26, y1: y, x2: 450, y2: y, stroke: v === 0 ? '#9b9e91' : '#efebe2', 'stroke-width': 1 }));
+    const tick = mk('text', { x: 22, y: y + 3, 'font-size': 10, 'text-anchor': 'end', fill: '#7c7f72' });
+    tick.textContent = v.toFixed(1);
+    svgEl.appendChild(tick);
+  });
+  const histLabel = mk('text', { x: 240, y: histTop - 18, 'font-size': 12, 'text-anchor': 'middle', fill: '#565a4e', 'font-weight': '700' });
+  histLabel.textContent = 'Observed relative frequency';
+  svgEl.appendChild(histLabel);
+
+  l2X.forEach((x) => {
+    const bar = mk('rect', {
+      x: x - barWidth / 2,
+      y: histBase,
+      width: barWidth,
+      height: 0,
+      fill: '#1f5a6b',
+      opacity: 0.78,
+    });
+    svgEl.appendChild(bar);
+    bars.push(bar);
+
+    const freqText = mk('text', { x, y: histBase - 5, 'font-size': 10, 'text-anchor': 'middle', fill: '#1f5a6b', 'font-weight': '700' });
+    freqText.textContent = '0.000';
+    svgEl.appendChild(freqText);
+    freqTexts.push(freqText);
+
+    const countText = mk('text', { x, y: histBase + 16, 'font-size': 10, 'text-anchor': 'middle', fill: '#6b6e62' });
+    countText.textContent = '0';
+    svgEl.appendChild(countText);
+    countTexts.push(countText);
+  });
+
+  function p() { return parseFloat(pSlider.value); }
+
+  function resetCounts() {
+    counts = [0, 0, 0, 0];
+    n = 0;
+  }
+
+  function simulateOne() {
+    const q = p();
+    const x1 = NotesUtils.bernoulli(q);
+    const x2 = NotesUtils.bernoulli(q);
+    counts[x1 * 2 + x2]++;
+    n++;
+  }
+
+  function render() {
+    const q = p();
+    edgesL1.forEach((e) => { e.lbl.textContent = e.i === 0 ? (1 - q).toFixed(2) : q.toFixed(2); });
+    edgesL2.forEach((e) => {
+      const edgeP = e.j === 0 ? (1 - q) : q;
+      e.lbl.textContent = edgeP.toFixed(2);
+      const firstP = e.i === 0 ? (1 - q) : q;
+      leafProbTexts[e.idx].textContent = (firstP * edgeP).toFixed(3);
+    });
+    bars.forEach((bar, idx) => {
+      const freq = n ? counts[idx] / n : 0;
+      const h = freq * (histBase - histTop);
+      bar.setAttribute('y', histBase - h);
+      bar.setAttribute('height', h);
+      freqTexts[idx].textContent = n ? freq.toFixed(3) : '0.000';
+      freqTexts[idx].setAttribute('y', Math.min(histBase - 5, histBase - h - 5));
+      countTexts[idx].textContent = counts[idx];
+    });
+  }
+
+  document.getElementById('tree-sim').addEventListener('click', () => {
+    simulateOne();
+    render();
+  });
+  document.getElementById('tree-sim100').addEventListener('click', () => {
+    for (let i = 0; i < 100; i++) simulateOne();
+    render();
+  });
+  document.getElementById('tree-reset').addEventListener('click', () => {
+    resetCounts();
+    render();
+  });
+
+  pSlider.addEventListener('input', () => {
+    pVal.textContent = p().toFixed(2);
+    resetCounts();
+    render();
+  });
+  render();
+})();
+</script>

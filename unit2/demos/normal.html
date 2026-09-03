@@ -1,0 +1,100 @@
+<div class="demo" id="demo-normal">
+  <div class="demo-label">Interactive demo</div>
+  <h4>Normal distribution: mean and standard deviations</h4>
+  <div class="demo-controls">
+    <label>$\mu$ = <input id="norm-mu" type="range" min="-4" max="4" step="0.5" value="0"><span id="norm-mu-val">0.0</span></label>
+    <label>$\sigma$ = <input id="norm-sigma" type="range" min="0.75" max="3" step="0.25" value="1"><span id="norm-sigma-val">1.00</span></label>
+  </div>
+  <svg id="norm-chart"></svg>
+</div>
+
+<script>
+(function () {
+  const muSlider = document.getElementById('norm-mu');
+  const sigmaSlider = document.getElementById('norm-sigma');
+  const muVal = document.getElementById('norm-mu-val');
+  const sigmaVal = document.getElementById('norm-sigma-val');
+  const chart = document.getElementById('norm-chart');
+  const W = 520, H = 260, m = { top: 16, right: 20, bottom: 40, left: 34 };
+  const innerW = W - m.left - m.right, innerH = H - m.top - m.bottom;
+  const xDomain = [-10, 10], yMax = 0.56;
+  const xToPx = (x) => ((x - xDomain[0]) / (xDomain[1] - xDomain[0])) * innerW;
+  const yToPx = (y) => innerH - (y / yMax) * innerH;
+
+  function mkText(x, y, str, attrs) {
+    const t = NotesUtils.svg('text', Object.assign({ x, y, 'font-size': 10, fill: '#6b6e62' }, attrs || {}));
+    t.textContent = str;
+    return t;
+  }
+
+  function render() {
+    const mu = parseFloat(muSlider.value);
+    const sigma = parseFloat(sigmaSlider.value);
+    muVal.textContent = mu.toFixed(1);
+    sigmaVal.textContent = sigma.toFixed(2);
+
+    NotesUtils.clear(chart);
+    chart.setAttribute('viewBox', `0 0 ${W} ${H}`);
+    chart.setAttribute('width', '100%');
+    const g = NotesUtils.svg('g', { transform: `translate(${m.left},${m.top})` });
+    chart.appendChild(g);
+    g.appendChild(NotesUtils.svg('line', { x1: 0, y1: innerH, x2: innerW, y2: innerH, stroke: '#9b9e91' }));
+    g.appendChild(NotesUtils.svg('line', { x1: 0, y1: 0, x2: 0, y2: innerH, stroke: '#9b9e91' }));
+
+    [-10, -5, 0, 5, 10].forEach((x) => {
+      const px = xToPx(x);
+      g.appendChild(NotesUtils.svg('line', { x1: px, y1: innerH, x2: px, y2: innerH + 4, stroke: '#9b9e91' }));
+      g.appendChild(mkText(px, innerH + 18, String(x), { 'text-anchor': 'middle' }));
+    });
+
+    const n = 180;
+    // Two nested bands, so the 68/95 empirical rule from the text is visible
+    // directly: the wide band is mu +/- 2 sigma, the inner one mu +/- sigma.
+    function band(k, opacity) {
+      const lo = Math.max(xDomain[0], mu - k * sigma);
+      const hi = Math.min(xDomain[1], mu + k * sigma);
+      if (hi <= lo) return;
+      const pts = [];
+      for (let i = 0; i <= n; i++) {
+        const x = lo + ((hi - lo) * i) / n;
+        pts.push(`${xToPx(x)},${yToPx(NotesUtils.normalPdf(x, mu, sigma))}`);
+      }
+      const d = `M ${xToPx(lo)},${innerH} L ${pts.join(' L ')} L ${xToPx(hi)},${innerH} Z`;
+      g.appendChild(NotesUtils.svg('path', { d, fill: '#1f5a6b', opacity }));
+    }
+    band(2, 0.13);
+    band(1, 0.28);
+
+    const curve = [];
+    for (let i = 0; i <= n; i++) {
+      const x = xDomain[0] + ((xDomain[1] - xDomain[0]) * i) / n;
+      curve.push(`${i === 0 ? 'M' : 'L'} ${xToPx(x)} ${yToPx(NotesUtils.normalPdf(x, mu, sigma))}`);
+    }
+    g.appendChild(NotesUtils.svg('path', { d: curve.join(' '), fill: 'none', stroke: '#3a3a34', 'stroke-width': 2 }));
+
+    [
+      { x: mu - 2 * sigma, label: 'μ − 2σ', color: '#a8c4cd' },
+      { x: mu - sigma, label: 'μ − σ', color: '#b08a2a' },
+      { x: mu, label: 'μ', color: '#1f5a6b' },
+      { x: mu + sigma, label: 'μ + σ', color: '#b08a2a' },
+      { x: mu + 2 * sigma, label: 'μ + 2σ', color: '#a8c4cd' },
+    ].forEach((mark) => {
+      if (mark.x < xDomain[0] || mark.x > xDomain[1]) return;
+      const px = xToPx(mark.x);
+      g.appendChild(NotesUtils.svg('line', { x1: px, y1: 0, x2: px, y2: innerH, stroke: mark.color, 'stroke-width': 1.7, 'stroke-dasharray': mark.label === 'μ' ? 'none' : '5 4' }));
+      g.appendChild(mkText(px, 10, mark.label, { 'text-anchor': 'middle', fill: mark.color, 'font-weight': 700 }));
+    });
+
+    // Label the two bands with the share of probability each one holds.
+    if (mu > xDomain[0] + 0.5 && mu < xDomain[1] - 0.5) {
+      g.appendChild(mkText(xToPx(mu), yToPx(NotesUtils.normalPdf(mu, mu, sigma)) + 26,
+        '68%', { 'text-anchor': 'middle', 'font-size': 11, fill: '#1f5a6b', 'font-weight': 700 }));
+      g.appendChild(mkText(xToPx(mu + 1.5 * sigma), innerH - 12,
+        '95% total', { 'text-anchor': 'middle', 'font-size': 10, fill: '#1f5a6b' }));
+    }
+  }
+
+  [muSlider, sigmaSlider].forEach((s) => s.addEventListener('input', render));
+  render();
+})();
+</script>
