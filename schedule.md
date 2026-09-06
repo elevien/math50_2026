@@ -32,13 +32,12 @@ Term dates follow the [Dartmouth Registrar's Fall 2026 academic calendar](https:
 | Wed Oct 7 | [Unit 3]({{ '/unit3/' | relative_url }}) | 3.4 The inverse problem for a linear model | [Slides]({{ '/unit3/slides-10-07.pdf' | relative_url }}) | |
 | Fri Oct 9 | [Unit 3]({{ '/unit3/' | relative_url }}) | 3.5 Coefficient of determination, correlation; autoregressive models and the Hurwicz bias | [Slides]({{ '/unit3/slides-10-09.pdf' | relative_url }}) | |
 | **Week 5** | | | | |
-| Mon Oct 12 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.1 Study design and confounding | [Slides]({{ '/unit4/slides-10-12.pdf' | relative_url }}) | [Competition]({{ '/project/' | relative_url }}) discussion |
+| Mon Oct 12 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.1 Study design and confounding | [Slides]({{ '/unit4/slides-10-12.pdf' | relative_url }}) | |
 | Wed Oct 14 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.2 Multiple-predictor regression; Simpson's paradox | [Slides]({{ '/unit4/slides-10-14.pdf' | relative_url }}) | |
-| Fri Oct 16 | | Work on the competition | | |
 | **Week 6** | | | | |
 | Mon Oct 19 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.3 Covariance matrix and estimating the coefficients | [Slides]({{ '/unit4/slides-10-19.pdf' | relative_url }}) | |
 | Wed Oct 21 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.4 Sample distribution and collinearity | [Slides]({{ '/unit4/slides-10-21.pdf' | relative_url }}) | |
-| Fri Oct 23 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.5 Categorical predictors | [Slides]({{ '/unit4/slides-10-23.pdf' | relative_url }}) | Competition progress due (Canvas); last day of Midterm 2 material |
+| Fri Oct 23 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.5 Categorical predictors | [Slides]({{ '/unit4/slides-10-23.pdf' | relative_url }}) | Last day of Midterm 2 material |
 | **Week 7** | | | | |
 | Mon Oct 26 | | Review for Midterm 2 | | Come with questions! |
 | Wed Oct 28 | | **Midterm 2** (first half of class) &mdash; Units 3&ndash;4 | [Slides]({{ '/unit5/slides-10-28.pdf' | relative_url }}) | Second half: 5.1 Interaction terms |

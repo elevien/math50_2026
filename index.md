@@ -23,7 +23,7 @@ See [weekly schedule]({{ '/schedule/' | relative_url }}) for details.
 **My availability:**  
 
 - Office hours (in person): Tuesday 8:00–10:00am **and** 1:30–2:30pm  
-- Generally available to answer questions on Slack (please use Slack over email for course-related matters) throughout the week. I will occasionally answer questions on the weekend, but there is no guarantee.  
+- Generally available to answer questions on Slack (please use Slack over email for course-related matters) throughout the week. If you would like to have a textbook for reference, I would recommend the following: 
 
 **Textbooks:** My notes are mostly self contained, although I will reference material from a few textbooks: 
 - James, Gareth, Witten, Daniela, Hastie, Trevor, Tibshirani, Robert, et al. (2013). *An introduction to statistical learning (python version)* (ISLP). Springer.  
@@ -42,6 +42,16 @@ All coding will be done using Python in [Colab Notebooks](https://colab.research
 - [numpy](https://numpy.org/) for arrays, linear algebra, and generating random numbers  
 - [pandas](https://pandas.pydata.org/) for working with tabular data sets  
 - [statsmodels](https://www.statsmodels.org/stable/index.html) for classical statistics  
+
+**LLM Policy:** 
+
+You are free to use LLMs at will on data analysis assignments. However, **all assignments can be completed without LLMs.** If you choose to use LLMs on assignments, you must include an *AI disclosure statement* with the following information:
+- What models were used.
+- A 1-2 paragraph reflection summarizing how the model was used: List the main contributions (e.g., pieces of code, making a specific plot) and how you engaged with those contributions to ensure the assignment was still beneficial.
+
+You are not permitted to use LLMs or any electronics during in-class exams or during lecture.
+
+See the [full LLM policy]({{ '/ai-policy/ai_policy.pdf' | relative_url }}) (PDF) for the rationale behind this policy and practical recommendations.
 
 ## Assignments
 
@@ -66,8 +76,7 @@ Your grade will be based on the following. You should see Canvas for the detaile
 - Come to class and ask questions.
 - Do every exercise in the notes and every question on the practice exams.
 - Use the data analysis competition as an opportunity to put the course material into practice on a concrete, hands-on task.
-- Spend time reviewing the material and working through problems without LLMs/AI. These tools can create the illusion of productivity because of the rapid feedback. Ask yourself: Are the interactions I'm having with AI really serving my learning goals?
-- That said, you should absolutely embrace AI as a tool to help you learn, as long as you use it mindfully and not to avoid doing the work yourself. I recommend making a GitHub account and interacting with the course material through Copilot on GitHub. [Here](https://github.com/copilot/share/007652a8-48c4-8874-b902-100a20c608ca) is an example of what this looks like. The problems it produced are not perfect (for example, I find the last one a bit trivial because the flips are independent), but they are a great starting point.
+- Spend time reviewing the material and working through problems without LLMs/AI. These tools can create the illusion of productivity because of the rapid feedback.
 - Connect with other students in the class and work with them. The class is typically very diverse: some students have taken other probability courses, like 20 and 40, while others have experience doing data analysis in a research or industry setting. It's great if you can connect with people whose skills complement yours.
 
 ## Accessibility Needs
