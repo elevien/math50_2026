@@ -25,7 +25,7 @@ Term dates follow the [Dartmouth Registrar's Fall 2026 academic calendar](https:
 | Fri Sept 25 | [Unit 2]({{ '/unit2/' | relative_url }}) | 2.3 Linear regression as a conditionally Normal model | [Slides]({{ '/unit2/slides-09-25.pdf' | relative_url }}) | |
 | **Week 3** | | | | |
 | Mon Sept 28 | [Unit 2]({{ '/unit2/' | relative_url }}) | 2.3 cont.; review | | Last day of Midterm 1 material |
-| Wed Sept 30 | | **Midterm 1** (first half of class) &mdash; Units 1&ndash;2 | [Slides]({{ '/unit3/slides-09-30.pdf' | relative_url }}) | Second half: 3.1 The LLN and the CLT |
+| Wed Sept 30 | | **Midterm 1** (first half of class) &mdash; Units 1&ndash;2 | [Slides]({{ '/unit3/slides-09-30.pdf' | relative_url }}) |  |
 | Fri Oct 2 | [Unit 3]({{ '/unit3/' | relative_url }}) | 3.2 Estimators, bias and consistency | [Slides]({{ '/unit3/slides-10-02.pdf' | relative_url }}) | |
 | **Week 4** | | | | |
 | Mon Oct 5 | [Unit 3]({{ '/unit3/' | relative_url }}) | 3.3 Confidence intervals | [Slides]({{ '/unit3/slides-10-05.pdf' | relative_url }}) | |
@@ -40,7 +40,7 @@ Term dates follow the [Dartmouth Registrar's Fall 2026 academic calendar](https:
 | Fri Oct 23 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.5 Categorical predictors | [Slides]({{ '/unit4/slides-10-23.pdf' | relative_url }}) | Last day of Midterm 2 material |
 | **Week 7** | | | | |
 | Mon Oct 26 | | Review for Midterm 2 | | Come with questions! |
-| Wed Oct 28 | | **Midterm 2** (first half of class) &mdash; Units 3&ndash;4 | [Slides]({{ '/unit5/slides-10-28.pdf' | relative_url }}) | Second half: 5.1 Interaction terms |
+| Wed Oct 28 | | **Midterm 2** (first half of class) &mdash; Units 3&ndash;4 | [Slides]({{ '/unit5/slides-10-28.pdf' | relative_url }}) |  |
 | Fri Oct 30 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.1 cont.; residual plots | [Slides]({{ '/unit5/slides-10-30.pdf' | relative_url }}) | |
 | **Week 8** | | | | |
 | Mon Nov 2 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.2 Feature maps for nonlinear models | [Slides]({{ '/unit5/slides-11-02.pdf' | relative_url }}) | |
