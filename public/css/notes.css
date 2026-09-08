@@ -527,6 +527,28 @@ p code, li code {
 table {
   border-collapse: collapse;
   margin: 1em 0;
+  width: 100%;
+}
+
+/* Plain reference/cheat-sheet tables: row borders and top alignment so a
+   cell that wraps to multiple lines still reads as belonging to one row,
+   instead of drifting to line up with the wrong line in the next column. */
+table:not(.prob-table) td,
+table:not(.prob-table) th {
+  border: 1px solid var(--rule);
+  padding: 0.5em 0.8em;
+  text-align: left;
+  vertical-align: top;
+}
+
+table:not(.prob-table) th {
+  background: var(--panel-bg);
+  color: var(--heading-2);
+  font-weight: 600;
+}
+
+table:not(.prob-table) tbody tr:nth-child(even) td {
+  background: var(--code-bg);
 }
 
 table.prob-table td, table.prob-table th {

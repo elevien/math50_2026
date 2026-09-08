@@ -557,6 +557,39 @@ print("Estimated P(A=0 | B=1, C=1):", est)
 The printed estimate should be close to the exact value $1/3$ above.
 </div>
 
+### Python cheat sheet: sampling and probability from data
+
+The examples above all reuse the same handful of moves: draw samples, index into arrays or DataFrames with a condition, and average a boolean condition to get a probability. Here's a reference for these moves. As stated in the unit overview, you won't be asked to write this code from scratch on an exam, but you should be able to read a few lines like these and say what probability they're computing.
+
+Throughout, `X` and `Y` are parallel 1D arrays of $N$ paired samples (e.g. `X[i], Y[i]` is the $i$th draw of $(X,Y)$), and `x`, `y` are specific values in their sample spaces.
+
+| Task | Python |
+|---|---|
+| Draw $N$ samples, support `vals`, probs `p` | `X = np.random.choice(vals, p=p, size=N)` |
+| Draw $N$ indices into a joint outcome list, given `probs` | `idx = np.random.choice(len(outcomes), p=probs, size=N)` |
+| Turn those indices into samples `(X,Y)` | `samples = np.array(outcomes)[idx]` |
+| Samples satisfying a condition | `X[X == x]` |
+| Count of samples satisfying a condition | `np.sum(X == x)` |
+| Marginal probability $P(X=x)$ | `np.mean(X == x)` |
+| Joint probability $P(X=x, Y=y)$ | `np.mean((X == x) & (Y == y))` |
+| Conditional probability $P(X=x \mid Y=y)$ | `np.mean(X[Y == y] == x)` |
+
+Marginalizing needs no extra code: the values in `X` are already its marginal samples regardless of what `Y` is, which is exactly why the marginal-probability line above never looks at `Y` &mdash; conditioning is what adds the `[Y == y]` filter.
+
+The same computations look like this on a DataFrame `df` with columns `"X"`, `"Y"`, whose rows are the paired samples:
+
+| Task | Python |
+|---|---|
+| Select one column | `df["X"]` |
+| Select the rows satisfying a condition | `df.loc[df["Y"] == y]` |
+| Select one column, restricted to rows satisfying a condition | `df.loc[df["Y"] == y, "X"]` |
+| Combine two conditions (AND) | `df.loc[(df["Y"] == y) & (df["Z"] == z)]` |
+| Marginal probability $P(X=x)$ | `(df["X"] == x).mean()` |
+| Joint probability $P(X=x, Y=y)$ | `((df["X"] == x) & (df["Y"] == y)).mean()` |
+| Conditional probability $P(X=x \mid Y=y)$ | `(df.loc[df["Y"] == y, "X"] == x).mean()` |
+
+The pattern to remember: a probability is always the *fraction of rows satisfying a condition*, i.e. `.mean()` of a boolean array or column; conditioning just means restricting to a subset of rows first with `[...]` or `.loc[...]` before you take that average.
+
 ### Seeding random number generators
 
 The `np.random` calls above aren't truly random: they're a deterministic algorithm that produces a sequence of numbers designed to *look* random, called a <span class="term">[pseudorandom number generator](https://en.wikipedia.org/wiki/Pseudorandom_number_generator)</span> (PRNG). A PRNG starts from a number called the <span class="term">[seed](https://en.wikipedia.org/wiki/Random_seed)</span>, and the entire sequence of "random" draws it produces is completely determined by that seed. In other words, the same seed reproduces the exact same numbers each time the code is run.
