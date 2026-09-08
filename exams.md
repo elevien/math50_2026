@@ -33,7 +33,7 @@ Covers [Unit 1]({{ '/unit1/' | relative_url }}) and [Unit 2]({{ '/unit2/' | rela
 ### Practice problems
 
 <div class="exercise" markdown="1">
-#### Problem 1 &mdash; Reading a joint table
+#### Problem 1
 
 $(X,Y)$ has $X\in\lbrace0,1\rbrace$, $Y\in\lbrace0,1,2\rbrace$ and joint distribution
 
@@ -49,7 +49,7 @@ $(X,Y)$ has $X\in\lbrace0,1\rbrace$, $Y\in\lbrace0,1,2\rbrace$ and joint distrib
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 2 &mdash; From $\sim$ notation to a joint distribution
+#### Problem 2
 
 Let $Y \sim \text{Bernoulli}(1/3)$ and $X \mid Y \sim \text{Bernoulli}(1/4 + Y/2)$.
 
@@ -60,7 +60,7 @@ Let $Y \sim \text{Bernoulli}(1/3)$ and $X \mid Y \sim \text{Bernoulli}(1/4 + Y/2
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 3 &mdash; Expectation, variance, coefficient of variation
+#### Problem 3
 
 $Z$ takes the value $-1$ with probability $0.2$, $0$ with probability $0.5$ and $2$ with probability $0.3$.
 
@@ -70,7 +70,7 @@ $Z$ takes the value $-1$ with probability $0.2$, $0$ with probability $0.5$ and 
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 4 &mdash; Tower property
+#### Problem 4
 
 Quiz scores $Y$ depend on which section a student is in. $45\%$ of students are in the morning section, where $E[Y\mid\text{morning}]=72$; the rest are in the afternoon section, where $E[Y\mid\text{afternoon}]=80$.
 
@@ -80,7 +80,7 @@ Quiz scores $Y$ depend on which section a student is in. $45\%$ of students are 
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 5 &mdash; Normal calculations
+#### Problem 5
 
 Let $W \sim \text{Normal}(12, 16)$.
 
@@ -91,13 +91,15 @@ Let $W \sim \text{Normal}(12, 16)$.
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 6 &mdash; Translating code into math
+#### Problem 6
 
 ```python
-rng = np.random.default_rng(0)
 n = 100_000
-y = rng.choice([0, 1], size=n, p=[0.4, 0.6])
-x = np.where(y == 1, rng.normal(2, 1, n), rng.normal(-1, 1, n))
+y = np.random.choice([0, 1], size=n, p=[0.4, 0.6])
+
+x = np.empty(n)
+x[y == 0] = np.random.normal(-1, 1, len(y[y == 0]))
+x[y == 1] = np.random.normal(2, 1, len(y[y == 1]))
 
 print(np.mean(x))
 print(np.mean(x[y == 1]))
@@ -110,7 +112,7 @@ print(np.mean(x[y == 1]))
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 7 &mdash; Continuous distributions
+#### Problem 7
 
 Let $Y \sim \text{Uniform}(0,4)$.
 
@@ -121,7 +123,7 @@ Let $Y \sim \text{Uniform}(0,4)$.
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 8 &mdash; Regression with a binary predictor
+#### Problem 8
 
 In a randomized trial, $X=1$ for treatment and $X=0$ for control, with $Y \mid X \sim \text{Normal}(\beta_0+\beta_1X,\ \sigma^2)$. Fifty subjects are assigned to each group; the control-group average outcome is $12.4$ and the treatment-group average is $15.1$.
 
@@ -132,26 +134,55 @@ In a randomized trial, $X=1$ for treatment and $X=0$ for control, with $Y \mid X
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 9 &mdash; Which code implements the model?
+#### Problem 9
 
 Consider the model $X \sim \text{Bernoulli}(1/2)$, $Y \mid X \sim \text{Normal}(1+3X,\ 4)$. One of the following implements it correctly.
 
 ```python
 # A
-x = rng.binomial(1, 0.5, n)
-y = rng.normal(1 + 3*x, 4, n)
+x = np.random.choice([0, 1], p=[0.5, 0.5], size=n)
+y = np.random.normal(1 + 3*x, 4, n)
 
 # B
-x = rng.binomial(1, 0.5, n)
-y = rng.normal(1 + 3*x, 2, n)
+x = np.random.choice([0, 1], p=[0.5, 0.5], size=n)
+y = np.random.normal(1 + 3*x, 2, n)
 
 # C
-x = rng.normal(0.5, 1, n)
-y = rng.normal(1 + 3*x, 2, n)
+x = np.random.normal(0.5, 1, n)
+y = np.random.normal(1 + 3*x, 2, n)
 ```
 
 1. Which one is correct?
 1. For each of the other two, say precisely which part of the model it gets wrong.
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 10
+
+An experiment tests whether *believing* an activity is exercise improves health, independent of any change in actual physical activity. Housekeeping staff at a single hotel are split into a control group and a treatment group; the treatment group is told that their daily work already meets recommended exercise guidelines, while the control group is told nothing. Everyone keeps doing their normal job at the same hotel. Several weeks later, health measurements (e.g. blood pressure) are taken for both groups and the group averages are compared.
+
+1. The description doesn't say how workers were assigned to the two groups. What is the best way to do this assignment, and why?
+1. Suppose that instead, workers were free to choose which group they wanted to join. Using the definition of exogeneity, explain why the difference between the two group averages would then be hard to interpret as the effect of the message itself.
+1. Even with the assignment from (a), give one reason that having both groups work at the same hotel could still bias the comparison, and suggest a fix.
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 11
+
+Consider the following code.
+
+```python
+n = 100_000
+x = np.random.choice([0, 1], size=n)
+y = np.random.normal(3 + 4*x, 2, n)
+
+result = np.mean(y[x == 1]) - np.mean(y[x == 0])
+print(result)
+```
+
+1. What value will `result` be close to? Show your reasoning.
+1. Write down the model being simulated for `y` in the form $Y\mid X \sim \text{Normal}(\beta_0+\beta_1X,\ \sigma^2)$, giving the values of $\beta_0$, $\beta_1$ and $\sigma^2$.
+1. What is `result` an estimate of, in terms of $\beta_0$ and $\beta_1$?
 </div>
 
 <!-- ### Past exams
@@ -205,7 +236,7 @@ Midterm 2 is not cumulative in the sense of having questions focusing on Unit 1 
 ### Practice problems
 
 <div class="exercise" markdown="1">
-#### Problem 1 &mdash; Using the CLT
+#### Problem 1
 
 Let $X_1,\dots,X_{100}$ be iid with $E[X_i]=3$ and $\operatorname{var}(X_i)=4$, and let $S=\sum_{i=1}^{100}X_i$.
 
@@ -216,7 +247,7 @@ Let $X_1,\dots,X_{100}$ be iid with $E[X_i]=3$ and $\operatorname{var}(X_i)=4$, 
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 2 &mdash; Bias and consistency
+#### Problem 2
 
 Let $X_1,\dots,X_N$ be iid $\text{Bernoulli}(q)$ and write $Y=\sum_i X_i$. For each estimator, state whether it is unbiased, whether it is consistent, and give its standard error.
 
@@ -228,7 +259,7 @@ Then: which of these is unbiased but *not* consistent, and which is consistent b
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 3 &mdash; Standard errors and confidence intervals
+#### Problem 3
 
 A quantity is Normally distributed with known $\sigma=6$. You collect $n=36$ samples and observe $\overline X = 21.5$.
 
@@ -238,7 +269,7 @@ A quantity is Normally distributed with known $\sigma=6$. You collect $n=36$ sam
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 4 &mdash; Least squares by hand
+#### Problem 4
 
 Fit a single-predictor regression to the four points $(1,1)$, $(2,3)$, $(3,4)$, $(4,6)$.
 
@@ -249,7 +280,7 @@ Fit a single-predictor regression to the four points $(1,1)$, $(2,3)$, $(3,4)$, 
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 5 &mdash; Covariance, correlation and $R^2$
+#### Problem 5
 
 For a single-predictor regression model you are told $\sigma_X = 4$, $\sigma_Y = 10$ and $\operatorname{cov}(X,Y)=24$.
 
@@ -261,7 +292,7 @@ For a single-predictor regression model you are told $\sigma_X = 4$, $\sigma_Y =
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 6 &mdash; Regression to the mean
+#### Problem 6
 
 Let $X$ and $Y$ be standardized (mean 0, variance 1) with correlation $\rho=0.7$, and $Y \mid X \sim \text{Normal}(\rho X,\ 1-\rho^2)$.
 
@@ -271,7 +302,7 @@ Let $X$ and $Y$ be standardized (mean 0, variance 1) with correlation $\rho=0.7$
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 7 &mdash; Study design and confounding
+#### Problem 7
 
 For each study, name the design and say whether a difference in average $Y$ between groups can be read causally. If not, name a plausible confounder.
 
@@ -282,7 +313,7 @@ For each study, name the design and say whether a difference in average $Y$ betw
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 8 &mdash; Omitted-variable bias and Simpson's paradox
+#### Problem 8
 
 The true model is $Y = 1 + 2X_1 + 4X_2 + \epsilon_1$, and the predictors satisfy $X_2 = 0.5 + cX_1 + \epsilon_2$, with $E[\epsilon_1]=E[\epsilon_2]=0$.
 
@@ -293,7 +324,7 @@ The true model is $Y = 1 + 2X_1 + 4X_2 + \epsilon_1$, and the predictors satisfy
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 9 &mdash; Reading a fitted model with two predictors
+#### Problem 9
 
 Monthly rent $Y$ (dollars) is regressed on floor area $X_1$ (square feet) and distance from campus $X_2$ (miles), giving
 

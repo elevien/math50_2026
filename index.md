@@ -45,13 +45,19 @@ All coding will be done using Python in [Colab Notebooks](https://colab.research
 
 **LLM Policy:** 
 
-You are free to use LLMs at will on data analysis assignments. However, **all assignments can be completed without LLMs.** If you choose to use LLMs on assignments, you must include an *AI disclosure statement* with the following information:
-- What models were used.
-- A 1-2 paragraph reflection summarizing how the model was used: List the main contributions (e.g., pieces of code, making a specific plot) and how you engaged with those contributions to ensure the assignment was still beneficial.
+You are free to use LLMs at will on all take-home assignments, subject to the following: 
+- All LLM output must be reviewed and edited. If I feel I am reading completely LLM-generated answers with long, padded sentences and LLM tropes, I reserve the right to deduct points, even if they are correct. 
+- When you use an LLM for an assignment, you must include an *LLM disclosure statement* with the following information:
+  - What models were used and how (e.g., Claude Code vs. a chat app).
+  - A 1-2 paragraph reflection summarizing how the model was used: List the main contributions (e.g., pieces of code, making a specific plot) and how you engaged with those contributions to ensure the assignment was still beneficial.
+
+Finally, unless otherwise indicated, it should be assumed that an assignment can be completed without an LLM.
+
+You must also review the [full LLM policy]({{ '/ai-policy/ai_policy.pdf' | relative_url }}) (PDF) for the rationale behind this policy and practical recommendations.
 
 You are not permitted to use LLMs or any electronics during in-class exams or during lecture.
 
-See the [full LLM policy]({{ '/ai-policy/ai_policy.pdf' | relative_url }}) (PDF) for the rationale behind this policy and practical recommendations.
+
 
 ## Assignments
 
