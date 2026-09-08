@@ -22,7 +22,7 @@ Term dates follow the [Dartmouth Registrar's Fall 2026 academic calendar](https:
 | **Week 2** | | | | |
 | Mon Sept 21 | [Unit 1]({{ '/unit1/' | relative_url }}) | 1.4 Continuous distributions | [Slides]({{ '/unit1/slides-09-21.pdf' | relative_url }}) | |
 | Wed Sept 23 | [Unit 2]({{ '/unit2/' | relative_url }}) | 2.1 Expectation, variance and conditional expectation; 2.2 The Normal distribution | [Slides]({{ '/unit2/slides-09-23.pdf' | relative_url }}) | |
-| Fri Sept 25 | [Unit 2]({{ '/unit2/' | relative_url }}) | 2.3 Linear regression as a conditionally Normal model | [Slides]({{ '/unit2/slides-09-25.pdf' | relative_url }}) | |
+| Fri Sept 25 | [Unit 2]({{ '/unit2/' | relative_url }}) | 2.3 Linear regression as a conditionally Normal model | [Slides]({{ '/unit2/slides-09-25.pdf' | relative_url }}) | Assignment 1 due on canvas|
 | **Week 3** | | | | |
 | Mon Sept 28 | [Unit 2]({{ '/unit2/' | relative_url }}) | 2.3 cont.; review | | Last day of Midterm 1 material |
 | Wed Sept 30 | | **Midterm 1** (first half of class) &mdash; Units 1&ndash;2 | [Slides]({{ '/unit3/slides-09-30.pdf' | relative_url }}) |  |
@@ -30,7 +30,7 @@ Term dates follow the [Dartmouth Registrar's Fall 2026 academic calendar](https:
 | **Week 4** | | | | |
 | Mon Oct 5 | [Unit 3]({{ '/unit3/' | relative_url }}) | 3.3 Confidence intervals | [Slides]({{ '/unit3/slides-10-05.pdf' | relative_url }}) | |
 | Wed Oct 7 | [Unit 3]({{ '/unit3/' | relative_url }}) | 3.4 The inverse problem for a linear model | [Slides]({{ '/unit3/slides-10-07.pdf' | relative_url }}) | |
-| Fri Oct 9 | [Unit 3]({{ '/unit3/' | relative_url }}) | 3.5 Coefficient of determination, correlation; autoregressive models and the Hurwicz bias | [Slides]({{ '/unit3/slides-10-09.pdf' | relative_url }}) | |
+| Fri Oct 9 | [Unit 3]({{ '/unit3/' | relative_url }}) | 3.5 Coefficient of determination, correlation; autoregressive models and the Hurwicz bias | [Slides]({{ '/unit3/slides-10-09.pdf' | relative_url }}) | Assignment 2 due on canvas |
 | **Week 5** | | | | |
 | Mon Oct 12 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.1 Study design and confounding | [Slides]({{ '/unit4/slides-10-12.pdf' | relative_url }}) | |
 | Wed Oct 14 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.2 Multiple-predictor regression; Simpson's paradox | [Slides]({{ '/unit4/slides-10-14.pdf' | relative_url }}) | |
@@ -41,7 +41,7 @@ Term dates follow the [Dartmouth Registrar's Fall 2026 academic calendar](https:
 | **Week 7** | | | | |
 | Mon Oct 26 | | Review for Midterm 2 | | Come with questions! |
 | Wed Oct 28 | | **Midterm 2** (first half of class) &mdash; Units 3&ndash;4 | [Slides]({{ '/unit5/slides-10-28.pdf' | relative_url }}) |  |
-| Fri Oct 30 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.1 cont.; residual plots | [Slides]({{ '/unit5/slides-10-30.pdf' | relative_url }}) | |
+| Fri Oct 30 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.1 cont.; residual plots | [Slides]({{ '/unit5/slides-10-30.pdf' | relative_url }}) | Assignment 3 due on canvas|
 | **Week 8** | | | | |
 | Mon Nov 2 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.2 Feature maps for nonlinear models | [Slides]({{ '/unit5/slides-11-02.pdf' | relative_url }}) | |
 | Wed Nov 4 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.3 Cross-validation and the bias-variance tradeoff | [Slides]({{ '/unit5/slides-11-04.pdf' | relative_url }}) | |
@@ -49,7 +49,7 @@ Term dates follow the [Dartmouth Registrar's Fall 2026 academic calendar](https:
 | **Week 9** | | | | |
 | Mon Nov 9 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.1 Bayesian inference: simple examples | [Slides]({{ '/unit6/slides-11-09.pdf' | relative_url }}) | |
 | Wed Nov 11 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.2 Bayesian linear regression | [Slides]({{ '/unit6/slides-11-11.pdf' | relative_url }}) | |
-| Fri Nov 13 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.3 Regularization view of priors | [Slides]({{ '/unit6/slides-11-13.pdf' | relative_url }}) | Last day of new material |
+| Fri Nov 13 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.3 Regularization view of priors | [Slides]({{ '/unit6/slides-11-13.pdf' | relative_url }}) | Assignment 4 due on canvas |
 | **Week 10** | | | | |
 | Mon Nov 16 | | Review for the final; [Unit 7]({{ '/unit7/' | relative_url }}) topics if time allows | | Come with questions! |
 

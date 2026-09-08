@@ -13,32 +13,22 @@ Covers [Unit 1]({{ '/unit1/' | relative_url }}) and [Unit 2]({{ '/unit2/' | rela
 
 ### What you need to know
 
-**Probability models.**
+**Unit 1**
 
-- The only distributions you need are **Bernoulli**, **Binomial** (you do not need to memorize $\binom{N}{k}$), **Uniform** and **Normal**.
+- The only named distributions you need to memorize are **Bernoulli**, **Uniform** and **Normal**.
 - Sample spaces, outcomes and events; the three axioms and how to use them.
-- Read a joint distribution off a table and compute marginal, joint and conditional probabilities from it.
+- Read a joint distribution off a table and compute marginal, joint and conditional probabilities from it. Determine if variables are independent. 
 - Go from a model written in $\sim$ notation, such as $Y \sim \text{Bernoulli}(q)$ and $X \mid Y \sim \text{Bernoulli}(Y/4 + 1/4)$, to the joint distribution, and back.
-- Check whether two variables are independent, and know all three equivalent ways of stating it.
-- Bayes' formula, and being able to reverse a conditional.
-- Continuous random variables: densities, why $P(Y=y)=0$, why a density may exceed 1, and probability as area under the curve. **You will not be asked to evaluate an integral.**
 
-**Expectation.**
+**Unit 2**
 
-- Compute $E[Y]$, $E[g(Y)]$, $\operatorname{var}(Y)$ and the coefficient of variation for a discrete random variable, by hand.
-- Conditional expectation, both as a formula and as "average the rows that satisfy the condition."
-- Linearity, $E[aX]=aE[X]$, factoring for independent variables, and the **tower property**.
-- $\operatorname{var}(Y)=E[Y^2]-E[Y]^2$, and the mean and variance of a sum of independent variables.
-
-**The Normal distribution and the regression model.**
-
+- Know propeties of expectation and compute $E[Y]$, $E[g(Y)]$, $\operatorname{var}(Y)$ and the coefficient of variation for a discrete random variable, by hand as well as conditional versions. 
 - Standardize a Normal variable, and use the empirical rule (68 / 95 / 99.7) to estimate probabilities.
 - The distribution of $aX+b$, and of a sum of independent Normals.
 - The single-predictor model $Y \mid X \sim \text{Normal}(\beta_0+\beta_1X, \sigma^2)$, its equivalent form $Y = \beta_0+\beta_1X+\epsilon$, and what each parameter controls.
 - For a **binary** predictor, why $\beta_1 = E[Y\mid X{=}1]-E[Y\mid X{=}0]$, and why the difference of group averages estimates it.
-- What it means for a predictor to be **exogenous** or **endogenous**, and why endogeneity makes $\beta_1$ hard to interpret.
+- What it means for a predictor to be **exogenous** or **endogenous**, and why endogeneity makes $\beta_1$ hard to interpret. 
 
-**Not on Midterm 1:** the LLN and CLT, standard errors, confidence intervals, least squares, $R^2$ and correlation. Those are Midterm 2 material.
 
 ### Practice problems
 
@@ -164,7 +154,7 @@ y = rng.normal(1 + 3*x, 2, n)
 1. For each of the other two, say precisely which part of the model it gets wrong.
 </div>
 
-### Past exams
+<!-- ### Past exams
 
 The 2024 and 2025 midterms were single full-period exams covering Units 1&ndash;3, so they are a mix of Midterm 1 and Midterm 2 material. Everything on probability, expectation, the Normal distribution and the binary-predictor regression model is Midterm 1; anything involving sample distributions, standard errors, confidence intervals, least squares or $R^2$ has moved to Midterm 2. Both sets are worth doing &mdash; just be aware of the split.
 
@@ -174,7 +164,7 @@ The 2024 and 2025 midterms were single full-period exams covering Units 1&ndash;
 - [Practice midterm, 2025 (2)]({{ '/public/exam_practice/math50_midterm_practice_2025_2.pdf' | relative_url }}) &mdash; Exercise 1 is Midterm 1 material; Exercise 2 is Midterm 2.
 - [Midterm review problems]({{ '/public/exam_practice/math50_midterm_review_problems.pdf' | relative_url }}) &mdash; Exercises 1 and 6 are Midterm 1 material; 2, 3, 4, 7 and 8 are Midterm 2 (Exercise 2 asks for a covariance, which is Unit 3).
 
-Also work every **Drill** in Units 1 and 2.
+Also work every **Drill** in Units 1 and 2. -->
 
 ---
 
@@ -182,11 +172,11 @@ Also work every **Drill** in Units 1 and 2.
 
 Covers [Unit 3]({{ '/unit3/' | relative_url }}) and [Unit 4]({{ '/unit4/' | relative_url }}).
 
-Midterm 2 is not cumulative in the sense of retesting Unit 1&ndash;2 material for its own sake, but it *uses* that language throughout: conditional expectation, the Normal distribution and the regression model are all assumed. You cannot skip them.
+Midterm 2 is not cumulative in the sense of having questions focusing on Unit 1 and 2 material, but intermediate steps may involve those topics.  
 
 ### What you need to know
 
-**From samples to inference.**
+**Unit 3**
 
 - What the **law of large numbers** and the **Central Limit Theorem** say, and why they matter for inference. Use the CLT to approximate the distribution of a sum or a sample average.
 - **Estimators**: what makes something an estimator, and the difference between an estimator and the parameter it targets.
@@ -194,15 +184,12 @@ Midterm 2 is not cumulative in the sense of retesting Unit 1&ndash;2 material fo
 - **Bias** and **consistency**. Given a simple estimator, decide whether it is unbiased and whether it is consistent, and be able to construct an estimator that is one but not the other.
 - **Standard error** $\text{se}(\hat\mu)=\sigma/\sqrt N$, and why we usually substitute $\hat\sigma$.
 - **Confidence intervals**: compute a 95% CI, solve for the $n$ needed to hit a target width, and state the correct interpretation &mdash; and why it is *not* "there is a 95% chance $\theta$ lies in this interval."
-
-**Single-predictor regression.**
-
 - Least squares: what RSS is, and that $\hat\beta_1,\hat\beta_0$ minimize it.
 - $\operatorname{cov}(X,Y)=\beta_1\sigma_X^2$, and estimating the slope and intercept from data by hand for a small dataset.
 - **Coefficient of determination** and **correlation**: the relationships $\rho = \operatorname{cov}(X,Y)/(\sigma_X\sigma_Y)$, $\rho = \beta_1\sigma_X/\sigma_Y$, $\sigma_Y^2 = \beta_1^2\sigma_X^2+\sigma_\epsilon^2$ and $\rho^2 = 1-\sigma_\epsilon^2/\sigma_Y^2$. You should be able to derive these, not just quote them.
 - **Regression to the mean**, and how to explain it to someone who thinks it is an effect rather than an artefact.
 
-**Multiple predictors.**
+**Unit 4**
 
 - **Study design**: randomized controlled trials versus cohort and other observational designs, what a **confounder** is, and when a regression coefficient may and may not be read causally.
 - Interpreting $\beta_i$ as an average difference *with the other predictors held fixed*, and what "controlling for" means.
@@ -214,7 +201,6 @@ Midterm 2 is not cumulative in the sense of retesting Unit 1&ndash;2 material fo
 - **Categorical predictors**: how many dummy variables, why one category is dropped, and how to interpret coefficients relative to the baseline.
 - Reading `statsmodels` output: coefficients, standard errors, $p$-values, confidence intervals and $R^2$.
 
-Hypothesis testing (Section 3.6) is optional material. If it appears, it will be as a short conceptual question, not a calculation.
 
 ### Practice problems
 
@@ -328,20 +314,6 @@ with $R^2=0.62$.
 1. The landlord adds a categorical predictor for neighbourhood, with five neighbourhoods. How many new columns appear in the model, and how would you compute the expected rent difference between two non-baseline neighbourhoods?
 </div>
 
-### Past exams
-
-The problems on sample distributions, estimators, standard errors, least squares and $R^2$ in the 2024 and 2025 midterms are Midterm 2 material; see the mapping in the [Midterm 1 section](#past-exams). In particular:
-
-- [Practice midterm, 2024]({{ '/public/exam_practice/midterm_practice_2024.pdf' | relative_url }}) &mdash; Exercises 3 and 4.
-- [Midterm review problems]({{ '/public/exam_practice/math50_midterm_review_problems.pdf' | relative_url }}) &mdash; Exercises 2, 3, 4, 7 and 8.
-- [Practice midterm, 2025 (2)]({{ '/public/exam_practice/math50_midterm_practice_2025_2.pdf' | relative_url }}) &mdash; Exercise 2.
-
-Unit 4 was previously examined on the **final** rather than the midterm, so the final papers are the best source of multiple-predictor practice:
-
-- [Practice final]({{ '/public/exam_practice/final_practice.pdf' | relative_url }}) &mdash; Exercise 1 recovers single-predictor coefficients from a two-predictor truth, which is exactly the $\beta_1' = \beta_1+\beta_2\beta_{1,2}$ relationship; Exercise 3 compares a fitted single-predictor model against the same data with a second predictor added.
-- [Final, 2024]({{ '/public/exam_practice/final_2024C.pdf' | relative_url }}) &mdash; Problem 2 is reading a fitted regression output and Problem 3 is the bias of an estimator. Problem 1 is Midterm 1 material; Problems 4 onward are Unit 5&ndash;6 and belong to the final.
-
-Also work every **Drill** in Units 3 and 4.
 
 ---
 
@@ -351,7 +323,7 @@ The final is **cumulative**: everything on both midterms, plus [Unit 5]({{ '/uni
 
 ### What you need to know, beyond the midterms
 
-**Nonlinear models (Unit 5).**
+**Unit 5.**
 
 - **Interactions**: what $J_{1,2}X_1X_2$ does to the slope, how to interpret it, and why centring a predictor makes the other coefficients interpretable again.
 - **Residual plots**: why residuals are plotted against the *fitted value* and not against $Y$, what an adequate plot looks like, and what a U-shape or a tilt tells you.
@@ -360,7 +332,7 @@ The final is **cumulative**: everything on both midterms, plus [Unit 5]({{ '/uni
 - **Bias-variance**: computing MSE, the decomposition into variance plus squared bias, and saying which way each term moves as a model gains parameters.
 - **Orthogonal features**: what orthogonality means, that it depends on the distribution of $X$, and why it makes $\hat\beta_j$ insensitive to which other features are included. Fourier features and the periodogram.
 
-**Bayesian inference and regularization (Unit 6).**
+**Unit 6.**
 
 - The conceptual difference between the frequentist and Bayesian treatments of a parameter.
 - Prior, likelihood, posterior, evidence &mdash; be able to name each piece of a given calculation.
