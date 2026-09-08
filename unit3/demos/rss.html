@@ -1,0 +1,86 @@
+<div class="demo" id="demo-rss">
+  <div class="demo-label">Interactive demo</div>
+  <h4>Least squares: minimizing the residual sum of squares</h4>
+  <div class="demo-controls">
+    <label>$\hat\beta_0$ (intercept) = <input id="rss-b0" type="range" min="-5" max="12" step="0.1" value="3"><span id="rss-b0-val">3.0</span></label>
+    <label>$\hat\beta_1$ (slope) = <input id="rss-b1" type="range" min="-1" max="4" step="0.05" value="0.5"><span id="rss-b1-val">0.50</span></label>
+  </div>
+  <div class="demo-controls">
+    <button id="rss-newdata">New random dataset</button>
+    <button id="rss-fit">Snap to least-squares fit</button>
+  </div>
+  <svg id="rss-chart"></svg>
+</div>
+
+<script>
+(function () {
+  const b0Slider = document.getElementById('rss-b0');
+  const b1Slider = document.getElementById('rss-b1');
+  const b0Val = document.getElementById('rss-b0-val');
+  const b1Val = document.getElementById('rss-b1-val');
+  const chart = document.getElementById('rss-chart');
+
+  let points = [];
+  let fit = { slope: 0, intercept: 0 };
+
+  function genData() {
+    const trueB0 = 2, trueB1 = 1.5, sigma = 2.2, n = 15;
+    points = [];
+    for (let i = 0; i < n; i++) {
+      const x = (i / (n - 1)) * 10;
+      const y = trueB0 + trueB1 * x + NotesUtils.gaussianRandom(0, sigma);
+      points.push({ x, y });
+    }
+    const xs = points.map((p) => p.x), ys = points.map((p) => p.y);
+    const xBar = NotesUtils.mean(xs), yBar = NotesUtils.mean(ys);
+    let num = 0, den = 0;
+    points.forEach((p) => { num += (p.x - xBar) * (p.y - yBar); den += (p.x - xBar) ** 2; });
+    const slope = num / den;
+    const intercept = yBar - slope * xBar;
+    fit = { slope, intercept };
+  }
+
+  function b0() { return parseFloat(b0Slider.value); }
+  function b1() { return parseFloat(b1Slider.value); }
+
+  function rss(slope, intercept) {
+    return points.reduce((acc, p) => acc + (p.y - (slope * p.x + intercept)) ** 2, 0);
+  }
+
+  let showFit = false;
+
+  function render() {
+    const slope = b1(), intercept = b0();
+    NotesUtils.scatterFit(chart, {
+      points,
+      xDomain: [-0.5, 10.5],
+      yDomain: [-2, 22],
+      slope,
+      intercept,
+      showResiduals: true,
+      refSlope: showFit ? fit.slope : null,
+      refIntercept: showFit ? fit.intercept : null,
+    });
+  }
+
+  [b0Slider, b1Slider].forEach((s) =>
+    s.addEventListener('input', () => {
+      b0Val.textContent = b0().toFixed(1);
+      b1Val.textContent = b1().toFixed(2);
+      render();
+    })
+  );
+  document.getElementById('rss-newdata').addEventListener('click', () => { genData(); showFit = false; render(); });
+  document.getElementById('rss-fit').addEventListener('click', () => {
+    showFit = true;
+    b0Slider.value = fit.intercept.toFixed(2);
+    b1Slider.value = fit.slope.toFixed(2);
+    b0Val.textContent = b0().toFixed(1);
+    b1Val.textContent = b1().toFixed(2);
+    render();
+  });
+
+  genData();
+  render();
+})();
+</script>

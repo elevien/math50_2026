@@ -1,0 +1,98 @@
+<div class="demo" id="demo-notes3CI">
+  <div class="demo-label">Interactive demo</div>
+  <h4>95%-CI</h4>
+  <div class="demo-controls">
+    <label>$N$ = <input id="ci3-n" type="range" min="2" max="60" step="1" value="10"><span id="ci3-n-val">10</span></label>
+  </div>
+  <div class="demo-controls">
+    <button id="ci3-one">Generate one 95%-CI</button>
+    <button id="ci3-forty">Run 40 more</button>
+    <button id="ci3-reset">Reset</button>
+  </div>
+  <svg id="ci3-chart" viewBox="0 0 480 320"></svg>
+</div>
+
+<script>
+(function () {
+  const nSlider = document.getElementById('ci3-n');
+  const nVal = document.getElementById('ci3-n-val');
+  const chartEl = document.getElementById('ci3-chart');
+  const mk = NotesUtils.svg;
+
+  const MAX_SHOWN = 40;
+  let intervals = []; // {lo, hi, covers}
+  let nTotal = 0, nCovered = 0;
+
+  // The point of this demo is that theta stays fixed while the intervals move,
+  // so mu and sigma are constants rather than controls; only N is adjustable.
+  const MU = 0, SIGMA = 1.5;
+  function mu() { return MU; }
+  function sigma() { return SIGMA; }
+  function N() { return parseInt(nSlider.value, 10); }
+
+  function runOne() {
+    const m = mu(), s = sigma(), n = N();
+    let sum = 0;
+    for (let i = 0; i < n; i++) sum += NotesUtils.gaussianRandom(m, s);
+    const muHat = sum / n;
+    const se = s / Math.sqrt(n);
+    const lo = muHat - 1.96 * se, hi = muHat + 1.96 * se;
+    const covers = lo <= m && m <= hi;
+    intervals.push({ lo, hi, covers });
+    if (intervals.length > MAX_SHOWN) intervals.shift();
+    nTotal++;
+    if (covers) nCovered++;
+  }
+
+  function render() {
+    NotesUtils.clear(chartEl);
+    const width = 480, height = 320;
+    const margin = { top: 12, right: 12, bottom: 30, left: 12 };
+    const innerW = width - margin.left - margin.right;
+    const innerH = height - margin.top - margin.bottom;
+    const m = mu(), s = sigma(), n = N();
+    const se = s / Math.sqrt(n);
+    const xDomain = [m - 3.5 * se - 1e-9, m + 3.5 * se + 1e-9];
+
+    const g = mk('g', { transform: `translate(${margin.left},${margin.top})` });
+    chartEl.appendChild(g);
+
+    const xToPx = (x) => ((x - xDomain[0]) / (xDomain[1] - xDomain[0])) * innerW;
+
+    const rowH = intervals.length ? innerH / Math.max(intervals.length, 1) : innerH;
+    const barH = Math.min(6, rowH * 0.6);
+
+    // true-mu reference line
+    g.appendChild(mk('line', { x1: xToPx(m), y1: 0, x2: xToPx(m), y2: innerH, stroke: '#b08a2a', 'stroke-width': 1.5, 'stroke-dasharray': '4,3' }));
+    const muLbl = mk('text', { x: xToPx(m), y: -2, 'text-anchor': 'middle', 'font-size': 10, fill: '#8a6a1c' });
+    muLbl.textContent = 'true μ';
+    g.appendChild(muLbl);
+
+    intervals.forEach((iv, i) => {
+      const y = i * rowH + rowH / 2;
+      const color = iv.covers ? '#6e7f4a' : '#a2542c';
+      g.appendChild(mk('line', { x1: xToPx(iv.lo), y1: y, x2: xToPx(iv.hi), y2: y, stroke: color, 'stroke-width': Math.max(1.5, barH * 0.35) }));
+      g.appendChild(mk('circle', { cx: xToPx((iv.lo + iv.hi) / 2), cy: y, r: 2, fill: color }));
+    });
+
+    const xLabel = mk('text', { x: innerW / 2, y: innerH + 18, 'text-anchor': 'middle', 'font-size': 10, fill: '#7c7f72' });
+    xLabel.textContent = 'μ̂ ± 1.96·se(μ̂)';
+    g.appendChild(xLabel);
+
+  }
+
+  [nSlider].forEach((s) =>
+    s.addEventListener('input', () => {
+      nVal.textContent = N();
+      intervals = []; nTotal = 0; nCovered = 0;
+      render();
+    })
+  );
+  document.getElementById('ci3-one').addEventListener('click', () => { runOne(); render(); });
+  document.getElementById('ci3-forty').addEventListener('click', () => { for (let i = 0; i < 40; i++) runOne(); render(); });
+  document.getElementById('ci3-reset').addEventListener('click', () => { intervals = []; nTotal = 0; nCovered = 0; render(); });
+
+  for (let i = 0; i < 20; i++) runOne();
+  render();
+})();
+</script>

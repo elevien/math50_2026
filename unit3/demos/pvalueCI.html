@@ -1,0 +1,64 @@
+<div class="demo" id="demo-pvalueCI">
+  <div class="demo-label">Interactive demo</div>
+  <h4>$p$-values and their relationship to confidence intervals</h4>
+  <div class="demo-controls">
+    <label>observed $\hat\beta_1$ = <input id="pv-b1" type="range" min="-3" max="3" step="0.05" value="1.2"><span id="pv-b1-val">1.20</span></label>
+    <label>se$(\hat\beta_1)$ = <input id="pv-se" type="range" min="0.2" max="2" step="0.05" value="0.6"><span id="pv-se-val">0.60</span></label>
+  </div>
+  <svg id="pv-chart1"></svg>
+  <svg id="pv-chart2"></svg>
+</div>
+
+<script>
+(function () {
+  const b1Slider = document.getElementById('pv-b1');
+  const seSlider = document.getElementById('pv-se');
+  const b1Val = document.getElementById('pv-b1-val');
+  const seVal = document.getElementById('pv-se-val');
+  const chart1 = document.getElementById('pv-chart1');
+  const chart2 = document.getElementById('pv-chart2');
+
+  function b1() { return parseFloat(b1Slider.value); }
+  function se() { return parseFloat(seSlider.value); }
+
+  function render() {
+    const b = b1(), s = se();
+    const domain = [Math.min(0, b) - 4 * s, Math.max(0, b) + 4 * s];
+
+    NotesUtils.densityArea(chart1, {
+      curve: (x) => NotesUtils.normalPdf(x, 0, s),
+      xDomain: domain,
+      shadeRegions: [[-1e9, -Math.abs(b)], [Math.abs(b), 1e9]],
+      shadeColor: '#a2542c',
+      xTicks: [
+        { x: 0, label: '0 (null)' },
+        { x: b, label: 'T̂' },
+        { x: -b, label: '−T̂' },
+      ],
+    });
+
+    NotesUtils.densityArea(chart2, {
+      curve: (x) => NotesUtils.normalPdf(x, b, s),
+      xDomain: domain,
+      shadeX0: b - 1.96 * s,
+      shadeX1: b + 1.96 * s,
+      shadeColor: '#1f5a6b',
+      xTicks: [
+        { x: 0, label: '0' },
+        { x: b, label: 'β̂₁' },
+      ],
+    });
+
+  }
+
+  [b1Slider, seSlider].forEach((s) =>
+    s.addEventListener('input', () => {
+      b1Val.textContent = b1().toFixed(2);
+      seVal.textContent = se().toFixed(2);
+      render();
+    })
+  );
+
+  render();
+})();
+</script>

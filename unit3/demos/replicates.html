@@ -1,0 +1,89 @@
+<div class="demo" id="demo-replicates">
+  <div class="demo-label">Interactive demo</div>
+  <h4>Replicates vs. samples, and the sample distribution of $\hat\mu$</h4>
+  <div class="demo-controls">
+    <label>$N$ (samples per replicate) = <input id="rep-n" type="range" min="2" max="60" step="1" value="10"><span id="rep-n-val">10</span></label>
+  </div>
+  <div class="demo-controls">
+    <button id="rep-one">Generate one replicate</button>
+    <button id="rep-hundred">Run 100 more replicates</button>
+    <button id="rep-reset">Reset</button>
+  </div>
+  <svg id="rep-chart"></svg>
+  <p class="demo-caption">$Y \sim \text{Normal}(\mu,\sigma^2)$ with $\mu=0$, $\sigma=1.5$ fixed. The wide, pale bars are the $N$ individual samples $Y_i$ from the latest replicate; the narrow, solid bars are $\hat\mu$ collected one per replicate, compared against the theoretical $\text{Normal}(\mu,\sigma^2/N)$ curve.</p>
+</div>
+
+<script>
+(function () {
+  const MU = 0, SIGMA = 1.5;
+  const nSlider = document.getElementById('rep-n');
+  const nVal = document.getElementById('rep-n-val');
+  const chart = document.getElementById('rep-chart');
+  const mk = NotesUtils.svg;
+
+  // Fixed once, from the constants above: never recomputed from accumulated
+  // data, so the axes (and the theoretical curve on them) stay put between
+  // clicks instead of rescaling around whatever's been drawn so far.
+  const X_DOMAIN = [MU - 4 * SIGMA, MU + 4 * SIGMA];
+  const NBINS = 44;
+  const BIN_W = (X_DOMAIN[1] - X_DOMAIN[0]) / NBINS;
+
+  let means = [];
+  let lastSamples = [];
+
+  function N() { return parseInt(nSlider.value, 10); }
+
+  function runOne() {
+    const n = N();
+    const ys = [];
+    for (let i = 0; i < n; i++) ys.push(NotesUtils.gaussianRandom(MU, SIGMA));
+    lastSamples = ys;
+    means.push(NotesUtils.mean(ys));
+  }
+
+  function histogram(values) {
+    const counts = new Array(NBINS).fill(0);
+    values.forEach((v) => {
+      const idx = Math.max(0, Math.min(NBINS - 1, Math.floor((v - X_DOMAIN[0]) / BIN_W)));
+      counts[idx]++;
+    });
+    return counts.map((c, i) => ({
+      x0: X_DOMAIN[0] + i * BIN_W,
+      x1: X_DOMAIN[0] + (i + 1) * BIN_W,
+      density: values.length ? c / (values.length * BIN_W) : 0,
+    }));
+  }
+
+  function render() {
+    const n = N();
+    const theorySE = SIGMA / Math.sqrt(n);
+    NotesUtils.histWithCurve(chart, {
+      series: [
+        { bins: histogram(lastSamples), color: '#1f5a6b', opacity: 0.3 },
+        { bins: histogram(means), color: '#a2542c', opacity: 0.8 },
+      ],
+      curve: (x) => NotesUtils.normalPdf(x, MU, theorySE),
+      xDomain: X_DOMAIN,
+      xTicks: [{ x: MU, label: 'μ = ' + MU.toFixed(1) }],
+      legend: [
+        { name: 'this replicate’s samples', color: '#1f5a6b' },
+        { name: 'replicate estimates μ̂', color: '#a2542c' },
+        { name: 'Normal(μ, σ²/N)', color: '#b08a2a' },
+      ],
+    });
+  }
+
+  nSlider.addEventListener('input', () => {
+    nVal.textContent = N();
+    means = [];
+    lastSamples = [];
+    render();
+  });
+  document.getElementById('rep-one').addEventListener('click', () => { runOne(); render(); });
+  document.getElementById('rep-hundred').addEventListener('click', () => { for (let i = 0; i < 100; i++) runOne(); render(); });
+  document.getElementById('rep-reset').addEventListener('click', () => { means = []; lastSamples = []; render(); });
+
+  runOne();
+  render();
+})();
+</script>
