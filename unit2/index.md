@@ -40,6 +40,8 @@ You're probably already familiar with the <span class="term">[sample mean](https
 
 $$ \overline{Y} = \frac{1}{n}\sum_{i=1}^n Y_i. $$
 
+In code, if `x` is a NumPy array holding $Y_1,\dots,Y_n$, the sample mean is `np.mean(x)`.
+
 More generally, we might look at the average of some function of a random variable,
 
 $$ \overline{g(Y)} = \frac{1}{n}\sum_{i=1}^n g(Y_i) $$
@@ -467,6 +469,8 @@ $$ g(x) = \frac{1}{\sqrt{2\pi\sigma^2}}\,e^{-\frac{(x-\mu)^2}{2\sigma^2}}. $$
 Despite the simplicity of this formula, calculating Normal probabilities by hand (integrating to find area under the curve) is difficult. Instead we rely on rough rules of thumb: about $68\%$ of the probability lies within $1$ standard deviation of the mean, about $95\%$ lies within $2$ standard deviations, and about $99.7\%$ lies within $3$ standard deviations. The demo below keeps the $x$-axis fixed while you change $\mu$ and $\sigma$, so you can see that $\mu$ shifts the center and $\sigma$ changes the spread. Its two shaded bands are $\mu\pm\sigma$ and $\mu\pm2\sigma$, and they hold about $68\%$ and $95\%$ of the area wherever you put the sliders &mdash; that is the empirical rule.
 
 If $X$ has density $g(x)$ above, we write $X \sim \text{Normal}(\mu,\sigma^2)$. It can be shown that $E[X]=\mu$ and $\operatorname{var}(X)=\sigma^2$ &mdash; hence the name. **Be careful:** sometimes (in code or in math) Normal random variables are parameterized by mean and standard deviation instead of mean and variance, so you'll also see $\text{Normal}(\mu,\sigma)$. Both conventions are used, so always check.
+
+In code, `np.random.normal(mu, sigma)` (or, with a `Generator`, `rng.normal(mu, sigma)`) draws a sample from $\text{Normal}(\mu,\sigma^2)$ &mdash; note it takes the standard deviation `sigma`, not the variance.
 
 {% include_relative demos/normal.html %}
 
