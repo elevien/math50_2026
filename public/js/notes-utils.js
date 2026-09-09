@@ -519,3 +519,50 @@
     polyEval,
   };
 })(window);
+
+// Printing/exporting a notes page (including tools/build_pdfs_html.sh's
+// headless-Chrome render) should show every Drill/Proof/aside, and every
+// demo populated with an example, not whatever happens to be expanded/drawn
+// on screen. Two fixes, both scoped to print media only:
+(function () {
+  let openedByUs = [];
+
+  // 1. CSS alone can't force a closed <details> open in Chromium, so flip
+  //    the `open` attribute here and put it back afterward.
+  function openAllDetails() {
+    openedByUs = Array.from(document.querySelectorAll("details:not([open])"));
+    openedByUs.forEach((d) => { d.open = true; });
+  }
+
+  function restoreDetails() {
+    openedByUs.forEach((d) => { d.open = false; });
+    openedByUs = [];
+  }
+
+  // 2. Most demos start with an empty chart until a "draw/simulate/new
+  //    dataset" button is clicked - the button itself is hidden in print
+  //    (see notes.css), so without this the printed figure is blank. Click
+  //    every demo button once, in document order, skipping ones that only
+  //    clear/reset state. Left in place afterward (unlike the <details>
+  //    toggle above, there's no generic "go back to blank" to restore, and
+  //    a populated demo is a harmless thing to leave behind after a manual
+  //    print/cancel).
+  function populateDemos() {
+    document.querySelectorAll(".demo button").forEach((btn) => {
+      if (/reset|clear/i.test(btn.textContent)) return;
+      btn.click();
+    });
+  }
+
+  function forPrint() { openAllDetails(); populateDemos(); }
+
+  if (window.matchMedia) {
+    const mql = window.matchMedia("print");
+    if (mql.matches) forPrint();
+    if (mql.addEventListener) {
+      mql.addEventListener("change", (e) => { if (e.matches) forPrint(); else restoreDetails(); });
+    }
+  }
+  window.addEventListener("beforeprint", forPrint);
+  window.addEventListener("afterprint", restoreDetails);
+})();

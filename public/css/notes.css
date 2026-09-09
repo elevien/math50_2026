@@ -588,3 +588,47 @@ footer.page-footer a { color: var(--link); }
   table.prob-table { display: block; overflow-x: auto; max-width: 100%; }
   table.prob-table td, table.prob-table th { padding: 0.3em 0.5em; font-size: 0.92em; }
 }
+
+/* PRINT ---------------------------------------------------------------
+   The "download PDF" link on each unit page is a rendering of this same
+   page - see tools/build_pdfs_html.sh. Anything below only changes how
+   the page looks when printed/exported, never on screen. */
+@media print {
+  body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+
+  /* Collapsed <details> (Proofs, asides, Drill dropdowns) are forced open
+     by public/js/notes-utils.js when print media is active - Chromium's
+     <details> content slot can't be un-hidden by CSS alone. */
+  details summary { cursor: default; }
+  details summary::-webkit-details-marker,
+  details summary::marker { display: none; }
+  .optional-section > summary::before,
+  .practice-section > summary::before { display: none; }
+
+  /* Same single-column treatment as the narrow-viewport layout above,
+     applied unconditionally so it doesn't depend on incidental page
+     width at print time. */
+  .layout { display: block; padding: 0 0.15in; }
+  .toc {
+    position: static;
+    display: flex;
+    flex-wrap: wrap;
+    column-gap: 1.1em;
+    row-gap: 0.2em;
+    padding: 0.4em 0 0.8em;
+    border-bottom: 1px solid var(--rule);
+    margin-bottom: 0.3em;
+  }
+  .toc-title { display: none; }
+  .toc a { padding: 0.15em 0; margin: 0; border-left: none; }
+  .page { max-width: none; padding: 0.3em 0 1em; }
+
+  /* Interactive-only chrome: not meaningful once static. */
+  .topbar .unit-label { display: none; }
+  footer.page-footer { display: none; }
+  .pdf-link { display: none; }
+  .demo-label, .demo-controls { display: none; }
+
+  h1, h2, h3, h4 { break-after: avoid; }
+  pre, svg, img { break-inside: avoid; }
+}

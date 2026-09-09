@@ -720,18 +720,26 @@ This is a special case of Jensen's inequality, and it is the general reason your
 Consider the earnings data, loaded with
 
 ```python
+import pandas as pd
+
 url = (
     "https://raw.githubusercontent.com/avehtari/"
     "ROS-Examples/master/Earnings/data/earnings.csv"
 )
 df = pd.read_csv(url)
+male = df["male"].to_numpy()
+earn = df["earn"].to_numpy()
+earnk = df["earnk"].to_numpy()
+height = df["height"].to_numpy()
 ```
+
+pandas is used only to load the CSV; work with the numpy arrays `male`, `earn`, `earnk`, and `height` defined above (`statsmodels` accepts numpy arrays directly).
 
 You'll study the association between earnings and gender, and how it depends on height. Later we'll see a better way to answer this question using regression with multiple predictors, but this more elementary approach highlights some key aspects of regression analysis.
 
 <ol type="a">
 <li>What do you expect the association between gender and earnings to be? Where do your expectations come from (news, intuition, other courses you've taken)?</li>
-<li>Using <code>statsmodels</code>, perform a linear regression with gender (the column <code>male</code>) as the predictor and earnings as the response. You can use either <code>earnk</code> or <code>earn</code>, just keep track of units. Is there a statistically significant effect? Is the direction and size of the effect what you expected?</li>
+<li>Using <code>statsmodels</code>, perform a linear regression with gender (the array <code>male</code>) as the predictor and earnings as the response. You can use either <code>earnk</code> or <code>earn</code>, just keep track of units. Is there a statistically significant effect? Is the direction and size of the effect what you expected?</li>
 <li>Using <code>statsmodels</code>, perform a linear regression with height as the predictor and earnings as the response. Answer the same questions as in part (b).</li>
 <li>You should have found an association between both (gender, earnings) and (height, earnings). A natural question: is the height/earnings association simply a byproduct of men being taller on average? To check, separate the data into males and females and fit the height &rarr; earnings regression separately within each group.</li>
 <li>Based on the previous part, what do you conclude? Is the association between height and earnings solely due to the association between gender and height, or does it look partially due to height itself?</li>
@@ -796,7 +804,7 @@ $$ \widehat\Delta = \frac{N(Y=1,X=1)}{N(X=1)} - \frac{N(Y=1,X=0)}{N(X=0)}, $$
 where, as in Unit 1, $N(\cdot)$ counts the rows satisfying a condition.
 
 <ol type="a">
-<li>Write a function <code>generate_data(q0, delta, n_samples)</code> producing a dataframe of $X,Y$ samples, and a function <code>estimate_delta(df)</code> producing $\widehat\Delta$ (you may adapt the code from the difference-of-means example in Unit 2).</li>
+<li>Write a function <code>generate_data(q0, delta, n_samples)</code> producing a pair of numpy arrays $X,Y$, and a function <code>estimate_delta(X, Y)</code> producing $\widehat\Delta$ (you may adapt the code from the difference-of-means example in Unit 2).</li>
 <li>Estimate the number of samples needed for a $95\%$ chance that the estimate is within $0.1$ of the true value.</li>
 <li>Pick values for $q_0$ and $\Delta$, and test your result.</li>
 </ol>

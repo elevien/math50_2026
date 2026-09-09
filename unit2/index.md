@@ -12,7 +12,7 @@ toc:
 
 <div class="unit-overview" markdown="1">
 
-In this unit we introduce **expectation**, an operation which takes a random variable and produces a deterministic quantity. The expectation of a random variable can be approximated with **sample averages**, and from them we can infer properties of the model (like its parameters). Much of statistics relies on the fact that sample averages approximate expectations, and understanding how well these approximations work is a central goal of the next unit. We then meet the **Normal distribution**, the most important continuous probability model, and arrive at our first example of a **linear regression** model: a conditionally Normal model whose conditional expectation is a line.
+In this unit we introduce **expectation**, an operation which takes a random variable and produces a deterministic quantity. The expectation of a random variable can be approximated with **sample averages**, and from them we can infer properties of the model (like its parameters). Much of statistics relies on the basic fact that sample averages approximate expectations, something we will learn more about (when discussing estimators) in Unit 3. In this section, we first discuss **Normal distribution** and probability models contructed from it; namely, a **linear regression** model. 
 
 #### Concepts
 
@@ -97,9 +97,10 @@ $$ E[Y] = \sum_{y=1}^3 y\,P(Y=y) = 1\cdot\tfrac12 + 2\cdot\tfrac13 + 3\cdot\tfra
 
 So $E[Y] = 5/3$.
 
+The code below illustrates the sample mean converging to $5/3$ as $n$ grows.
+
 ```python
 import numpy as np
-import pandas as pd
 import matplotlib.pyplot as plt
 
 values = [1, 2, 3]
@@ -107,9 +108,8 @@ probs = [1/2, 1/3, 1/6]
 
 Nmax = 5000
 samples = np.random.choice(values, size=Nmax, p=probs)
-df = pd.DataFrame({"Y": samples})
 
-sample_means = df["Y"].expanding().mean()
+sample_means = np.cumsum(samples) / np.arange(1, Nmax + 1)
 
 plt.figure(figsize=(6,4))
 plt.plot(sample_means, label="Sample mean")
@@ -214,7 +214,10 @@ The demo repeats this same two-step procedure for a few different conditions: pi
 
 Consider data on children's test scores. The variable `kid_score` is the child's test score, and `mom_hs` is $1$ if the mother graduated high school and $0$ otherwise.
 
+pandas is used only to load the CSV; the rest of the example works with the numpy arrays `kid_score` and `mom_hs`.
+
 ```python
+import numpy as np
 import pandas as pd
 
 url = (
@@ -223,20 +226,20 @@ url = (
     "master/KidIQ/data/kidiq.csv"
 )
 df = pd.read_csv(url)
-df[["kid_score", "mom_hs"]].head()
+kid_score = df["kid_score"].to_numpy()
+mom_hs = df["mom_hs"].to_numpy()
 ```
 
 Let $Y$ be the test score and let $X$ be `mom_hs`. The conditional expectation $E[Y\mid X=1]$ is the average test score among children whose mothers graduated high school. The conditional expectation $E[Y\mid X=0]$ is the corresponding average among children whose mothers did not.
 
 ```python
-overall = df["kid_score"].mean()
-by_mom_hs = df.groupby("mom_hs")["kid_score"].mean()
+overall = np.mean(kid_score)
+mean_given_hs0 = np.mean(kid_score[mom_hs == 0])
+mean_given_hs1 = np.mean(kid_score[mom_hs == 1])
 
-print("E[Y] estimated from all rows:")
-print(overall)
-
-print("E[Y | X=x] estimated within each group:")
-print(by_mom_hs)
+print("E[Y] estimated from all rows:", overall)
+print("E[Y | X=0] estimated within group:", mean_given_hs0)
+print("E[Y | X=1] estimated within group:", mean_given_hs1)
 ```
 
 This code is doing the same operation as the definition: it restricts the rows to a condition, then averages $Y$ inside that restricted sample space. If the two conditional averages differ substantially, then $E[Y\mid X=x]$ depends on $x$, which is evidence that $X$ and $Y$ are not independent in this dataset. That conclusion is associational: it does not, by itself, prove that a mother's high-school graduation caused the difference in test scores.
@@ -327,7 +330,7 @@ and suppose quiz scores satisfy
 
 $$ E[Y\mid X=0]=78,\qquad E[Y\mid X=1]=86. $$
 
-<u>Question:</u> compute $E[Y]$ using the tower property.
+<u>Question:</u> compute $E[Y]$ using the tower property, both by hand and with code.
 
 <u>Solution:</u> by the tower property,
 
@@ -337,11 +340,10 @@ $$ = E[Y\mid X=0]P(X=0)+E[Y\mid X=1]P(X=1) $$
 
 $$ = 78(0.6)+86(0.4)=81.2. $$
 
-The overall mean is a weighted average of the conditional means, with weights given by the group probabilities.
+The overall mean is a weighted average of the conditional means, with weights given by the group probabilities. The code below confirms the tower property numerically.
 
 ```python
 import numpy as np
-import pandas as pd
 
 rng = np.random.default_rng(2025)
 
@@ -352,14 +354,15 @@ Y = np.where(
     rng.normal(loc=78, scale=8, size=N),
     rng.normal(loc=86, scale=8, size=N),
 )
-df = pd.DataFrame({"X": X, "Y": Y})
 
-EY_given_X_hat = df.groupby("X")["Y"].mean().sort_index()
-pX_hat = df["X"].value_counts(normalize=True).sort_index()
-EEY_given_X_hat = (EY_given_X_hat * pX_hat).sum()
+EY_given_X0_hat = np.mean(Y[X == 0])
+EY_given_X1_hat = np.mean(Y[X == 1])
+pX0_hat = np.mean(X == 0)
+pX1_hat = np.mean(X == 1)
+EEY_given_X_hat = EY_given_X0_hat * pX0_hat + EY_given_X1_hat * pX1_hat
 
 print(f"Theoretical E[Y]    = 81.200000")
-print(f"Estimated E[Y]      = {df['Y'].mean():.6f}")
+print(f"Estimated E[Y]      = {np.mean(Y):.6f}")
 print(f"Estimated E[E[Y|X]] = {EEY_given_X_hat:.6f}")
 ```
 </div>
@@ -400,9 +403,9 @@ This measures variation *relative* to the average, which matters for many applic
 <div class="example" markdown="1">
 #### Example (election modeling)
 
-Consider an election between two candidates. Let $q$ be the population fraction supporting candidate one, and suppose $N$ people vote (with $N$ much smaller than the population, since turnout is low). The number of votes for candidate one, $M$, can be modeled as $M \sim \text{Binomial}(N,q)$.
+Consider an election between two candidates. Let $q$ be the population fraction supporting candidate one, and suppose $N$ people vote (with $N$ much smaller than the population, since turnout is low). Each voter's ballot is a Bernoulli($q$) indicator of support for candidate one, so the number of votes for candidate one, $M$, is a sum of $N$ iid Bernoulli($q$) draws, i.e. $M \sim \text{Binomial}(N,q)$, with mean and variance as derived above.
 
-<u>Question:</u> in a city where $q=0.51$ support a candidate, and $N=1000$ vote, what's the chance the vote share $\hat q=M/N$ differs from $q$ by more than $1\%$?
+<u>Question:</u> in a city where $q=0.51$ support a candidate, and $N=1000$ vote, what's the chance the vote share $\hat q=M/N$ differs from $q$ by more than $1\%$? There's no closed form for this, so we answer by simulation.
 
 ```python
 import numpy as np
@@ -509,7 +512,7 @@ Transforming $X$ to a standard normal is equivalent to measuring $X$ in units of
 
 $$ aX_1+bX_2+d \sim \text{Normal}\big(a\mu_1+b\mu_2+d,\ a^2\sigma_1^2+b^2\sigma_2^2\big). $$
 
-We'll put this to work in Unit 3, where sums of random variables like these &mdash; via the Central Limit Theorem &mdash; let us approximate the distribution of almost any sample average.
+We'll use this in Unit 3, where via the Central Limit Theorem, we can approximate the distribution of almost any sample average with a Normal distribution.
 
 <details class="practice-section" markdown="1">
 <summary><h3>Drill</h3></summary>
@@ -597,18 +600,18 @@ $$ \overline{Y\mid X=1} = \frac{1}{N(X=1)}\sum_{i=1}^n Y_i 1_{X_i=1}, $$
 
 where $n$ is the number of samples and $N(X=1)$ counts those with $X_i=1$.
 
+The functions below implement this estimator in code.
+
 ```python
 import numpy as np
-import pandas as pd
 
 def generate_data(beta0, beta1, sigma, n_samples):
-    x = np.random.choice([0,1], n_samples)
-    y = beta0 + beta1*x + np.random.normal(0, sigma, n_samples)
-    df = pd.DataFrame(np.array([x,y]).T, columns=['x','y'])
-    return df
+    x = np.random.choice([0, 1], n_samples)
+    y = beta0 + beta1 * x + np.random.normal(0, sigma, n_samples)
+    return x, y
 
-def beta1_hat(df):
-    return df[df['x']==1]['y'].mean() - df[df['x']==0]['y'].mean()
+def beta1_hat(x, y):
+    return y[x == 1].mean() - y[x == 0].mean()
 ```
 </div>
 

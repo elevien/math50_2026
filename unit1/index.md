@@ -491,7 +491,7 @@ print("Estimated probability:", p_hat)
 On running this code, the output will be close to $0.6$, but not exactly, since the data are random. The difference between the estimate $\hat p$ and the true parameter $p$ is the central problem of statistical inference.
 </div>
 
-The simulator below runs exactly this experiment, and is the picture behind $P(X=x) \approx N(x)/n$: adjust the true probability $q$, flip the simulated coin, and watch the running estimate $\hat p$ wander while $n$ is small and then settle near $q$ as $n$ grows. Move $q$ and reset to see the level it settles on move with it.
+The simulator below runs this experiment. 
 
 {% include_relative demos/bernoulli.html %}
 
@@ -517,13 +517,13 @@ cond_prob = np.mean(Y_A[mask] == 1)
 print("P(Y_A = 1 | Y_B = 0) =", cond_prob)
 ```
 
-This simulates the joint distribution, selects samples where $Y_B=0$, and computes the fraction of those where $Y_A=1$ &mdash; estimating $P(Y_A=1 \mid Y_B=0)$.
+This simulates the joint distribution, selects samples where $Y_B=0$, and computes the fraction of those where $Y_A=1$, thus it estimates $P(Y_A=1 \mid Y_B=0)$.
 </div>
 
 <div class="example" markdown="1">
 #### Example (Python: DataFrame estimate of a conditional probability)
 
-Using the same distribution as the $A,B,C$ example above: make a DataFrame with columns `A`, `B`, `C` whose rows are iid samples, then estimate $P(A=0 \mid B=1, C=1)$.
+<u>Question:</u> using the same distribution as the $A,B,C$ example above, make a DataFrame with columns `A`, `B`, `C` whose rows are iid samples, then estimate $P(A=0 \mid B=1, C=1)$, both by hand and in code.
 
 <u>Solution:</u> by definition,
 
@@ -559,22 +559,19 @@ The printed estimate should be close to the exact value $1/3$ above.
 
 ### Python cheat sheet: sampling and probability from data
 
-The examples above all reuse the same handful of moves: draw samples, index into arrays or DataFrames with a condition, and average a boolean condition to get a probability. Here's a reference for these moves. As stated in the unit overview, you won't be asked to write this code from scratch on an exam, but you should be able to read a few lines like these and say what probability they're computing.
+The examples above all reuse the same handful of moves: draw samples, index into arrays or DataFrames with a condition, and average a boolean condition to get a probability. Here's a reference for these moves. For the exams, you should be able to read a few lines like these and say what probability they're computing.
 
 Throughout, `X` and `Y` are parallel 1D arrays of $N$ paired samples (e.g. `X[i], Y[i]` is the $i$th draw of $(X,Y)$), and `x`, `y` are specific values in their sample spaces.
 
 | Task | Python |
 |---|---|
-| Draw $N$ samples, support `vals`, probs `p` | `X = np.random.choice(vals, p=p, size=N)` |
-| Draw $N$ indices into a joint outcome list, given `probs` | `idx = np.random.choice(len(outcomes), p=probs, size=N)` |
-| Turn those indices into samples `(X,Y)` | `samples = np.array(outcomes)[idx]` |
+| Draw $N$ samples, from the sample space `vals`, probs `p` | `X = np.random.choice(vals, p=p, size=N)` |
 | Samples satisfying a condition | `X[X == x]` |
 | Count of samples satisfying a condition | `np.sum(X == x)` |
 | Marginal probability $P(X=x)$ | `np.mean(X == x)` |
 | Joint probability $P(X=x, Y=y)$ | `np.mean((X == x) & (Y == y))` |
 | Conditional probability $P(X=x \mid Y=y)$ | `np.mean(X[Y == y] == x)` |
 
-Marginalizing needs no extra code: the values in `X` are already its marginal samples regardless of what `Y` is, which is exactly why the marginal-probability line above never looks at `Y` &mdash; conditioning is what adds the `[Y == y]` filter.
 
 The same computations look like this on a DataFrame `df` with columns `"X"`, `"Y"`, whose rows are the paired samples:
 
@@ -588,7 +585,9 @@ The same computations look like this on a DataFrame `df` with columns `"X"`, `"Y
 | Joint probability $P(X=x, Y=y)$ | `((df["X"] == x) & (df["Y"] == y)).mean()` |
 | Conditional probability $P(X=x \mid Y=y)$ | `(df.loc[df["Y"] == y, "X"] == x).mean()` |
 
-The pattern to remember: a probability is always the *fraction of rows satisfying a condition*, i.e. `.mean()` of a boolean array or column; conditioning just means restricting to a subset of rows first with `[...]` or `.loc[...]` before you take that average.
+A probability is always the *fraction of rows satisfying a condition*, i.e. `.mean()` of a boolean array or column; conditioning just means restricting to a subset of rows first with `[...]` or `.loc[...]` before you take that average.
+
+The DataFrame table is shown so you can *read* pandas code when it appears in examples or datasets, not because you need to memorize its syntax. On exams, the numpy array versions above are the ones you're expected to know cold.
 
 ### Seeding random number generators
 
@@ -908,16 +907,18 @@ Let $Y \sim \text{Binomial}(5,q)$.
 <div class="exercise" id="ex-washpost" markdown="1">
 #### Problem 1.1 &mdash; Homicide Victim Age and Race
 
-Below we load data on homicide victims in the US from the Washington Post. You don't need to worry about how the file is processed; just work with the DataFrame `data` on the last line.
+Below we load data on homicide victims in the US from the Washington Post. You don't need to worry about how the file is processed; pandas is used only to read the CSV &mdash; just work with the numpy arrays `age` and `race` defined on the last two lines.
 
 ```python
+import numpy as np
 import pandas as pd
 
-data = pd.read_csv("https://raw.githubusercontent.com/washingtonpost/data-homicides/master/homicide-data.csv", encoding="ISO-8859-1")
-data["victim_age"] = pd.to_numeric(data["victim_age"], errors="coerce")
+df = pd.read_csv("https://raw.githubusercontent.com/washingtonpost/data-homicides/master/homicide-data.csv", encoding="ISO-8859-1")
+age = pd.to_numeric(df["victim_age"], errors="coerce").to_numpy()
+race = df["victim_race"].to_numpy()
 ```
 
-In this problem, treat a randomly selected row as one outcome. Let $A$ be the victim's age. Among rows with known race, let $R$ indicate whether the victim is listed as white or not white.
+In this problem, treat a randomly selected row (i.e. a matched pair `age[i], race[i]`) as one outcome. Let $A$ be the victim's age. Among rows with known race, let $R$ indicate whether the victim is listed as white or not white.
 
 <ol type="a">
   <li>Identify the sample space you are actually using. What rows, if any, should be excluded before computing probabilities involving age or race?</li>
