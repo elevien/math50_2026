@@ -17,8 +17,7 @@ Specific topics include: Conditional probability and expectation, basic statisti
 
 
 See [weekly schedule]({{ '/schedule/' | relative_url }}) for details.  
-
-**Attendance and class rules:** Come to class. Please do not use phones or computers in class except during in-class problem-solving sessions. If you have an issue with this policy, please come talk to me. I may ask you to leave the room if your use of technology is distracting.  
+  
 
 **My availability:**  
 
@@ -55,7 +54,7 @@ Finally, unless otherwise indicated, it should be assumed that an assignment can
 
 You must also review the [full LLM policy]({{ '/ai-policy/ai_policy.pdf' | relative_url }}) (PDF) for the rationale behind this policy and practical recommendations.
 
-You are not permitted to use LLMs or any electronics during in-class exams or during lecture.
+**You are not permitted to use LLMs or any electronics during in-class exams or during lecture.**
 
 
 
@@ -70,11 +69,11 @@ Your grade will be based on the following. You should see Canvas for the detaile
 - <u>Final</u> (40%): During finals week, November 25th at 3pm (room TBD), cumulative over Units 1–6. Final grade replaces lowest midterm grade. 
 
 
-**Weekly assignments (10%):**  In addition to the practice problems, there will be a few open ended assignments you will turn in each week.  
+**Weekly assignments (10%):**  In addition to the practice problems, there will be a few more open ended assignments you will turn in each week.  
 
 **Attendence and Participation (15%):** You are expected to be present in class ever day. While I will not check every student's attendence each class. I will randomly select a unspecified number of students and check if they are present each lecture. If you miss class or are late, I reserve the right to adjust your final grade. 
 
-**Exercises (not graded):** Each section of the notes ends with a <u>Drill</u> dropdown, and each unit ends with a set of <u>Problems</u>. You should do all of them and ask questions if you have any. The drills are written at exam level &mdash; short calculations, interpreting a formula, reading a few lines of code &mdash; so they are the best preparation for the midterms and the final. The end-of-unit problems are for learning rather than exam practice: they are longer and involve more open-ended coding.
+**Exercises (not graded):** Each section of the notes ends with a <u>Drill</u> dropdown, and each unit ends with a set of <u>Problems</u>. You should do all of them and ask questions if you have any. The drills are written at exam level &mdash; short calculations, interpreting a formula, reading a few lines of code &mdash; so they are the best preparation for the midterms and the final. 
 
 
 ## How to be successful in this course

@@ -581,7 +581,7 @@ where $\epsilon$ is the noise term: whatever is left in $Y$ after accounting for
 
 For the regression model to describe the conditional expectation correctly, the leftover noise should not still depend systematically on the predictor. A predictor $X$ is <span class="term">[exogenous](https://en.wikipedia.org/wiki/Exogenous_and_endogenous_variables)</span> if $E[\epsilon\mid X]=0$: after accounting for $X$, the remaining error has mean zero at every value of $X$. A predictor is <span class="term">[endogenous](https://en.wikipedia.org/wiki/Exogenous_and_endogenous_variables)</span> if this fails.
 
-Endogeneity often happens when an omitted variable affects both $X$ and $Y$, or when the direction of influence is partly reversed. For now, treat this as a model warning: the formulas for fitting a regression line can still be computed, but the interpretation of $\beta_1$ becomes fragile if $\epsilon$ is still related to $X$. We will return to the larger questions of study design and confounding in Unit 4, where multiple predictors give us the right language for them.
+Endogeneity often happens when an omitted variable affects both $X$ and $Y$, or when the direction of influence is partly reversed. For now, treat this as an assumption of the regession model. 
 
 <div class="example" id="ex-diffmeans" markdown="1">
 #### Example (binary predictor: the difference of means)
