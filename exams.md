@@ -185,17 +185,6 @@ print(result)
 1. What is `result` an estimate of, in terms of $\beta_0$ and $\beta_1$?
 </div>
 
-<!-- ### Past exams
-
-The 2024 and 2025 midterms were single full-period exams covering Units 1&ndash;3, so they are a mix of Midterm 1 and Midterm 2 material. Everything on probability, expectation, the Normal distribution and the binary-predictor regression model is Midterm 1; anything involving sample distributions, standard errors, confidence intervals, least squares or $R^2$ has moved to Midterm 2. Both sets are worth doing &mdash; just be aware of the split.
-
-- [Practice midterm, 2024]({{ '/public/exam_practice/midterm_practice_2024.pdf' | relative_url }}) &mdash; Exercises 1, 2 and 5 are Midterm 1 material; 3 and 4 are Midterm 2.
-- [Midterm, 2024]({{ '/public/exam_practice/midterm_2024-10.pdf' | relative_url }}) &mdash; Exercises 1, 2 and 4 are Midterm 1 material.
-- [Practice midterm, 2025 (1)]({{ '/public/exam_practice/math50_midterm_practice_2025.pdf' | relative_url }})
-- [Practice midterm, 2025 (2)]({{ '/public/exam_practice/math50_midterm_practice_2025_2.pdf' | relative_url }}) &mdash; Exercise 1 is Midterm 1 material; Exercise 2 is Midterm 2.
-- [Midterm review problems]({{ '/public/exam_practice/math50_midterm_review_problems.pdf' | relative_url }}) &mdash; Exercises 1 and 6 are Midterm 1 material; 2, 3, 4, 7 and 8 are Midterm 2 (Exercise 2 asks for a covariance, which is Unit 3).
-
-Also work every **Drill** in Units 1 and 2. -->
 
 ---
 
@@ -218,7 +207,6 @@ Midterm 2 is not cumulative in the sense of having questions focusing on Unit 1 
 - Least squares: what RSS is, and that $\hat\beta_1,\hat\beta_0$ minimize it.
 - $\operatorname{cov}(X,Y)=\beta_1\sigma_X^2$, and estimating the slope and intercept from data by hand for a small dataset.
 - **Coefficient of determination** and **correlation**: the relationships $\rho = \operatorname{cov}(X,Y)/(\sigma_X\sigma_Y)$, $\rho = \beta_1\sigma_X/\sigma_Y$, $\sigma_Y^2 = \beta_1^2\sigma_X^2+\sigma_\epsilon^2$ and $\rho^2 = 1-\sigma_\epsilon^2/\sigma_Y^2$. You should be able to derive these, not just quote them.
-- **Regression to the mean**, and how to explain it to someone who thinks it is an effect rather than an artefact.
 
 **Unit 4**
 

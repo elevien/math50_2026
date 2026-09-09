@@ -9,7 +9,7 @@ toc:
   - {href: "#sec-3-3", label: "3.3 Confidence intervals"}
   - {href: "#sec-3-4", label: "3.4 The inverse problem for a linear model"}
   - {href: "#sec-3-5", label: "3.5 Coefficient of determination & correlation"}
-  - {href: "#sec-3-6", label: "3.6 Hypothesis testing", optional: true}
+  - {href: "#sec-3-6", label: "3.6 Hypothesis testing"}
   - {href: "#problems", label: "Problems"}
 ---
 
@@ -19,7 +19,7 @@ This unit develops the tools needed to estimate regression parameters and quanti
 
 #### Concepts
 
-The law of large numbers, the Central Limit Theorem, estimators, sample distributions, bias and consistency, standard errors, confidence intervals, the bias-variance decomposition, fitting the single-predictor linear regression model via least squares, covariance, the coefficient of determination, correlation and their relationship to the regression slope, regression to the mean, autoregressive models and the Hurwicz bias, and (optional) hypothesis testing and $p$-values for regression models.
+The law of large numbers, the Central Limit Theorem, estimators, sample distributions, bias and consistency, standard errors, confidence intervals, the bias-variance decomposition, fitting the single-predictor linear regression model via least squares, covariance, the coefficient of determination, correlation and their relationship to the regression slope, regression to the mean, autoregressive models and the Hurwicz bias, and hypothesis testing and $p$-values for regression models.
 
 #### Things to practice
 
@@ -113,7 +113,7 @@ Let $X_1,\dots,X_N$ be iid with $E[X_i]=\mu$ and $\operatorname{var}(X_i)=\sigma
 <div class="exercise" markdown="1">
 #### Binomial approximation
 
-Let $Y\sim\operatorname{Binomial}(N,q)$.
+Let $Y = \sum_{i=1}^N X_i$ where $X_1,\dots,X_N$ are iid $\text{Bernoulli}(q)$ (this is what it means to say $Y\sim\operatorname{Binomial}(N,q)$).
 
 <ol type="a">
   <li>Use the CLT to approximate the distribution of $Y$.</li>
@@ -615,7 +615,7 @@ Let $X$ and $Y$ be standardized with correlation $\rho=0.6$. If $X=2$, compute $
 </details>
 
 <details class="optional-section" id="sec-3-6" open markdown="1">
-<summary><h2>3.6 Hypothesis testing</h2> <span class="optional-badge">(optional)</span></summary>
+<summary><h2>3.6 Hypothesis testing</h2></summary>
 
 In statistics we often infer parameters not because we care about their exact values, but because we want to use them to make a decision &mdash; e.g. in a clinical trial, whether a candidate drug is worth pursuing. This is often framed as <span class="term">[hypothesis testing](https://en.wikipedia.org/wiki/Statistical_hypothesis_testing)</span>: we assign a probability to a hypothesis (or its converse). In abstract terms, the basic procedure is:
 
