@@ -625,7 +625,7 @@ The DataFrame table is shown so you can *read* pandas code when it appears in ex
 
 The `np.random` calls above aren't truly random: they're a deterministic algorithm that produces a sequence of numbers designed to *look* random, called a <span class="term">[pseudorandom number generator](https://en.wikipedia.org/wiki/Pseudorandom_number_generator)</span> (PRNG). A PRNG starts from a number called the <span class="term">[seed](https://en.wikipedia.org/wiki/Random_seed)</span>, and the entire sequence of "random" draws it produces is completely determined by that seed. In other words, the same seed reproduces the exact same numbers each time the code is run.
 
-This matters because simulation results should be <span class="term">[reproducible](https://en.wikipedia.org/wiki/Reproducibility)</span>. If you're debugging a simulation, comparing two models on "the same" simulated data, or handing code to someone else to check your work, you want the randomness to be fixed while everything else changes &mdash; not a new source of unexplained variation every time the code runs. Leaving the seed unset means every run gives a different answer, which makes it impossible to tell whether a changed result came from a real effect or just from new random numbers.
+This matters because simulation results should be <span class="term">[reproducible](https://en.wikipedia.org/wiki/Reproducibility)</span>. If you're debugging a simulation, comparing two models on "the same" simulated data, or handing code to someone else to check your work, you want the randomness to be fixed while everything else changes. Leaving the seed unset means every run gives a different answer, which makes it impossible to tell whether a changed result came from a real effect or just from new random numbers.
 
 In `numpy`, the recommended way to do this is to create an explicit generator object with `np.random.default_rng(seed)` and draw from that object, as in
 
@@ -718,9 +718,8 @@ A simple starting point: $Y \sim \text{Uniform}(a,b)$, meaning $Y$ is equally li
 
 $$ P(y_1 \le Y \le y_2) = \frac{y_2-y_1}{L}. $$
 
-The probability of landing in an interval is proportional to its length, which ensures $P(a\le Y\le b)=1$. As $y_2\to y_1$, this probability goes to zero &mdash; so $P(Y=y)=0$ for any specific $y$: there are uncountably many possible outcomes in any interval, so no single point can carry positive probability. Drag the two endpoints below and watch both effects: the shaded area, and so the probability, is just the width $y_2-y_1$, and it vanishes as the endpoints meet.
+The probability of landing in an interval is proportional to its length, which ensures $P(a\le Y\le b)=1$. As $y_2\to y_1$, this probability goes to zero &mdash; so $P(Y=y)=0$ for any specific $y$: there are uncountably many possible outcomes in any interval, so no single point can carry positive probability. 
 
-{% include_relative demos/uniform.html %}
 
 
 ### Densities
@@ -740,7 +739,11 @@ Every pdf must satisfy:
 
 These are the continuous analogues of the discrete axioms. Note that $f(y)$ need *not* be less than $1$, because $f(y)$ is not itself a probability &mdash; only the integral $\int_a^b f(y)\,dy$ is. For example, if $Y$ is uniform on $[0,1/1000]$, then $f(y)=1000$ on that interval: the density is concentrated in a tiny region, but the large values it takes there cancel out so that integrals stay $\le 1$.
 
-You won't have to calculate integrals in this class, but it's worth understanding where this comes from.
+You won't have to calculate integrals in this class, but it's worth understanding where this comes from. Below is a interactive plot illustrating the idea of a density
+
+{% include_relative demos/uniform.html %}
+
+
 
 <div class="example" markdown="1">
 #### Example (waiting for a bus)

@@ -63,15 +63,15 @@ You must also review the [full LLM policy]({{ '/ai-policy/ai_policy.pdf' | relat
 Your grade will be based on the following. You should see Canvas for the detailed grading scheme and see the linked pages for assignment details.
 
 
-**Exams (70%):** There will be three [exams]({{ '/exams/' | relative_url }}). Each midterm takes half a class period; the rest of that class is used for new material.  
-- <u>Midterm 1</u> (15%): In class on October 1st, covering Units 1–2.  
-- <u>Midterm 2</u> (15%): In class on October 29th, covering Units 3–4.  
-- <u>Final</u> (40%): During finals week, November 25th at 3pm (room TBD), cumulative over Units 1–6. Final grade replaces lowest midterm grade. 
+**Exams (75%):** There will be three [exams]({{ '/exams/' | relative_url }}). Each midterm takes half a class period; the rest of that class is used for new material.  
+- <u>Midterm 1</u> (20%): In class on October 1st, covering Units 1–2.  
+- <u>Midterm 2</u> (20%): In class on October 29th, covering Units 3–4.  
+- <u>Final</u> (35%): During finals week, November 25th at 3pm (room TBD), cumulative over Units 1–6. Your lower midterm score is replaced by the final if the final is higher. 
 
 
-**Weekly assignments (10%):**  In addition to the practice problems, there will be a few more open ended assignments you will turn in each week.  
+**Weekly assignments (15%):**  In addition to the practice problems, there will be a few more open ended assignments you will turn in each week.  
 
-**Attendence and Participation (15%):** You are expected to be present in class ever day. While I will not check every student's attendence each class. I will randomly select a unspecified number of students and check if they are present each lecture. If you miss class or are late, I reserve the right to adjust your final grade. 
+**Attendence and Participation (10%):** You are expected to be present in class ever day. While I will not check every student's attendence each class. I will randomly select a unspecified number of students and check if they are present each lecture. If you miss class or are late, I reserve the right to adjust your final grade. 
 
 **Exercises (not graded):** Each section of the notes ends with a <u>Drill</u> dropdown, and each unit ends with a set of <u>Problems</u>. You should do all of them and ask questions if you have any. The drills are written at exam level &mdash; short calculations, interpreting a formula, reading a few lines of code &mdash; so they are the best preparation for the midterms and the final. 
 
