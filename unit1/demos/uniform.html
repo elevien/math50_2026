@@ -1,12 +1,20 @@
 <div class="demo" id="demo-uniform">
   <div class="demo-label">Interactive demo</div>
-  <h4>Uniform density: area = probability</h4>
+  <h4>Density: area = probability</h4>
   <div class="demo-controls">
     <label>$y_1$ = <input id="unif-y1" type="range" min="0" max="1" step="0.02" value="0.2"><span id="unif-y1-val">0.20</span></label>
     <label>$y_2$ = <input id="unif-y2" type="range" min="0" max="1" step="0.02" value="0.6"><span id="unif-y2-val">0.60</span></label>
-    <span class="demo-value">$P(y_1&lt;Y&lt;y_2)$ = <span id="unif-area">0.40</span></span>
   </div>
-  <svg id="unif-chart"></svg>
+  <div style="display:flex; flex-wrap:wrap; gap:1.2em;">
+    <div style="flex:1 1 260px; min-width:220px;">
+      <svg id="unif-chart"></svg>
+      <div class="demo-value">Uniform: $P(y_1&lt;Y&lt;y_2)$ = <span id="unif-area">0.40</span></div>
+    </div>
+    <div style="flex:1 1 260px; min-width:220px;">
+      <svg id="unif-chart-general"></svg>
+      <div class="demo-value">General density: $P(y_1&lt;Y&lt;y_2)$ = <span id="unif-area-general">0.40</span></div>
+    </div>
+  </div>
 </div>
 
 <script>
@@ -17,12 +25,29 @@
   const y2Val = document.getElementById('unif-y2-val');
   const chart = document.getElementById('unif-chart');
   const area = document.getElementById('unif-area');
+  const chartGeneral = document.getElementById('unif-chart-general');
+  const areaGeneral = document.getElementById('unif-area-general');
+
+  // A fixed, genuinely-normalized bell-shaped density on [gA, gB]. y1/y2
+  // track the same fraction of the support as the uniform panel, so
+  // dragging the sliders shows that equal-width intervals no longer give
+  // equal probability once the curve isn't flat.
+  const gA = 0, gB = 3.4, mu = 1.7, sigma = 0.6;
+  const gaussian = (x) => Math.exp(-0.5 * ((x - mu) / sigma) ** 2) / (Math.sqrt(2 * Math.PI) * sigma);
+
+  function integrate(f, a, b, steps) {
+    if (b <= a) return 0;
+    let sum = 0.5 * (f(a) + f(b));
+    for (let i = 1; i < steps; i++) sum += f(a + ((b - a) * i) / steps);
+    return (sum * (b - a)) / steps;
+  }
 
   function render() {
     let y1 = parseFloat(y1Slider.value), y2 = parseFloat(y2Slider.value);
     if (y1 > y2) [y1, y2] = [y2, y1];
     y1Val.textContent = y1.toFixed(2);
     y2Val.textContent = y2.toFixed(2);
+
     NotesUtils.densityArea(chart, {
       curve: (x) => (x >= 0 && x <= 1 ? 1 : 0),
       xDomain: [-0.15, 1.15],
@@ -32,6 +57,18 @@
       xTicks: [{ x: 0, label: '0' }, { x: 1, label: '1' }, { x: y1, label: 'y₁' }, { x: y2, label: 'y₂' }],
     });
     area.textContent = (y2 - y1).toFixed(2);
+
+    const gy1 = gA + y1 * (gB - gA);
+    const gy2 = gA + y2 * (gB - gA);
+    NotesUtils.densityArea(chartGeneral, {
+      curve: gaussian,
+      xDomain: [gA - 0.3, gB + 0.3],
+      yDomain: [0, gaussian(mu) * 1.25],
+      shadeX0: gy1,
+      shadeX1: gy2,
+      xTicks: [{ x: gy1, label: 'y₁' }, { x: gy2, label: 'y₂' }],
+    });
+    areaGeneral.textContent = integrate(gaussian, gy1, gy2, 400).toFixed(2);
   }
 
   [y1Slider, y2Slider].forEach((s) => s.addEventListener('input', render));

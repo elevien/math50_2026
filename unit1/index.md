@@ -465,6 +465,38 @@ Going forward we'll use $N$ to denote the number of times an outcome occurs. As 
 
 $$ N(\lbrace X=x\rbrace) = N(X=x) = N_X(x) = N(x). $$
 
+### Python basics: numpy arrays
+
+Before working through the code examples below, it's worth getting comfortable with a few basic `numpy` array operations we'll rely on throughout the course.
+
+```python
+import numpy as np
+
+x = np.array([3, 1, 4, 1, 5])
+y = np.array([1, 9, 4, 1, 5])
+
+x[0]                     # 3          (first element)
+x[1:3]                   # [1, 4]     (a slice)
+x[x > 2]                 # [3, 4, 5]  (boolean indexing)
+x[y <= 1]                # [3, 1]     (boolean indexing using another array)
+x[(x == 1) & (y == 1)]   # [1]        (combine conditions with &)
+```
+
+`x[condition]`, where `condition` is a boolean array like `x > 2`, selects the entries where `condition` is `True`; this only works because `x` is a numpy array, not a plain Python list. Combine conditions with `&` (and) or `|` (or), and always use parentheses: since `&` binds tighter than `==`, writing `x == 1 & y == 1` (without the parentheses around each comparison) raises an error instead of doing what you'd expect.
+
+A few more operations that come up constantly:
+
+```python
+len(x)        # 5           (number of elements)
+np.sum(x)     # 14          (sum of elements)
+np.mean(x)    # 2.8         (average, equal to np.sum(x) / len(x))
+
+x + y         # [4, 10, 8, 2, 10]   (elementwise sum)
+x * y         # [3, 9, 16, 1, 25]  (elementwise product)
+```
+
+Elementwise operations like `x + y` and `x * y` require `x` and `y` to have the same length.
+
 <div class="example" markdown="1">
 #### Example (estimating a coin's bias)
 
@@ -711,21 +743,21 @@ These are the continuous analogues of the discrete axioms. Note that $f(y)$ need
 You won't have to calculate integrals in this class, but it's worth understanding where this comes from.
 
 <div class="example" markdown="1">
-#### Example (age at diagnosis)
+#### Example (waiting for a bus)
 
-Continuing the colon cancer example from Section 1.1: let $A$ be the age at which a person who will eventually be diagnosed with colorectal cancer receives that diagnosis. As a simplification &mdash; real diagnosis ages are not actually uniform, they skew toward older ages &mdash; model $A \sim \text{Uniform}(20,90)$ over adulthood, with length $L=90-20=70$.
+Let $T$ be how long (in minutes) you wait for a bus, modeled as $T \sim \text{Uniform}(0,5)$.
 
-<u>Question:</u> restricting to the early-onset cases from Section 1.1, i.e. those diagnosed before $50$, what's the density of $A\mid(A<50)$? Check with simulation.
+<u>Question:</u> restricting to the cases where you've already waited more than $3$ minutes, what's the density of $T\mid(T>3)$? Check with simulation.
 
 <u>Solution:</u> starting from the definition,
 
-$$ P(a_1<A<a_2\mid A<50) = \frac{P(a_1<A<a_2,\,A<50)}{P(A<50)}. $$
+$$ P(t_1<T<t_2\mid T>3) = \frac{P(t_1<T<t_2,\,T>3)}{P(T>3)}. $$
 
-Assuming $20<a_1$ and $a_2<50$, the numerator is $P(a_1<A<a_2) = (a_2-a_1)/70$ &mdash; since $A\in[a_1,a_2]$ already implies $A<50$, the chance both hold is just the chance the more restrictive one holds. The denominator is $P(A<50) = (50-20)/70 = 3/7$, so
+Assuming $3<t_1$ and $t_2<5$, the numerator is $P(t_1<T<t_2) = (t_2-t_1)/5$ &mdash; since $T\in[t_1,t_2]$ already implies $T>3$, the chance both hold is just the chance of the more restrictive event. The denominator is $P(T>3) = (5-3)/5 = 2/5$, so
 
-$$ P(a_1<A<a_2\mid A<50) = \frac{(a_2-a_1)/70}{3/7} = \frac{a_2-a_1}{30}, $$
+$$ P(t_1<T<t_2\mid T>3) = \frac{(t_2-t_1)/5}{2/5} = \frac{t_2-t_1}{2}, $$
 
-meaning the density is $f(a\mid A<50) = 1/30$, i.e. $A\mid(A<50) \sim \text{Uniform}(20,50)$: conditioning a uniform on a sub-interval just gives a uniform on that sub-interval.
+meaning the density is $f(t\mid T>3) = 1/2$, i.e. $T\mid(T>3) \sim \text{Uniform}(3,5)$: conditioning a uniform on a sub-interval just gives a uniform on that sub-interval. In particular, $E[T\mid T>3] = (3+5)/2 = 4$ minutes.
 
 ```python
 import numpy as np
@@ -734,14 +766,14 @@ import matplotlib.pyplot as plt
 rng = np.random.default_rng(123)
 
 N = 200_000
-A = rng.uniform(20, 90, size=N)
-A_cond = A[A < 50]
+T = rng.uniform(0, 5, size=N)
+T_cond = T[T > 3]
 
-print(f"Proportion kept (should be ~3/7 ~ 0.429): {len(A_cond)/N:.3f}")
+print(f"Proportion kept (should be ~2/5 ~ 0.400): {len(T_cond)/N:.3f}")
 plt.figure(figsize=(6,4))
-plt.hist(A_cond, bins=40, density=True, alpha=0.7, label="Simulated density")
-plt.axhline(1/30, color="red", linestyle="--", label="Theoretical density f(a|A<50)=1/30")
-plt.xlabel("Age at diagnosis (a)")
+plt.hist(T_cond, bins=40, density=True, alpha=0.7, label="Simulated density")
+plt.axhline(1/2, color="red", linestyle="--", label="Theoretical density f(t|T>3)=1/2")
+plt.xlabel("Waiting time given T>3 (t)")
 plt.ylabel("Density")
 plt.legend()
 plt.show()
@@ -785,6 +817,33 @@ Let $Y \sim \text{Uniform}(0,1)$. Compute each probability.
   <li>$P(Y<0.3)$</li>
   <li>$P(Y<0.3 \mid Y<0.5)$</li>
   <li>$P(Y>0.7 \mid Y>0.4)$</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Drill 16 &mdash; Mixing a Bernoulli and a Uniform
+
+Let $X \sim \text{Bernoulli}(0.3)$ indicate whether it rains today ($X=1$) or not ($X=0$). Your train's delay $Y$, in minutes, depends on the weather:
+
+$$ Y \mid (X=0) \sim \text{Uniform}(0,5), \qquad Y \mid (X=1) \sim \text{Uniform}(0,20). $$
+
+<ol type="a">
+  <li>Compute $P(Y<3 \mid X=0)$ and $P(Y<3 \mid X=1)$.</li>
+  <li>Use part (a) to marginalize out $X$ and compute $P(Y<3)$.</li>
+  <li>Use Bayes' formula and parts (a)&ndash;(b) to compute $P(X=1 \mid Y<3)$.</li>
+  <li>Without computing anything, explain in one sentence why your answer to (c) is smaller than $P(X=1)=0.3$.</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Drill 17 &mdash; Simulating a mixed model
+
+Continuing the model from Drill 16, write code to simulate $N=200{,}000$ pairs $(X,Y)$, then use the samples to check your answers.
+
+<ol type="a">
+  <li>Simulate $X$ from its Bernoulli distribution. Then simulate $Y$, using boolean indexing (as in the <a href="#sec-1-3">Section 1.3 cheat sheet</a>) so that the samples with $X=0$ get $\text{Uniform}(0,5)$ draws and the samples with $X=1$ get $\text{Uniform}(0,20)$ draws.</li>
+  <li>Estimate $P(Y<3)$ with <code>np.mean(...)</code> and compare it to Drill 16(b).</li>
+  <li>Restrict to the samples with $Y<3$, then estimate $P(X=1\mid Y<3)$ from that subset. Compare it to Drill 16(c).</li>
 </ol>
 </div>
 
@@ -873,7 +932,7 @@ The demo below does the same comparison interactively: the bars are the exact PM
 <summary><h3>Drill</h3></summary>
 
 <div class="exercise" markdown="1">
-#### Drill 16 &mdash; Binomial probabilities
+#### Drill 18 &mdash; Binomial probabilities
 
 Let $Y \sim \text{Binomial}(4,q)$.
 
@@ -886,7 +945,7 @@ Let $Y \sim \text{Binomial}(4,q)$.
 </div>
 
 <div class="exercise" markdown="1">
-#### Drill 17 &mdash; Counting configurations
+#### Drill 19 &mdash; Counting configurations
 
 Let $Y \sim \text{Binomial}(5,q)$.
 
