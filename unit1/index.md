@@ -228,7 +228,7 @@ Notice that for independent variables,
 
 $$ \sum_{y \in S_Y} P(x,y) = P(x) \sum_{y \in S_Y} P(y) = P(x). $$
 
-The table below starts out as the gene-mutation joint distribution from the example above. Its margins are the sums $P(y_A)=\sum_{y_B}P(y_A,y_B)$; conditioning divides a row by its margin, which is the definition $P(y_A\mid y_B)=P(y_A,y_B)/P(y_B)$ in table form. Before clicking anything, try computing $P(Y_A=1)$, $P(Y_B=0)$ and $P(Y_A=1 \mid Y_B=0)$ yourself, then check your answers; regenerate the table for a fresh one to practice on.
+The table below starts out as the gene-mutation joint distribution from the example above. Its margins are the sums $P(y_A)=\sum_{y_B}P(y_A,y_B)$; conditioning divides a row by its margin, which is the definition $P(y_A\mid y_B)=P(y_A,y_B)/P(y_B)$ in table form. Before clicking anything, try computing $P(Y_A=1)$, $P(Y_B=0)$ and $P(Y_A=1 \mid Y_B=0)$ yourself, then check your answers, You can regenerate the table for a fresh one to practice on.
 
 {% include_relative demos/joint.html %}
 
