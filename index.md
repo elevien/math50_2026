@@ -23,7 +23,7 @@ See [weekly schedule]({{ '/schedule/' | relative_url }}) for details.
 
 - Office (Kemeny 205)
 - Office hours (in person): Tuesday 8:00–10:00am **and** 11:00am–12:30pm  
-- Generally available to answer questions on Slack (please use Slack over email for course-related matters) throughout the week. If you would like to have a textbook for reference, I would recommend the following: 
+- If you would like to have a textbook for reference, I would recommend the following: 
 
 **Textbooks:** My notes are mostly self contained, although I will reference material from a few textbooks: 
 - James, Gareth, Witten, Daniela, Hastie, Trevor, Tibshirani, Robert, et al. (2013). *An introduction to statistical learning (python version)* (ISLP). Springer.  
