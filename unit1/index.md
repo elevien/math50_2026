@@ -148,19 +148,7 @@ For each situation, identify tbe random variable(s) involeved, their sample spac
 </div>
 
 <div class="exercise" markdown="1">
-#### Drill 2 &mdash; Verbal models and notation
-
-Move between words, $\sim$ notation, and an explicit distribution.
-
-<ol type="a">
-  <li>$Y$ records whether a student says YES, and the probability of YES is $0.7$. Write this in $\sim$ notation, including the parameter.</li>
-  <li>A model is written $W \sim \text{Bernoulli}(1/3)$. Write out $P_W(w)$ for every $w \in S_W$, and describe in one sentence a situation this could model.</li>
-  <li>$D$ is the outcome of a fair six-sided die roll. Write out $S_D$ and $P_D(d)$. Why can't this one be written as a Bernoulli distribution?</li>
-</ol>
-</div>
-
-<div class="exercise" markdown="1">
-#### Drill 3 &mdash; Probabilities from a tree diagram
+#### Drill 2 &mdash; Probabilities from a tree diagram
 
 Two people are independently and randomly selected from a population in which the chance any given person supports a ballot measure is $0.6$.
 
@@ -173,7 +161,7 @@ Two people are independently and randomly selected from a population in which th
 </div>
 
 <div class="exercise" markdown="1">
-#### Drill 4 &mdash; Sample spaces of compound random variables
+#### Drill 3 &mdash; Sample spaces of compound random variables
 
 For each scenario, work out the sample space $S_Y$ of the described random variable $Y$.
 
@@ -182,6 +170,19 @@ For each scenario, work out the sample space $S_Y$ of the described random varia
   <li>A spinner is equally likely to land red, green, or blue. If it lands red, a coin is flipped and $Y$ is $0$ (tails) or $1$ (heads); if it lands green or blue, a fair four-sided die is rolled and $Y$ is the value shown.</li>
   <li>A fair six-sided die is rolled. $Y$ is the value shown if it's odd, or twice the value shown if it's even.</li>
   <li>For the scenario in (a), is every value in $S_Y$ reached by only one (coin, die) combination? If not, name a value that can arise in more than one way, and give both combinations that produce it.</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Drill 4 &mdash; Getting caught skipping class
+
+There are $N=35$ students in the class. Each day, $5$ students are selected uniformly at random and checked for attendance. You skip $1/2$ of all classes, independently from day to day and independently of who gets checked. There are $M=27$ class meetings this term (see the [schedule]({{ '/schedule/' | relative_url }})).
+
+<ol type="a">
+  <li>What is the probability that you are one of the $5$ students checked on a given day?</li>
+  <li>Let $X$ be the event that you are checked <i>and</i> absent on a given day &mdash; that is, you get caught skipping. Find $P(X)$.</li>
+  <li>Treating the outcome on each of the $M$ days as independent, what is the probability that you are never caught all term?</li>
+  <li>What is the probability that you get caught at least once (and thus lose participation points)?</li>
 </ol>
 </div>
 
@@ -442,6 +443,21 @@ $$ Y_B \sim \text{Bernoulli}(2/3), \qquad Y_A \mid (Y_B=0) \sim \text{Bernoulli}
 </ol>
 </div>
 
+<div class="exercise" markdown="1">
+#### Drill 10 &mdash; Reverse-engineering a joint distribution
+
+Suppose $X,Y \in \lbrace 0,1,2\rbrace$ are independent, with marginal distributions
+
+$$ P_X(0)=0.2,\ P_X(1)=0.5,\ P_X(2)=0.3, \qquad P_Y(0)=0.4,\ P_Y(1)=0.4,\ P_Y(2)=0.2. $$
+
+<ol type="a">
+  <li>Use independence to construct the full joint distribution $P(X=x,Y=y)$ for all nine pairs $(x,y)$.</li>
+  <li>Now perturb your table: add $\varepsilon=0.05$ to $P(X=0,Y=0)$ and to $P(X=1,Y=1)$, and subtract $\varepsilon=0.05$ from $P(X=0,Y=1)$ and from $P(X=1,Y=0)$, leaving every other entry as in part (a). Check that the row sums still give $P_X$ and the column sums still give $P_Y$.</li>
+  <li>Are $X$ and $Y$ independent under this new table? Justify your answer using the product rule.</li>
+  <li>In one sentence, explain what parts (b) and (c) show about whether a joint distribution is determined by its marginals.</li>
+</ol>
+</div>
+
 </details>
 
 ## 1.3 Sampling and simulation {#sec-1-3}
@@ -650,7 +666,7 @@ Both readings obey the same rules of probability, so for the mathematics we've d
 <summary><h3>Drill</h3></summary>
 
 <div class="exercise" markdown="1">
-#### Drill 10 &mdash; Reading simulation code
+#### Drill 11 &mdash; Reading simulation code
 
 Consider the code below.
 
@@ -669,7 +685,7 @@ estimate = np.mean(samples)
 </div>
 
 <div class="exercise" markdown="1">
-#### Drill 11 &mdash; Translating code into a joint model
+#### Drill 12 &mdash; Translating code into a joint model
 
 Consider the code below.
 
@@ -690,7 +706,7 @@ else:
 </div>
 
 <div class="exercise" markdown="1">
-#### Drill 12 &mdash; Describing a simulation plan
+#### Drill 13 &mdash; Describing a simulation plan
 
 Without writing exact code, describe how you would use simulation to check the probability you computed in Drill 9.
 
@@ -787,7 +803,7 @@ plt.show()
 <summary><h3>Drill</h3></summary>
 
 <div class="exercise" markdown="1">
-#### Drill 13 &mdash; Uniform probabilities
+#### Drill 14 &mdash; Uniform probabilities
 
 Let $Y \sim \text{Uniform}(0,10)$.
 
@@ -800,7 +816,7 @@ Let $Y \sim \text{Uniform}(0,10)$.
 </div>
 
 <div class="exercise" markdown="1">
-#### Drill 14 &mdash; Density is not probability
+#### Drill 15 &mdash; Density is not probability
 
 Suppose $Y$ is uniform on $[0,0.2]$.
 
@@ -812,7 +828,7 @@ Suppose $Y$ is uniform on $[0,0.2]$.
 </div>
 
 <div class="exercise" markdown="1">
-#### Drill 15 &mdash; Conditioning on an interval
+#### Drill 16 &mdash; Conditioning on an interval
 
 Let $Y \sim \text{Uniform}(0,1)$. Compute each probability.
 
@@ -824,7 +840,7 @@ Let $Y \sim \text{Uniform}(0,1)$. Compute each probability.
 </div>
 
 <div class="exercise" markdown="1">
-#### Drill 16 &mdash; Mixing a Bernoulli and a Uniform
+#### Drill 17 &mdash; Mixing a Bernoulli and a Uniform
 
 Let $X \sim \text{Bernoulli}(0.3)$ indicate whether it rains today ($X=1$) or not ($X=0$). Your train's delay $Y$, in minutes, depends on the weather:
 
@@ -839,14 +855,14 @@ $$ Y \mid (X=0) \sim \text{Uniform}(0,5), \qquad Y \mid (X=1) \sim \text{Uniform
 </div>
 
 <div class="exercise" markdown="1">
-#### Drill 17 &mdash; Simulating a mixed model
+#### Drill 18 &mdash; Simulating a mixed model
 
-Continuing the model from Drill 16, write code to simulate $N=200{,}000$ pairs $(X,Y)$, then use the samples to check your answers.
+Continuing the model from Drill 17, write code to simulate $N=200{,}000$ pairs $(X,Y)$, then use the samples to check your answers.
 
 <ol type="a">
   <li>Simulate $X$ from its Bernoulli distribution. Then simulate $Y$, using boolean indexing (as in the <a href="#sec-1-3">Section 1.3 cheat sheet</a>) so that the samples with $X=0$ get $\text{Uniform}(0,5)$ draws and the samples with $X=1$ get $\text{Uniform}(0,20)$ draws.</li>
-  <li>Estimate $P(Y<3)$ with <code>np.mean(...)</code> and compare it to Drill 16(b).</li>
-  <li>Restrict to the samples with $Y<3$, then estimate $P(X=1\mid Y<3)$ from that subset. Compare it to Drill 16(c).</li>
+  <li>Estimate $P(Y<3)$ with <code>np.mean(...)</code> and compare it to Drill 17(b).</li>
+  <li>Restrict to the samples with $Y<3$, then estimate $P(X=1\mid Y<3)$ from that subset. Compare it to Drill 17(c).</li>
 </ol>
 </div>
 
@@ -935,7 +951,7 @@ The demo below does the same comparison interactively: the bars are the exact PM
 <summary><h3>Drill</h3></summary>
 
 <div class="exercise" markdown="1">
-#### Drill 18 &mdash; Binomial probabilities
+#### Drill 19 &mdash; Binomial probabilities
 
 Let $Y \sim \text{Binomial}(4,q)$.
 
@@ -948,7 +964,7 @@ Let $Y \sim \text{Binomial}(4,q)$.
 </div>
 
 <div class="exercise" markdown="1">
-#### Drill 19 &mdash; Counting configurations
+#### Drill 20 &mdash; Counting configurations
 
 Let $Y \sim \text{Binomial}(5,q)$.
 
@@ -989,7 +1005,6 @@ In this problem, treat a randomly selected row (i.e. a matched pair `age[i], rac
   <li>Translate the two plotted curves into words: for a fixed value of $z$, what probability is each curve showing?</li>
   <li>Based on the plots, do age and race look independent in this dataset? Explain using conditional probability, not just visual language.</li>
   <li>Approximate $P(R=\text{white} \mid 10<A<60)$ from the data. Explain which rows are in the numerator and denominator.</li>
-  <li>Inspect your code. Point to one line that implements a sample-space restriction, one line that computes a count or proportion, and one line that produces a plot.</li>
 </ol>
 </div>
 
