@@ -62,9 +62,13 @@ Formally, a probability measure $P$ on a sample space $S$ satisfies the followin
 In particular, by additivity, 
 $$ P(U) = \sum_{x \in U} P(\{x\}) $$. 
 
-Probabilities $P(\{x\})$ (that is, probabilities of outcomes) are called the  <span class="term">[probability distribution](https://en.wikipedia.org/wiki/Probability_distribution)</span> and we write
+A direct consequence of these axioms is the <span class="term">[complement rule](https://en.wikipedia.org/wiki/Complementary_event)</span>. If $U^c = S \setminus U$ denotes the complement of an event $U$ (everything *not* in $U$), then $U$ and $U^c$ are disjoint and $U \cup U^c = S$, so additivity and normalization give $P(U) + P(U^c) = P(S) = 1$, i.e.
 
-We'll write this in equivalent ways
+$$ P(U^c) = 1 - P(U). $$
+
+This is often the easiest way to compute the probability of an "at least one" event: rather than adding up every way at least one thing happens, compute the probability that *none* of them happen and subtract from $1$.
+
+Probabilities $P(\{x\})$ (that is, probabilities of outcomes) are called the  <span class="term">[probability distribution](https://en.wikipedia.org/wiki/Probability_distribution)</span>. We'll write this in equivalent ways:
 
 $$ P_X(x) = P(\{x\}) = P(X=x) = \text{chance that } X=x \text{ for } x \in S_X $$
 
@@ -95,7 +99,7 @@ Not all random variables have specific names, but when they do, this notation le
 <div class="example" markdown="1">
 #### Example (joint distribution of two diagnoses)
 
-Suppose we sample two people independently from the population and, for each, record whether they are diagnosed with condition $X$. For now, we will understand ``independent'' to mean known one has no influence on the other. Model each person's diagnosis as an independent $\text{Bernoulli}(p)$ random variable with $(0,1) = (\text{no diagnosis}, \text{diagnosis})$, where $p$ is the (unknown, population-wide) chance of a diagnosis before $50$. Together the two people give a pair $(X_1, X_2)$ with sample space
+Suppose we sample two people independently from the population and, for each, record whether they are diagnosed with condition $X$. For now, we will understand ``independent'' to mean that knowing one person's diagnosis does not change the probabilities for the other person's diagnosis. Model each person's diagnosis as an independent $\text{Bernoulli}(p)$ random variable with $(0,1) = (\text{no diagnosis}, \text{diagnosis})$, where $p$ is the (unknown, population-wide) chance of a diagnosis before $50$. Together the two people give a pair $(X_1, X_2)$ with sample space
 
 $$ S = \lbrace (0,0), (0,1), (1,0), (1,1)\rbrace, $$
 
@@ -303,7 +307,7 @@ These are close but not exactly equal. What do we make to this? Is this is real 
 
 What if we're interested in the chance someone has a mutation in gene $A$, given we know they don't have one in gene $B$? We write this as the <span class="term">[conditional probability](https://en.wikipedia.org/wiki/Conditional_probability)</span> $P(Y_A=1 \mid Y_B=0)$: the chance gene $A$ is mutated, restricted to people without a mutation in gene $B$. More generally, $P(X \mid Y=y)$ is the distribution of $X$ once we know $Y=y$, assuming $P(Y=y)>0$.
 
-It's useful to write this in terms of joint and marginal probabilities. If $N(E)$ denotes the number of times event $E$ occurs in a dataset, then
+It's useful to write this in terms of joint and marginal probabilities. If $N(E)$ denotes the number of times event $E$ occurs in a dataset of $n$ total observations, then
 
 $$ P(Y_A=1 \mid Y_B=0) = \frac{N(Y_A=1, Y_B=0)}{N(Y_B=0)} = \frac{N(Y_A=1,Y_B=0)/n}{N(Y_B=0)/n} = \frac{P(Y_A=1, Y_B=0)}{P(Y_B=0)}. $$
 
@@ -718,6 +722,32 @@ Without writing exact code, describe how you would use simulation to check the p
 </ol>
 </div>
 
+<div class="exercise" markdown="1">
+#### Drill 14 &mdash; Reading NumPy array code
+
+Consider the array `x = np.array([4, 7, 7, 1, 3])`.
+
+<ol type="a">
+  <li>What is `x[2]`?</li>
+  <li>What is `x[x >= 5]`?</li>
+  <li>What is `np.mean(x == 7)`?</li>
+  <li>What is `len(x[x > 3])`?</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Drill 15 &mdash; Marginal, joint, and conditional probability from arrays
+
+Suppose `x` and `y` are numpy arrays of $N$ paired iid samples of $(X,Y)$, where $X,Y \in \{0,1\}$.
+
+<ol type="a">
+  <li>Write a numpy expression that estimates $P(X=1)$.</li>
+  <li>Write a numpy expression that estimates $P(X=1, Y=0)$.</li>
+  <li>Write a numpy expression that estimates $P(Y=0 \mid X=1)$.</li>
+  <li>Suppose `np.mean(x == 1)` is $0.45$ and `np.mean((x == 1) & (y == 0))` is $0.18$. What is the resulting estimate of $P(Y=0 \mid X=1)$?</li>
+</ol>
+</div>
+
 </details>
 
 ## 1.4 Continuous distributions {#sec-1-4}
@@ -803,7 +833,7 @@ plt.show()
 <summary><h3>Drill</h3></summary>
 
 <div class="exercise" markdown="1">
-#### Drill 14 &mdash; Uniform probabilities
+#### Drill 16 &mdash; Uniform probabilities
 
 Let $Y \sim \text{Uniform}(0,10)$.
 
@@ -816,7 +846,7 @@ Let $Y \sim \text{Uniform}(0,10)$.
 </div>
 
 <div class="exercise" markdown="1">
-#### Drill 15 &mdash; Density is not probability
+#### Drill 17 &mdash; Density is not probability
 
 Suppose $Y$ is uniform on $[0,0.2]$.
 
@@ -828,7 +858,7 @@ Suppose $Y$ is uniform on $[0,0.2]$.
 </div>
 
 <div class="exercise" markdown="1">
-#### Drill 16 &mdash; Conditioning on an interval
+#### Drill 18 &mdash; Conditioning on an interval
 
 Let $Y \sim \text{Uniform}(0,1)$. Compute each probability.
 
@@ -840,7 +870,7 @@ Let $Y \sim \text{Uniform}(0,1)$. Compute each probability.
 </div>
 
 <div class="exercise" markdown="1">
-#### Drill 17 &mdash; Mixing a Bernoulli and a Uniform
+#### Drill 19 &mdash; Mixing a Bernoulli and a Uniform
 
 Let $X \sim \text{Bernoulli}(0.3)$ indicate whether it rains today ($X=1$) or not ($X=0$). Your train's delay $Y$, in minutes, depends on the weather:
 
@@ -855,14 +885,14 @@ $$ Y \mid (X=0) \sim \text{Uniform}(0,5), \qquad Y \mid (X=1) \sim \text{Uniform
 </div>
 
 <div class="exercise" markdown="1">
-#### Drill 18 &mdash; Simulating a mixed model
+#### Drill 20 &mdash; Simulating a mixed model
 
-Continuing the model from Drill 17, write code to simulate $N=200{,}000$ pairs $(X,Y)$, then use the samples to check your answers.
+Continuing the model from Drill 19, write code to simulate $N=200{,}000$ pairs $(X,Y)$, then use the samples to check your answers.
 
 <ol type="a">
   <li>Simulate $X$ from its Bernoulli distribution. Then simulate $Y$, using boolean indexing (as in the <a href="#sec-1-3">Section 1.3 cheat sheet</a>) so that the samples with $X=0$ get $\text{Uniform}(0,5)$ draws and the samples with $X=1$ get $\text{Uniform}(0,20)$ draws.</li>
-  <li>Estimate $P(Y<3)$ with <code>np.mean(...)</code> and compare it to Drill 17(b).</li>
-  <li>Restrict to the samples with $Y<3$, then estimate $P(X=1\mid Y<3)$ from that subset. Compare it to Drill 17(c).</li>
+  <li>Estimate $P(Y<3)$ with <code>np.mean(...)</code> and compare it to Drill 19(b).</li>
+  <li>Restrict to the samples with $Y<3$, then estimate $P(X=1\mid Y<3)$ from that subset. Compare it to Drill 19(c).</li>
 </ol>
 </div>
 
@@ -951,7 +981,7 @@ The demo below does the same comparison interactively: the bars are the exact PM
 <summary><h3>Drill</h3></summary>
 
 <div class="exercise" markdown="1">
-#### Drill 19 &mdash; Binomial probabilities
+#### Drill 21 &mdash; Binomial probabilities
 
 Let $Y \sim \text{Binomial}(4,q)$.
 
@@ -964,7 +994,7 @@ Let $Y \sim \text{Binomial}(4,q)$.
 </div>
 
 <div class="exercise" markdown="1">
-#### Drill 20 &mdash; Counting configurations
+#### Drill 22 &mdash; Counting configurations
 
 Let $Y \sim \text{Binomial}(5,q)$.
 
