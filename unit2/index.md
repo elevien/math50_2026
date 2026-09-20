@@ -12,7 +12,7 @@ toc:
 
 <div class="unit-overview" markdown="1">
 
-In this unit we introduce **expectation**, an operation which takes a random variable and produces a deterministic quantity. The expectation of a random variable can be approximated with **sample averages**, and from them we can infer properties of the model (like its parameters). Much of statistics relies on the basic fact that sample averages approximate expectations, something we will learn more about (when discussing estimators) in Unit 3. In this section, we first discuss **Normal distribution** and probability models contructed from it; namely, a **linear regression** model. 
+In this unit we introduce **expectation**, an operation which takes a random variable and produces a deterministic quantity. The expectation of a random variable can be approximated with **sample averages**, and from them we can infer properties of the model (like its parameters). Much of statistics relies on the basic fact that sample averages approximate expectations, something we will learn more about (when discussing estimators) in Unit 3. Later in the unit we discuss the **Normal distribution** and a probability model built from it: a **linear regression** model. 
 
 #### Concepts
 
@@ -150,7 +150,7 @@ $$ E[Y] = P(Y=0)\times 0 + P(Y=1)\times 1 = q. $$
 Similarly, you should be able to show $\operatorname{var}(Y) = q(1-q)$; you will also check this formula by simulation in a problem.
 </div>
 
-Based on this example, we can estimate $q$ using $\hat q = \bar Y$, as expected &mdash; here $\hat q$ is shorthand for "an estimator of $q$." (We will dive deeper into the the concept of an estimator in the Unit 3).
+Based on this example, we can estimate $q$ using $\hat q = \bar Y$, as expected &mdash; here $\hat q$ is shorthand for "an estimator of $q$." (We will dive deeper into the concept of an estimator in Unit 3).
 
 To measure "how much variation" there is in a random variable, we'd like to compare the variance to the mean. But there's a problem: the variance has different units than the mean. If mean human height is about $170\,\text{cm}$, the variance might be around $100\,\text{cm}^2$ &mdash; hard to interpret, since it's in squared centimeters. Taking the square root of the variance gives the <span class="term">[standard deviation](https://en.wikipedia.org/wiki/Standard_deviation)</span>, which brings the spread back into the same units as the mean (here, $10\,\text{cm}$).
 
@@ -160,7 +160,7 @@ This leads to the <span class="term">[coefficient of variation](https://en.wikip
 
 $$ \text{CV} = \frac{\sigma}{\mu}, $$
 
-where $\sigma$ is the standard deviation and $\mu$ is the mean. The CV is unitless, so it allows comparisons across variables measured in different units or with very different scalesa. For example, a CV of $0.06$ in height ($10/170$) indicates less relative variability than a CV of $0.14$ in weight ($10/70$).
+where $\sigma$ is the standard deviation and $\mu$ is the mean. The CV is unitless, so it allows comparisons across variables measured in different units or with very different scales. For example, a CV of $0.06$ in height ($10/170$) indicates less relative variability than a CV of $0.14$ in weight ($10/70$).
 
 | Quantity | Typical CV |
 |---|---|
@@ -671,7 +671,7 @@ $$ \overline{Y\mid X=1} = \frac{1}{N(X=1)}\sum_{i=1}^n Y_i 1_{X_i=1}, $$
 
 where $n$ is the number of samples and $N(X=1)$ counts those with $X_i=1$.
 
-The functions below implement this expressions in code.
+The functions below implement these expressions in code.
 
 ```python
 import numpy as np
