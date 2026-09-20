@@ -19,11 +19,13 @@ Covers [Unit 1]({{ '/unit1/' | relative_url }}) and [Unit 2]({{ '/unit2/' | rela
 - Sample spaces, outcomes and events; the three axioms and how to use them.
 - Read a joint distribution off a table and compute marginal, joint and conditional probabilities from it. Determine if variables are independent. 
 - Go from a model written in $\sim$ notation, such as $Y \sim \text{Bernoulli}(q)$ and $X \mid Y \sim \text{Bernoulli}(Y/4 + 1/4)$, to the joint distribution, and back.
+- Read and produce the output of simple Python code (arrays, for loops, if statements, `np.random`). Emphasis will be placed on translating simulations to probability statements.
 
 **Unit 2**
 
 - Know propeties of expectation and compute $E[Y]$, $E[g(Y)]$, $\operatorname{var}(Y)$ and the coefficient of variation for a discrete random variable, by hand as well as conditional versions. 
-- Standardize a Normal variable, and use the empirical rule (68 / 95 / 99.7) to estimate probabilities.
+- Use the tower property and the law of total variance to compute $E[Y]$ and $\operatorname{var}(Y)$ from conditional moments.
+- Standardize a Normal variable, and use the bell curve shape (68 / 95 / 99.7) to estimate probabilities.
 - The distribution of $aX+b$, and of a sum of independent Normals.
 - The single-predictor model $Y \mid X \sim \text{Normal}(\beta_0+\beta_1X, \sigma^2)$, its equivalent form $Y = \beta_0+\beta_1X+\epsilon$, and what each parameter controls.
 - For a **binary** predictor, why $\beta_1 = E[Y\mid X{=}1]-E[Y\mid X{=}0]$, and why the difference of group averages estimates it.
@@ -85,7 +87,7 @@ Quiz scores $Y$ depend on which section a student is in. $45\%$ of students are 
 Let $W \sim \text{Normal}(12, 16)$.
 
 1. Write the standardized version of $W$.
-1. Estimate $P(W>16)$ and $P(4<W<20)$ using the empirical rule.
+1. Estimate $P(W>16)$ and $P(4<W<20)$ using the bell curve shape.
 1. Let $V = 3-2W$. Give the distribution of $V$.
 1. Let $W_1,W_2$ be independent copies of $W$. Give the distribution of $(W_1+W_2)/2$, and say in one sentence how its spread compares to that of $W$.
 </div>
@@ -230,7 +232,7 @@ Let $X_1,\dots,X_{100}$ be iid with $E[X_i]=3$ and $\operatorname{var}(X_i)=4$, 
 
 1. Compute $E[S]$ and $\operatorname{var}(S)$.
 1. Write the approximate distribution of $S$, and say what justifies the approximation.
-1. Estimate $P(S>340)$ using the empirical rule.
+1. Estimate $P(S>340)$ using the bell curve shape.
 1. Give the approximate distribution of $\overline X$, and its standard deviation.
 </div>
 

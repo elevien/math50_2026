@@ -31,7 +31,7 @@ The law of large numbers, the Central Limit Theorem, estimators, sample distribu
 
 </div>
 
-<p class="pdf-link"><a href="unit3.pdf">Unit 3 notes pdf</a> <a href="unit3_slides.pdf">Unit 3 slides pdf</a> <a href="https://colab.research.google.com/github/elevien/math50_2026/blob/main/unit3/unit3.ipynb">Unit 3 notebook</a></p>
+<p class="pdf-link"><a href="unit3.pdf">Unit 3 notes pdf</a> <a href="https://colab.research.google.com/github/elevien/math50_2026/blob/main/unit3/unit3.ipynb">Unit 3 notebook</a></p>
 
 ## 3.1 The Law of Large Numbers & the Central Limit Theorem {#sec-3-1}
 

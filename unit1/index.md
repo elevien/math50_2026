@@ -30,7 +30,7 @@ Probability models, random variables, sample spaces, outcomes and events, probab
 
 </div>
 
-<p class="pdf-link"><a href="unit1.pdf">Unit 1 notes pdf</a> <a href="unit1_slides.pdf">Unit 1 slides pdf</a> <a href="https://colab.research.google.com/github/elevien/math50_2026/blob/main/unit1/unit1.ipynb">Unit 1 notebook</a></p>
+<p class="pdf-link"><a href="unit1.pdf">Unit 1 notes pdf</a> <a href="https://colab.research.google.com/github/elevien/math50_2026/blob/main/unit1/unit1.ipynb">Unit 1 notebook</a></p>
 
 The first step in our journey into regression modeling is to establish a language and system of notation for communicating uncertainty. Before doing so, let's say a few words about modeling in general. Broadly speaking, <span class="term">[models](https://en.wikipedia.org/wiki/Scientific_modelling)</span> are simplified representations of the world &mdash; astrology is a model of human behavior, and Newton's laws are a model of how objects move in physical space. Neither is perfectly correct, but Newton's laws provide a remarkably good approximation. In science (and in life) we mostly rely on <span class="term">[mathematical models](https://en.wikipedia.org/wiki/Mathematical_model)</span>.
 

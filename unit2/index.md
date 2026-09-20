@@ -16,19 +16,19 @@ In this unit we introduce **expectation**, an operation which takes a random var
 
 #### Concepts
 
-Expectation, variance and standard deviation, conditional expectation, empirical averages, coefficient of variation, linearity of expectation and the tower property, the Normal distribution, standardization, linear transformations and sums of independent Normal random variables, the single-predictor linear regression model, exogenous vs. endogenous predictors.
+Expectation, variance and standard deviation, conditional expectation, empirical averages, coefficient of variation, linearity of expectation, the tower property and the law of total variance, the Normal distribution, standardization, linear transformations and sums of independent Normal random variables, the single-predictor linear regression model, exogenous vs. endogenous predictors.
 
 #### Things to practice
 
 - Calculate expectations by hand and translate between mathematical definitions and code (on exams you will not be asked to write code, but you may be asked to explain what a few lines of code do).
-- Work with the Normal distribution: standardize a variable, compute probabilities using the empirical rule, and find the distribution of a linear transformation or sum of independent Normal random variables.
+- Work with the Normal distribution: standardize a variable, compute probabilities using the bell curve shape (68/95/99.7), and find the distribution of a linear transformation or sum of independent Normal random variables.
 - For a linear regression model with a binary predictor, understand why the regression coefficient is a difference of conditional averages.
 - State the assumptions of a linear regression model and identify (e.g. from plots) when they are violated.
 - Recognize when a predictor may be endogenous, meaning the model's error term may still be related to the predictor.
 
 </div>
 
-<p class="pdf-link"><a href="unit2.pdf">Unit 2 notes pdf</a> <a href="unit2_slides.pdf">Unit 2 slides pdf</a> <a href="https://colab.research.google.com/github/elevien/math50_2026/blob/main/unit2/unit2.ipynb">Unit 2 notebook</a></p>
+<p class="pdf-link"><a href="unit2.pdf">Unit 2 notes pdf</a> <a href="https://colab.research.google.com/github/elevien/math50_2026/blob/main/unit2/unit2.ipynb">Unit 2 notebook</a></p>
 
 ## 2.1 Expectation, variance and standard deviation {#sec-2-1}
 
@@ -61,7 +61,7 @@ Now we introduce the idea of <span class="term">[expectation](https://en.wikiped
 <details markdown="1">
 <summary>Frequentist vs. Bayesian interpretation</summary>
 
-Recall the flipped-but-hidden coin from [Unit 1](../unit1/#sec-1-3): whether you read its probability of heads as a long-run frequency or as your degree of belief, given the outcome is already fixed, is exactly this distinction. Thinking of probability as a long-run frequency is the frequentist interpretation. We can also interpret probabilities as measures of belief &mdash; the Bayesian view. More on that in Units 6 and 7.
+Recall the flipped-but-hidden coin from [Unit 1](../unit1/#sec-1-3). Whether you interpret its probability of heads as a long-run frequency or as your degree of belief (given the outcome is already fixed) is a key distinction in statistics. Thinking of probability as a long-run frequency is the frequentist interpretation and belief is Bayesian.  We will say more about this in Units 6 and 7.
 </details>
 
 Suppose each $Y_i$ is iid with sample space $S$. If $n$ is large, the fraction of samples for which $Y_i=y$ will be $\approx P(\lbrace Y=y \rbrace)$. We can express the sample average in terms of probabilities:
@@ -150,7 +150,7 @@ $$ E[Y] = P(Y=0)\times 0 + P(Y=1)\times 1 = q. $$
 Similarly, you should be able to show $\operatorname{var}(Y) = q(1-q)$; you will also check this formula by simulation in a problem.
 </div>
 
-Based on this example, we can estimate $q$ using $\hat q = \bar Y$, as expected &mdash; here $\hat q$ is shorthand for "an estimator of $q$."
+Based on this example, we can estimate $q$ using $\hat q = \bar Y$, as expected &mdash; here $\hat q$ is shorthand for "an estimator of $q$." (We will dive deeper into the the concept of an estimator in the Unit 3).
 
 To measure "how much variation" there is in a random variable, we'd like to compare the variance to the mean. But there's a problem: the variance has different units than the mean. If mean human height is about $170\,\text{cm}$, the variance might be around $100\,\text{cm}^2$ &mdash; hard to interpret, since it's in squared centimeters. Taking the square root of the variance gives the <span class="term">[standard deviation](https://en.wikipedia.org/wiki/Standard_deviation)</span>, which brings the spread back into the same units as the mean (here, $10\,\text{cm}$).
 
@@ -160,7 +160,14 @@ This leads to the <span class="term">[coefficient of variation](https://en.wikip
 
 $$ \text{CV} = \frac{\sigma}{\mu}, $$
 
-where $\sigma$ is the standard deviation and $\mu$ is the mean. The CV is unitless, so it allows comparisons across variables measured in different units or with very different scales &mdash; a CV of $0.06$ in height ($10/170$) indicates less relative variability than a CV of $0.14$ in weight ($10/70$).
+where $\sigma$ is the standard deviation and $\mu$ is the mean. The CV is unitless, so it allows comparisons across variables measured in different units or with very different scalesa. For example, a CV of $0.06$ in height ($10/170$) indicates less relative variability than a CV of $0.14$ in weight ($10/70$).
+
+| Quantity | Typical CV |
+|---|---|
+| Adult height | $\approx 0.05$ |
+| Adult weight | $\approx 0.2$ |
+| Household income | $\approx 1$ |
+| Household wealth | $3$&ndash;$5$ |
 
 ### Conditional expectation
 
@@ -174,7 +181,21 @@ $$ E[X\mid Y=y] \approx \frac{1}{N(Y=y)}\sum_{i=1}^n 1_{\lbrace y_i=y \rbrace}\,
 
 where $1_{\lbrace y_i=y \rbrace}$ is the <span class="term">[indicator function](https://en.wikipedia.org/wiki/Indicator_function)</span> (1 if $y_i=y$, 0 otherwise). Put simply: we compute a conditional expectation from data by taking the sample average among samples that satisfy the condition.
 
-As we already noted, conditional probabilities tell us whether two variables are independent: as shorthand, $P(X\mid Y)=P(X)$ if and only if $X$ and $Y$ are independent. If $X$ and $Y$ are independent, then $E[X\mid Y=y]=E[X]$ for every $y$ with $P(Y=y)>0$ &mdash; but **the converse is false: it's possible for this to hold even when $X$ and $Y$ are not independent!**
+It should be clear that if $X$ and $Y$ are independent, then $E[X\mid Y=y]=E[X]$ for every $y$ with $P(Y=y)>0$ &mdash; but **the converse is false: it's possible for this to hold even when $X$ and $Y$ are not independent!**
+
+<div class="example" markdown="1">
+#### Example ($E[X\mid Y]=E[X]$ without independence)
+
+Let $Y \in \lbrace -1,1\rbrace$ with $P(Y=1)=P(Y=-1)=1/2$. Given $Y=1$, let $X\in\lbrace -1,1\rbrace$ each with probability $1/2$; given $Y=-1$, let $X\in\lbrace -2,2\rbrace$ each with probability $1/2$.
+
+<u>Question:</u> compute $E[X\mid Y=1]$ and $E[X\mid Y=-1]$. Are $X$ and $Y$ independent?
+
+<u>Solution:</u>
+
+$$ E[X\mid Y=1] = \tfrac12(-1)+\tfrac12(1) = 0, \qquad E[X\mid Y=-1] = \tfrac12(-2)+\tfrac12(2) = 0. $$
+
+So $E[X\mid Y=y]=0=E[X]$ for both values of $y$ &mdash; the conditional expectation doesn't depend on $y$ at all. But $X$ and $Y$ are **not** independent: for instance $P(X=1\mid Y=1)=\tfrac12$ while $P(X=1\mid Y=-1)=0$, since $X$ can't even equal $1$ when $Y=-1$. Matching conditional means only tells us the *average* of $X$ doesn't shift with $Y$; the whole *distribution* of $X$ can still change with $Y$.
+</div>
 
 <div class="example" markdown="1">
 #### Example (computing a conditional expectation)
@@ -244,7 +265,7 @@ print("E[Y | X=0] estimated within group:", mean_given_hs0)
 print("E[Y | X=1] estimated within group:", mean_given_hs1)
 ```
 
-This code is doing the same operation as the definition: it restricts the rows to a condition, then averages $Y$ inside that restricted sample space. If the two conditional averages differ substantially, then $E[Y\mid X=x]$ depends on $x$, which is evidence that $X$ and $Y$ are not independent in this dataset. That conclusion is associational: it does not, by itself, prove that a mother's high-school graduation caused the difference in test scores.
+This code is doing the same operation as the definition: it restricts the rows to a condition, then averages $Y$ inside that restricted sample space. If the two conditional averages differ substantially, then $E[Y\mid X=x]$ depends on $x$, which is evidence that $X$ and $Y$ are not independent in this dataset.
 
 </div>
 
@@ -319,6 +340,11 @@ $$ = \Big(\sum_x xP(X=x)\Big)\Big(\sum_y yP(Y=y)\Big) = E[X]E[Y]. $$
 </details>
 </li>
 <li><strong>Tower property:</strong> for random variables $X$ and $Y$, $E[E[X\mid Y]] = E[X]$, where $E[X\mid Y]$ is the random variable obtained by applying the deterministic function $f(y)=E[X\mid Y=y]$ to $Y$; that is, $E[X\mid Y] = f(Y)$, so $E[E[X\mid Y]] = E[f(Y)]$.</li>
+<li><strong>Law of total variance:</strong> variance has an analogous decomposition,
+
+$$ \operatorname{var}(X) = \underbrace{E[\operatorname{var}(X\mid Y)]}_{\text{within-group variance}} + \underbrace{\operatorname{var}(E[X\mid Y])}_{\text{between-group variance}}. $$
+
+The total variance splits into the average spread *within* each group, plus how much the group *means* themselves vary.</li>
 </ol>
 
 <div class="example" markdown="1">
@@ -351,11 +377,9 @@ rng = np.random.default_rng(2025)
 
 N = 100_000
 X = rng.choice([0, 1], size=N, p=[0.6, 0.4])
-Y = np.where(
-    X == 0,
-    rng.normal(loc=78, scale=8, size=N),
-    rng.normal(loc=86, scale=8, size=N),
-)
+Y = np.empty(N)
+Y[X == 0] = rng.normal(loc=78, scale=8, size=np.sum(X == 0))
+Y[X == 1] = rng.normal(loc=86, scale=8, size=np.sum(X == 1))
 
 EY_given_X0_hat = np.mean(Y[X == 0])
 EY_given_X1_hat = np.mean(Y[X == 1])
@@ -366,6 +390,40 @@ EEY_given_X_hat = EY_given_X0_hat * pX0_hat + EY_given_X1_hat * pX1_hat
 print(f"Theoretical E[Y]    = 81.200000")
 print(f"Estimated E[Y]      = {np.mean(Y):.6f}")
 print(f"Estimated E[E[Y|X]] = {EEY_given_X_hat:.6f}")
+```
+</div>
+
+<div class="example" markdown="1">
+#### Example (law of total variance)
+
+Continuing the previous example, suppose additionally that quiz scores have the same spread in each section, $\operatorname{var}(Y\mid X=0)=\operatorname{var}(Y\mid X=1)=64$.
+
+<u>Question:</u> compute $\operatorname{var}(Y)$ using the law of total variance.
+
+<u>Solution:</u> the within-group term is the weighted average of the (here, equal) conditional variances:
+
+$$ E[\operatorname{var}(Y\mid X)] = 0.6(64)+0.4(64) = 64. $$
+
+The between-group term is the variance of the conditional means $78$ and $86$ around the overall mean $E[Y]=81.2$, weighted by $P(X=0)=0.6$ and $P(X=1)=0.4$:
+
+$$ \operatorname{var}(E[Y\mid X]) = 0.6(78-81.2)^2+0.4(86-81.2)^2 = 6.144+9.216=15.36. $$
+
+So
+
+$$ \operatorname{var}(Y) = 64+15.36 = 79.36. $$
+
+Even though every section has the *same* internal spread, the overall variance is bigger than either conditional variance, because the two sections also have different means. The code below extends the previous simulation to confirm this.
+
+```python
+within_hat = pX0_hat * np.var(Y[X == 0]) + pX1_hat * np.var(Y[X == 1])
+between_hat = (
+    pX0_hat * (EY_given_X0_hat - np.mean(Y)) ** 2
+    + pX1_hat * (EY_given_X1_hat - np.mean(Y)) ** 2
+)
+
+print(f"Theoretical var(Y)                   = 79.360000")
+print(f"Estimated var(Y)                     = {np.var(Y):.6f}")
+print(f"Estimated E[var(Y|X)] + var(E[Y|X])  = {within_hat + between_hat:.6f}")
 ```
 </div>
 
@@ -453,6 +511,12 @@ Suppose $P(X=0)=0.7$, $P(X=1)=0.3$, $E[Y\mid X=0]=10$, and $E[Y\mid X=1]=20$. Us
 </div>
 
 <div class="exercise" markdown="1">
+#### Law of total variance from conditional moments
+
+Suppose $P(X=0)=0.7$, $P(X=1)=0.3$, $E[Y\mid X=0]=10$, $E[Y\mid X=1]=20$, $\operatorname{var}(Y\mid X=0)=4$, and $\operatorname{var}(Y\mid X=1)=9$. Use the law of total variance to compute $\operatorname{var}(Y)$.
+</div>
+
+<div class="exercise" markdown="1">
 #### Sum of Bernoulli variables
 
 Let $Y=\sum_{i=1}^{12}X_i$, where the $X_i$ are iid Bernoulli$(0.25)$. Compute $E[Y]$, $\operatorname{var}(Y)$, and the coefficient of variation.
@@ -466,7 +530,7 @@ We now define the most important distribution in statistics: the <span class="te
 
 $$ g(x) = \frac{1}{\sqrt{2\pi\sigma^2}}\,e^{-\frac{(x-\mu)^2}{2\sigma^2}}. $$
 
-Despite the simplicity of this formula, calculating Normal probabilities by hand (integrating to find area under the curve) is difficult. Instead we rely on rough rules of thumb: about $68\%$ of the probability lies within $1$ standard deviation of the mean, about $95\%$ lies within $2$ standard deviations, and about $99.7\%$ lies within $3$ standard deviations. The demo below keeps the $x$-axis fixed while you change $\mu$ and $\sigma$, so you can see that $\mu$ shifts the center and $\sigma$ changes the spread. Its two shaded bands are $\mu\pm\sigma$ and $\mu\pm2\sigma$, and they hold about $68\%$ and $95\%$ of the area wherever you put the sliders &mdash; that is the empirical rule.
+Despite the simplicity of this formula, calculating Normal probabilities by hand (integrating to find area under the curve) is difficult. Instead we rely on rough rules of thumb: about $68\%$ of the probability lies within $1$ standard deviation of the mean, about $95\%$ lies within $2$ standard deviations, and about $99.7\%$ lies within $3$ standard deviations. The demo below keeps the $x$-axis fixed while you change $\mu$ and $\sigma$, so you can see that $\mu$ shifts the center and $\sigma$ changes the spread. Its two shaded bands are $\mu\pm\sigma$ and $\mu\pm2\sigma$, and they hold about $68\%$ and $95\%$ of the area wherever you put the sliders &mdash; a direct consequence of the Normal distribution's bell curve shape.
 
 If $X$ has density $g(x)$ above, we write $X \sim \text{Normal}(\mu,\sigma^2)$. It can be shown that $E[X]=\mu$ and $\operatorname{var}(X)=\sigma^2$ &mdash; hence the name. **Be careful:** sometimes (in code or in math) Normal random variables are parameterized by mean and standard deviation instead of mean and variance, so you'll also see $\text{Normal}(\mu,\sigma)$. Both conventions are used, so always check.
 
@@ -494,7 +558,7 @@ Since $3=5-2=\mu-\sigma$ and $7=5+2=\mu+\sigma$, we have $P(Y<7)\approx0.841$ an
 
 ### Properties of Normal random variables
 
-**Linear transformations of Normal random variables.** Suppose $Z \sim \text{Normal}(0,1)$ and define $X = \sigma Z + \mu$. Write $\phi(z) = e^{-z^2/2}/\sqrt{2\pi}$ for the density of $Z$ &mdash; this is the density $g$ above with $\mu=0,\sigma=1$, and it is standard notation we'll reuse in Unit 3. Then
+**Linear transformations of Normal random variables.** Suppose $Z \sim \text{Normal}(0,1)$ and define $X = \sigma Z + \mu$. Write $\phi(z) = e^{-z^2/2}/\sqrt{2\pi}$ for the density of $Z$ &mdash; this is the density $g$ above with $\mu=0,\sigma=1$. Then
 
 $$ P(X<x) = P(Z < \tfrac{x-\mu}{\sigma}) = \int_{-\infty}^{(x-\mu)/\sigma} \phi(z)\,dz. $$
 
@@ -528,8 +592,8 @@ Suppose $Y\sim\operatorname{Normal}(10,9)$.
 
 <ol type="a">
   <li>Write the standardized version of $Y$.</li>
-  <li>Estimate $P(Y>13)$ using the empirical rule.</li>
-  <li>Estimate $P(7<Y<13)$ using the empirical rule.</li>
+  <li>Estimate $P(Y>13)$ using the bell curve shape.</li>
+  <li>Estimate $P(7<Y<13)$ using the bell curve shape.</li>
 </ol>
 </div>
 
@@ -540,7 +604,7 @@ Suppose $X \sim \operatorname{Normal}(5,9)$ and define $Y=-2X+7$.
 
 <ol type="a">
   <li>Find the distribution of $Y$ by giving its mean and variance.</li>
-  <li>Standardize $Y$, then use the empirical rule to estimate $P(Y>3)$.</li>
+  <li>Standardize $Y$, then use the bell curve shape to estimate $P(Y>3)$.</li>
   <li>Without computing anything, write down $P(Y>-3)$ and explain in one sentence how you know.</li>
 </ol>
 </div>
@@ -553,7 +617,7 @@ Suppose $X_1\sim\operatorname{Normal}(2,4)$ and $X_2\sim\operatorname{Normal}(-1
 <ol type="a">
   <li>Find the distribution of $S$ by giving its mean and variance.</li>
   <li>Standardize $S$.</li>
-  <li>Use the empirical rule to estimate $P(0<S<16)$.</li>
+  <li>Use the bell curve shape to estimate $P(0<S<16)$.</li>
 </ol>
 </div>
 
@@ -575,13 +639,16 @@ and the Normal distribution describes the vertical spread of $Y$ around that lin
 
 $$ Y=\beta_0+\beta_1X+\epsilon,\qquad \epsilon\sim\text{Normal}(0,\sigma^2), $$
 
-where $\epsilon$ is the noise term: whatever is left in $Y$ after accounting for the linear relationship with $X$.
+where $\epsilon$ is the noise or error term. Let us summarize the assumptions being made in this model:
 
-### Exogenous vs. endogenous predictors
+<ol type="a">
+  <li><strong>Linearity:</strong> the conditional mean $E[Y\mid X]=\beta_0+\beta_1X$ is a straight line in $X$.</li>
+  <li><strong>Homoskedasticity:</strong> the conditional variance $\operatorname{var}(Y\mid X)=\sigma^2$ is the same at every value of $X$. </li>
+  <li><strong>Conditional normality:</strong> $Y\mid X$ (equivalently $\epsilon$) is Normally distributed. </li>
+  <li><strong>Exogeneity of $\epsilon$:</strong> $E[\epsilon\mid X]=0$, so after accounting for $X$, the leftover error has mean zero at every value of $X$. A predictor satisfying this is called <span class="term"><a href="https://en.wikipedia.org/wiki/Exogenous_and_endogenous_variables">exogenous</a></span>; if it fails, $X$ is <span class="term"><a href="https://en.wikipedia.org/wiki/Exogenous_and_endogenous_variables">endogenous</a></span>, and $\beta_1$ can no longer be interpreted as the effect of $X$ alone.</li>
+</ol>
 
-For the regression model to describe the conditional expectation correctly, the leftover noise should not still depend systematically on the predictor. A predictor $X$ is <span class="term">[exogenous](https://en.wikipedia.org/wiki/Exogenous_and_endogenous_variables)</span> if $E[\epsilon\mid X]=0$: after accounting for $X$, the remaining error has mean zero at every value of $X$. A predictor is <span class="term">[endogenous](https://en.wikipedia.org/wiki/Exogenous_and_endogenous_variables)</span> if this fails.
-
-Endogeneity often happens when an omitted variable affects both $X$ and $Y$, or when the direction of influence is partly reversed. For now, treat this as an assumption of the regession model. 
+For example, suppose $X$ indicates whether a student attended a study-skills workshop and $Y$ is their exam score. If $X$ is assigned by a coin flip (a randomized trial), then whatever unmeasured factors drive $\epsilon$ are, on average, balanced between the two groups and as a result $E[\epsilon\mid X]=0$.  But if students instead self-select into the workshop, the more motivated or more anxious students may be the ones who choose to attend, so unmeasured motivation is now correlated with $X$, making $X$ endogenous. 
 
 <div class="example" id="ex-diffmeans" markdown="1">
 #### Example (binary predictor: the difference of means)
@@ -604,7 +671,7 @@ $$ \overline{Y\mid X=1} = \frac{1}{N(X=1)}\sum_{i=1}^n Y_i 1_{X_i=1}, $$
 
 where $n$ is the number of samples and $N(X=1)$ counts those with $X_i=1$.
 
-The functions below implement this estimator in code.
+The functions below implement this expressions in code.
 
 ```python
 import numpy as np
@@ -704,5 +771,24 @@ Your final answer should include:
   <li>the difference $\overline{Y\mid X=1}-\overline{Y\mid X=0}$ and the true value of $\beta_1$;</li>
   <li>a plot comparing the simulated $Y$ values in the two groups;</li>
   <li>two sentences explaining what $\beta_0$, $\beta_1$, and $\sigma$ control in this model.</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 2.4 &mdash; Checking the law of total variance by simulation
+
+Let $X$ indicate group membership with $P(X=0)=P(X=1)=0.5$, and suppose
+
+$$ Y\mid X=0 \sim \operatorname{Normal}(50,10^2), \qquad Y\mid X=1 \sim \operatorname{Normal}(70,20^2). $$
+
+Note that, unlike the worked example in [Section 2.1](#sec-2-1), the two conditional variances are **not** equal here.
+
+Write Python code that:
+
+<ol type="a">
+  <li>simulates $N=100{,}000$ samples of $(X,Y)$ from this model;</li>
+  <li>estimates $E[\operatorname{var}(Y\mid X)]$ (within-group) and $\operatorname{var}(E[Y\mid X])$ (between-group) from the simulated data, and adds them together;</li>
+  <li>compares that sum to the sample variance of all of $Y$ taken together, and confirms they closely agree;</li>
+  <li>by hand, computes the exact value of $\operatorname{var}(Y)$ using the law of total variance, and states how closely it matches part (c).</li>
 </ol>
 </div>

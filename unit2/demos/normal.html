@@ -48,7 +48,7 @@
     });
 
     const n = 180;
-    // Two nested bands, so the 68/95 empirical rule from the text is visible
+    // Two nested bands, so the 68/95 bell curve shape from the text is visible
     // directly: the wide band is mu +/- 2 sigma, the inner one mu +/- sigma.
     function band(k, opacity) {
       const lo = Math.max(xDomain[0], mu - k * sigma);
