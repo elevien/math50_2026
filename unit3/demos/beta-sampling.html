@@ -103,7 +103,7 @@
       readout.textContent =
         `Replicates drawn: ${fits.length}. Average of the fitted lines so far: ` +
         `\\(\\hat\\beta_0\\approx${meanB0.toFixed(2)}\\), \\(\\hat\\beta_1\\approx${meanB1.toFixed(2)}\\) ` +
-        `(true values: \\(\\beta_0=${trueB0}\\), \\(\\beta_1=${trueB1}\\)) -- the average fit drifts toward the true line as you draw more, illustrating unbiasedness.`;
+        `(true values: \\(\\beta_0=${trueB0}\\), \\(\\beta_1=${trueB1}\\)).`;
     }
     if (window.MathJax && window.MathJax.typesetPromise) {
       window.MathJax.typesetPromise([readout]);

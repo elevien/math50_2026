@@ -15,7 +15,7 @@ toc:
 
 <div class="unit-overview" markdown="1">
 
-This unit develops the tools needed to estimate regression parameters and quantify their uncertainty. The **Central Limit Theorem** connects the behavior of large random samples to the Normal distribution from Unit 2. We use it to study **estimators** and their properties, including bias, consistency, **standard errors**, and **confidence intervals**, and then fit the **linear regression model** for a general (not just binary) predictor, building on Unit 2's covariance-based slope estimator. Along the way we define the **coefficient of determination** ($R^2$), study **correlation** in more depth, and look at autoregressive models.
+This unit develops the tools needed to estimate regression parameters and quantify their uncertainty. The **Central Limit Theorem** connects the behavior of large random samples to the Normal distribution from Unit 2. We use it to study **estimators** and their properties, including bias, consistency, **standard errors**, and **confidence intervals**. We then study the **least squares estimator** for the regression coefficient in a linear regression model and look at autoregressive models.
 
 #### Concepts
 
@@ -371,25 +371,13 @@ For a Normal model with known $\sigma=2$, find the minimum $n$ so that the appro
 
 ## 3.4 Least squares and estimators for linear regression {#sec-3-4}
 
-Regression models describe input-output relationships: the input is the <span class="term">[predictor](https://en.wikipedia.org/wiki/Dependent_and_independent_variables)</span> ($X$) and the output is the <span class="term">[response variable](https://en.wikipedia.org/wiki/Dependent_and_independent_variables)</span> ($Y$). Recall from Unit 2 that a <span class="term">[linear regression](https://en.wikipedia.org/wiki/Linear_regression) model</span> is
+We now discuss the estimator for the regression coefficient in a single predictor linear regression model. Recall from Unit 2 that a <span class="term">[linear regression](https://en.wikipedia.org/wiki/Linear_regression) model</span> is
 
 $$ Y = \beta_0+\beta_1X+\epsilon,\qquad \epsilon\sim\text{Normal}(0,\sigma^2), $$
 
-or equivalently
+The input is the <span class="term">[predictor](https://en.wikipedia.org/wiki/Dependent_and_independent_variables)</span> ($X$) and the output is the <span class="term">[response variable](https://en.wikipedia.org/wiki/Dependent_and_independent_variables)</span> ($Y$). 
 
-$$ Y\mid X \sim \text{Normal}(\beta_0+\beta_1X,\ \sigma^2). $$
-
-In Unit 2 we only estimated $\beta_1$ by hand, and only for a *binary* predictor, where comparing group means sufficed. Most predictors aren't binary, though, so we need a general way to estimate $\beta_0,\beta_1$ from any $(X,Y)$ data &mdash; that's the goal of this section.
-
-In regression modeling the distribution of the predictor is often left unspecified &mdash; but it's still worth thinking about, since it plays an important role in inference (as we'll see below). For this reason it's often useful to think of a linear regression model as a model of *both* variables:
-
-$$ X \sim \text{some distribution with mean } \mu_X \text{ and variance }\sigma_X^2, \qquad Y\mid X \sim \text{Normal}(\beta_1X+\beta_0,\ \sigma^2). $$
-
-We already saw examples of this with Bernoulli and Normal predictors in Unit 2.
-
-### Covariance (recap)
-
-Recall from [Unit 2](../unit2/#sec-2-3) the <span class="term">[covariance](https://en.wikipedia.org/wiki/Covariance_and_correlation)</span> $\text{cov}(X,Y)=E[XY]-E[X]E[Y]$, and that for any linear regression model, regardless of the distribution of $X$,
+Also recall from [Unit 2](../unit2/#sec-2-3) the <span class="term">[covariance](https://en.wikipedia.org/wiki/Covariance_and_correlation)</span> $\text{cov}(X,Y)=E[XY]-E[X]E[Y]$, and that for any linear regression model, regardless of the distribution of $X$,
 
 $$ \text{cov}(X,Y) = \beta_1\sigma_X^2. $$
 
@@ -405,7 +393,7 @@ Suppose we plot the $(X,Y)$ points. Regardless of where they came from (a Normal
 
 $$ \text{RSS} = \sum_{i=1}^n r_i^2, \qquad r_i = Y_i - (\hat\beta_1X_i+\hat\beta_0). $$
 
-There are many other ways we could draw a line through a set of points; minimizing RSS happens to be the right choice under the assumption that the data come from a linear regression model, as above. In the demo below the vertical segments are the residuals $r_i$: try to fit the line by eye first, then compare against the true minimizer of RSS.
+There are many other ways we could draw a line through a set of points; minimizing RSS happens to be the right choice under the assumption that the data come from a linear regression model, as above. In the demo below the vertical segments are the residuals $r_i$. Try to fit the line by eye first, then compare against the true minimizer of RSS.
 
 {% include_relative demos/rss.html %}
 
