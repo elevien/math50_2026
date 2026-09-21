@@ -29,10 +29,9 @@ Covers [Unit 1]({{ '/unit1/' | relative_url }}) and [Unit 2]({{ '/unit2/' | rela
 - The distribution of $aX+b$, and of a sum of independent Normals.
 - The single-predictor model $Y \mid X \sim \text{Normal}(\beta_0+\beta_1X, \sigma^2)$, its equivalent form $Y = \beta_0+\beta_1X+\epsilon$, and what each parameter controls.
 - For a **binary** predictor, why $\beta_1 = E[Y\mid X{=}1]-E[Y\mid X{=}0]$, and why the difference of group averages estimates it.
-- What it means for a predictor to be **exogenous** or **endogenous**, and why endogeneity makes $\beta_1$ hard to interpret. 
+- Assumptions of linear regression model
 - $\operatorname{cov}(X,Y)=\beta_1\sigma_X^2$ for a general (not necessarily binary) predictor, and the resulting formula for $\hat\beta_1$ from data.
-- The correlation $\rho = \operatorname{cov}(X,Y)/(\sigma_X\sigma_Y) = \beta_1\sigma_X/\sigma_Y$, and **regression to the mean**: why an unusually extreme standardized $X$ predicts a less extreme standardized $Y$ whenever $\lvert\rho\rvert<1$.
-- **Coefficient of determination**: the relationships $\sigma_Y^2 = \beta_1^2\sigma_X^2+\sigma_\epsilon^2$ and $\rho^2 = 1-\sigma_\epsilon^2/\sigma_Y^2$, and its sample estimate $R^2$. You should be able to derive these, not just quote them.
+- The correlation $\rho = \operatorname{cov}(X,Y)/(\sigma_X\sigma_Y) = \beta_1\sigma_X/\sigma_Y$, and **regression to the mean**. 
 
 
 ### Practice problems
