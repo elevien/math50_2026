@@ -2,29 +2,33 @@
 layout: notes
 title: "Unit 2: Expectation, the Normal Distribution & Regression"
 unit_title: "Unit 2"
-unit_subtitle: "Expectation, the Normal distribution, and the conditionally Normal regression model"
+unit_subtitle: "Expectation, the Normal distribution, and single-predictor linear regression model"
 toc:
   - {href: "#sec-2-1", label: "2.1 Expectation & variance"}
   - {href: "#sec-2-2", label: "2.2 The Normal distribution"}
   - {href: "#sec-2-3", label: "2.3 Linear regression: a conditionally Normal model"}
+  - {href: "#sec-2-4", label: "2.4 Coefficient of determination and correlation"}
   - {href: "#problems", label: "Problems"}
 ---
 
 <div class="unit-overview" markdown="1">
 
-In this unit we introduce **expectation**, an operation which takes a random variable and produces a deterministic quantity. The expectation of a random variable can be approximated with **sample averages**, and from them we can infer properties of the model (like its parameters). Much of statistics relies on the basic fact that sample averages approximate expectations, something we will learn more about (when discussing estimators) in Unit 3. Later in the unit we discuss the **Normal distribution** and a probability model built from it: a **linear regression** model. 
+In this unit we introduce **expectation**, an operation which takes a random variable and produces a deterministic quantity. The expectation of a random variable can be approximated with **sample averages**, and from them we can infer properties of the model (like its parameters). We then discuss the **Normal distribution** and a probability model built on the assumptions of conditional normality and linearity; namely, the **linear regression** model.
 
 #### Concepts
 
-Expectation, variance and standard deviation, conditional expectation, empirical averages, coefficient of variation, linearity of expectation, the tower property and the law of total variance, the Normal distribution, standardization, linear transformations and sums of independent Normal random variables, the single-predictor linear regression model, exogenous vs. endogenous predictors.
+Expectation, variance and standard deviation, conditional expectation, empirical averages, coefficient of variation, linearity of expectation, the tower property and the law of total variance, the Normal distribution, standardization, linear transformations and sums of independent Normal random variables, the single-predictor linear regression model, exogenous vs. endogenous predictors, covariance, correlation, regression to the mean, and the coefficient of determination ($R^2$).
 
 #### Things to practice
 
 - Calculate expectations by hand and translate between mathematical definitions and code (on exams you will not be asked to write code, but you may be asked to explain what a few lines of code do).
 - Work with the Normal distribution: standardize a variable, compute probabilities using the bell curve shape (68/95/99.7), and find the distribution of a linear transformation or sum of independent Normal random variables.
 - For a linear regression model with a binary predictor, understand why the regression coefficient is a difference of conditional averages.
+- For a general predictor, relate the regression slope to covariance, and estimate it from data.
 - State the assumptions of a linear regression model and identify (e.g. from plots) when they are violated.
 - Recognize when a predictor may be endogenous, meaning the model's error term may still be related to the predictor.
+- Use the correlation coefficient to explain why extreme values of a predictor go with less extreme predicted responses (regression to the mean).
+- Compute and interpret the coefficient of determination ($R^2$) as the fraction of variance in $Y$ explained by $X$, and relate it to correlation.
 
 </div>
 
@@ -708,6 +712,42 @@ $$ E[XY] = \beta_1\sigma_x^2+\beta_1\mu_x^2+\beta_0\mu_x. $$
 Meanwhile $E[X]E[Y] = \mu_x(\beta_1\mu_x+\beta_0) = \beta_1\mu_x^2+\beta_0\mu_x$. The difference between the two is the extra term $\beta_1\sigma_x^2$, which comes from the variance of $X$.
 </div>
 
+### Covariance and estimating the slope
+
+The quantity $E[XY]-E[X]E[Y]$ from the example above is important enough to have its own name, the <span class="term">[covariance](https://en.wikipedia.org/wiki/Covariance_and_correlation)</span>,
+
+$$ \operatorname{cov}(X,Y) := E[XY]-E[X]E[Y]. $$
+
+(Replacing $Y$ with $X$ recovers the variance: $\operatorname{cov}(X,X)=\operatorname{var}(X)$.) The example above shows that for *any* linear regression model $Y\mid X\sim\text{Normal}(\beta_0+\beta_1X,\sigma^2)$, regardless of the distribution of $X$ (as long as $\operatorname{var}(X)=\sigma_X^2<\infty$),
+
+$$ \operatorname{cov}(X,Y) = \beta_1\sigma_X^2. $$
+
+This is useful because it lets us estimate $\beta_1$ from data $(x_1,y_1),\dots,(x_n,y_n)$ without needing $X$ to be binary:
+
+$$ \hat\beta_1 = \frac{\sum_{i=1}^n (x_i-\bar x)(y_i-\bar y)}{\sum_{i=1}^n (x_i-\bar x)^2}, \qquad \hat\beta_0 = \bar y-\hat\beta_1\bar x. $$
+
+In Python, `np.cov(x, y)[0, 1]` computes the sample covariance and `np.cov(x, y)[0, 0]` the sample variance of `x`, so `np.cov(x, y)[0, 1] / np.cov(x, y)[0, 0]` estimates $\beta_1$ directly. (We'll return to this formula in Unit 3, where it's called the *least squares* estimator.)
+
+### Regression to the mean
+
+Standardizing both variables, $Z_X=(X-\mu_X)/\sigma_X$ and $Z_Y=(Y-\mu_Y)/\sigma_Y$, turns the slope into a unitless quantity
+
+$$ \rho := \frac{\beta_1\sigma_X}{\sigma_Y} = \frac{\operatorname{cov}(X,Y)}{\sigma_X\sigma_Y}, $$
+
+called the <span class="term">[correlation](https://en.wikipedia.org/wiki/Covariance_and_correlation)</span> between $X$ and $Y$ (we'll study its properties, including why $-1\le\rho\le1$, in Unit 3). A short calculation shows $E[Z_Y\mid Z_X]=\rho Z_X$.
+
+Whenever $\lvert\rho\rvert<1$, this means an unusually large $Z_X$ predicts a *less* extreme $Z_Y$ &mdash; shrunk toward $0$ by the factor $\rho$. This is <span class="term">[regression to the mean](https://en.wikipedia.org/wiki/Regression_toward_the_mean)</span>: extreme values of $X$ tend to go with less extreme values of $Y$, on average.
+
+<div class="example" markdown="1">
+#### Example (regression to the mean)
+
+Suppose exam 1 and exam 2 scores, standardized, have correlation $\rho=0.6$.
+
+<u>Question:</u> a student scores $2$ standard deviations above the mean on exam 1. What's their predicted standardized score on exam 2?
+
+<u>Solution:</u> $E[Z_Y\mid Z_X=2] = 0.6 \times 2 = 1.2$. The predicted score is still above average, but less extreme than exam 1's &mdash; not because the student got worse, but because an unusually high score is partly luck, and luck doesn't repeat.
+</div>
+
 <details class="practice-section" markdown="1">
 <summary><h3>Drill</h3></summary>
 
@@ -719,6 +759,95 @@ Suppose $X\in\lbrace 0,1\rbrace$ and
 $$ Y\mid X \sim \operatorname{Normal}(\beta_0+\beta_1X,\sigma^2). $$
 
 Compute $E[Y\mid X=0]$, $E[Y\mid X=1]$, and $E[Y\mid X=1]-E[Y\mid X=0]$. Then explain why the difference of conditional sample averages is a natural estimator of $\beta_1$.
+</div>
+
+<div class="exercise" markdown="1">
+#### Covariance, correlation, and shrinkage
+
+Suppose $\operatorname{var}(X)=4$, $\operatorname{var}(Y)=25$, and $\operatorname{cov}(X,Y)=8$.
+
+<ol type="a">
+  <li>Compute $\beta_1$.</li>
+  <li>Compute the correlation $\rho$.</li>
+  <li>If $X$ is $2$ standard deviations above its mean, what is the predicted standardized value of $Y$?</li>
+</ol>
+</div>
+
+</details>
+
+## 2.4 Coefficient of determination and correlation {#sec-2-4}
+
+### Coefficient of determination
+
+In most applications the goal of regression modeling is to predict $Y$ from $X$, so it's natural to look for a metric of how well these predictions can be made. Think about the best-case scenario: $\sigma_\epsilon=0$ (and $\beta_1\ne 0$), so $Y$ is *deterministic* given $X$. Here $\sigma_\epsilon$ is the same noise standard deviation $\sigma$ from the model definition above, written with a subscript now that we also need to talk about $\sigma_X$ and $\sigma_Y$ in the same breath. Predictions get worse as $\sigma_\epsilon$ grows, since $\sigma_\epsilon$ measures the variability in $Y$ for a *fixed* $X$ &mdash; but large relative to what? $\sigma_\epsilon^2$ has the units of $Y$ *squared*, so we should compare it to something with those same units: the marginal variance $\sigma_Y^2=\text{var}(Y)$. Note (check this yourself!) that
+
+$$ \sigma_Y^2 = \beta_1^2\sigma_X^2+\sigma_\epsilon^2 \ge \sigma_\epsilon^2, $$
+
+i.e. the total variance in $Y$ splits into variation from $\epsilon$ (factors unrelated to $X$) and $\beta_1^2\sigma_X^2$ (the spread in $X$, weighted by the squared slope). This is actually a special case of the law of total variance from [Section 2.1](#sec-2-1). (Check this as well!)
+
+This motivates the <span class="term">[coefficient of determination](https://en.wikipedia.org/wiki/Coefficient_of_determination)</span>,
+
+$$ \rho^2 = 1-\frac{\sigma_\epsilon^2}{\sigma_Y^2} = 1-\frac{\text{var}(Y\mid X)}{\text{var}(Y)}, $$
+
+which lies between $0$ and $1$. When $\rho^2=1$, essentially all the variation in $Y$ comes from variation in $X$. When $\rho^2=0$ (i.e. $\sigma_\epsilon^2=\sigma_Y^2$), knowing $X$ doesn't change how variable $Y$ is &mdash; all the variation in $Y$ is due to something other than $X$.
+
+The sample estimate of $\rho^2$ is denoted $R^2$:
+
+$$ R^2 = 1-\frac{\sum_{i=1}^n r_i^2}{\sum_{i=1}^n (Y_i-\overline Y)^2}, $$
+
+which should make sense as the natural estimator, given the definition above.
+
+### Correlation
+
+[Section 2.3](#sec-2-3) already introduced the correlation coefficient $\rho=\beta_1\sigma_X/\sigma_Y=\operatorname{cov}(X,Y)/(\sigma_X\sigma_Y)$ to explain regression to the mean. Here's a more careful derivation, which also shows why it matches the $\rho^2$ defined above. Standardize the predictor and response,
+
+$$ Z_X = \frac{X-\mu_X}{\sigma_X}, \qquad Z_Y = \frac{Y-\mu_Y}{\sigma_Y}. $$
+
+This is natural since we want a dimensionless measure of association. Since $\mu_Y=\beta_0+\beta_1\mu_X$,
+
+$$ Z_Y = \frac{\beta_0+\beta_1X+\epsilon-\mu_Y}{\sigma_Y} = \frac{\beta_1(X-\mu_X)}{\sigma_Y}+\frac{\epsilon}{\sigma_Y} = \frac{\beta_1\sigma_X}{\sigma_Y}Z_X + \frac{\epsilon}{\sigma_Y}, $$
+
+so
+
+$$ Z_Y\mid Z_X \sim \text{Normal}\Big(\frac{\beta_1\sigma_X}{\sigma_Y}Z_X,\ \frac{\sigma_\epsilon^2}{\sigma_Y^2}\Big). $$
+
+This is a simple regression of $Z_Y$ on $Z_X$ with slope $b=\beta_1\sigma_X/\sigma_Y$, representing the expected change (in standard deviations of $Y$) associated with a one-standard-deviation change in $X$.
+
+This motivates defining the <span class="term">[correlation](https://en.wikipedia.org/wiki/Covariance_and_correlation) coefficient</span> $\rho$ as this slope:
+
+$$ \rho := b = \frac{\beta_1\sigma_X}{\sigma_Y}. $$
+
+Using $\text{cov}(X,Y)=\beta_1\sigma_X^2$ from [Section 2.3](#sec-2-3),
+
+$$ \rho = \frac{\beta_1\sigma_X}{\sigma_Y} = \frac{\text{cov}(X,Y)}{\sigma_X\sigma_Y}. $$
+
+It's usually this last formula that's taken as the *definition* of correlation, since it applies to any two random variables and doesn't require an underlying regression model. Notice that if $X,Y$ both already have standard deviation $1$, correlation and covariance coincide. The <span class="term">[Cauchy&ndash;Schwarz inequality](https://en.wikipedia.org/wiki/Cauchy%E2%80%93Schwarz_inequality)</span> guarantees $-1\le\rho\le 1$.
+
+To see this is the same $\rho^2$ as before, recall $\sigma_Y^2=\beta_1^2\sigma_X^2+\sigma_\epsilon^2$, so
+
+$$ \rho^2 = \frac{\beta_1^2\sigma_X^2}{\sigma_Y^2} = \frac{\sigma_Y^2-\sigma_\epsilon^2}{\sigma_Y^2}, $$
+
+matching the definition above. So standardizing and computing a unitless regression slope leads to the same measure of association as comparing conditional to marginal variance.
+
+<details class="practice-section" markdown="1">
+<summary><h3>Drill</h3></summary>
+
+<div class="exercise" markdown="1">
+#### Linear regression model parameters
+
+Suppose that for a fitted linear regression model, $\hat\beta_1=1/2$, $\hat\sigma_\epsilon=1$, and $\sigma_X^2=4$. Estimate $R^2$.
+</div>
+
+<div class="exercise" markdown="1">
+#### Correlation and units
+
+Suppose $X$ has standard deviation $10$, $Y$ has standard deviation $4$, and $\operatorname{cov}(X,Y)=20$.
+
+<ol type="a">
+  <li>Compute the correlation $\rho$.</li>
+  <li>Compute the slope of the regression of $Y$ on $X$.</li>
+  <li>Explain why correlation has no units but the regression slope does.</li>
+</ol>
 </div>
 
 </details>

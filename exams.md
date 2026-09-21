@@ -9,7 +9,7 @@ There are **two midterms** this term, each taking half of a class period, plus a
 
 ## Midterm 1
 
-Covers [Unit 1]({{ '/unit1/' | relative_url }}) and [Unit 2]({{ '/unit2/' | relative_url }}) &mdash; everything through Section 2.3.
+Covers [Unit 1]({{ '/unit1/' | relative_url }}) and [Unit 2]({{ '/unit2/' | relative_url }}) &mdash; everything through Section 2.4.
 
 ### What you need to know
 
@@ -30,6 +30,9 @@ Covers [Unit 1]({{ '/unit1/' | relative_url }}) and [Unit 2]({{ '/unit2/' | rela
 - The single-predictor model $Y \mid X \sim \text{Normal}(\beta_0+\beta_1X, \sigma^2)$, its equivalent form $Y = \beta_0+\beta_1X+\epsilon$, and what each parameter controls.
 - For a **binary** predictor, why $\beta_1 = E[Y\mid X{=}1]-E[Y\mid X{=}0]$, and why the difference of group averages estimates it.
 - What it means for a predictor to be **exogenous** or **endogenous**, and why endogeneity makes $\beta_1$ hard to interpret. 
+- $\operatorname{cov}(X,Y)=\beta_1\sigma_X^2$ for a general (not necessarily binary) predictor, and the resulting formula for $\hat\beta_1$ from data.
+- The correlation $\rho = \operatorname{cov}(X,Y)/(\sigma_X\sigma_Y) = \beta_1\sigma_X/\sigma_Y$, and **regression to the mean**: why an unusually extreme standardized $X$ predicts a less extreme standardized $Y$ whenever $\lvert\rho\rvert<1$.
+- **Coefficient of determination**: the relationships $\sigma_Y^2 = \beta_1^2\sigma_X^2+\sigma_\epsilon^2$ and $\rho^2 = 1-\sigma_\epsilon^2/\sigma_Y^2$, and its sample estimate $R^2$. You should be able to derive these, not just quote them.
 
 
 ### Practice problems
@@ -187,6 +190,17 @@ print(result)
 1. What is `result` an estimate of, in terms of $\beta_0$ and $\beta_1$?
 </div>
 
+<div class="exercise" markdown="1">
+#### Problem 12
+
+Suppose $X \sim \text{Normal}(\mu_X, 4)$ and $Y \mid X \sim \text{Normal}(\beta_0+3X,\ 64)$.
+
+1. Compute $\operatorname{cov}(X,Y)$.
+1. Compute $\operatorname{var}(Y)$.
+1. Compute the correlation $\rho$ between $X$ and $Y$.
+1. If $X$ is $2$ standard deviations above its mean, what is the predicted standardized value of $Y$? What phenomenon does this illustrate?
+</div>
+
 
 ---
 
@@ -206,9 +220,8 @@ Midterm 2 is not cumulative in the sense of having questions focusing on Unit 1 
 - **Bias** and **consistency**. Given a simple estimator, decide whether it is unbiased and whether it is consistent, and be able to construct an estimator that is one but not the other.
 - **Standard error** $\text{se}(\hat\mu)=\sigma/\sqrt N$, and why we usually substitute $\hat\sigma$.
 - **Confidence intervals**: compute a 95% CI, solve for the $n$ needed to hit a target width, and state the correct interpretation &mdash; and why it is *not* "there is a 95% chance $\theta$ lies in this interval."
-- Least squares: what RSS is, and that $\hat\beta_1,\hat\beta_0$ minimize it.
-- $\operatorname{cov}(X,Y)=\beta_1\sigma_X^2$, and estimating the slope and intercept from data by hand for a small dataset.
-- **Coefficient of determination** and **correlation**: the relationships $\rho = \operatorname{cov}(X,Y)/(\sigma_X\sigma_Y)$, $\rho = \beta_1\sigma_X/\sigma_Y$, $\sigma_Y^2 = \beta_1^2\sigma_X^2+\sigma_\epsilon^2$ and $\rho^2 = 1-\sigma_\epsilon^2/\sigma_Y^2$. You should be able to derive these, not just quote them.
+- Least squares: what RSS is, that $\hat\beta_1,\hat\beta_0$ (from Unit 2's covariance formula) minimize it, and estimating the slope and intercept from data by hand for a small dataset.
+- **Sample distribution of $\hat\beta_1,\hat\beta_0$**: treating the $x_i$ as fixed, write $\hat\beta_1$ as a weighted sum $\sum_i w_iY_i$ of the (random) $Y_i$, and show it is **unbiased** ($E[\hat\beta_1]=\beta_1$).
 
 **Unit 4**
 

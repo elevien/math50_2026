@@ -1,25 +1,25 @@
 ---
 layout: notes
-title: "Unit 3: The Inverse Problem for Regression"
+title: "Unit 3: Estimators, and uncertainty Quantification for single-Predictor Regression"
 unit_title: "Unit 3"
 unit_subtitle: "The CLT, uncertainty quantification, and single-predictor regression"
 toc:
   - {href: "#sec-3-1", label: "3.1 The LLN & the CLT"}
   - {href: "#sec-3-2", label: "3.2 Estimators, bias & consistency"}
   - {href: "#sec-3-3", label: "3.3 Confidence intervals"}
-  - {href: "#sec-3-4", label: "3.4 The inverse problem for a linear model"}
-  - {href: "#sec-3-5", label: "3.5 Coefficient of determination & correlation"}
+  - {href: "#sec-3-4", label: "3.4 Least squares and estimators for linear regression"}
+  - {href: "#sec-3-5", label: "3.5 Autoregressive models and the Hurwicz bias"}
   - {href: "#sec-3-6", label: "3.6 Hypothesis testing"}
   - {href: "#problems", label: "Problems"}
 ---
 
 <div class="unit-overview" markdown="1">
 
-This unit develops the tools needed to estimate regression parameters and quantify their uncertainty. The **Central Limit Theorem** connects the behavior of large random samples to the Normal distribution from Unit 2. We use it to study **estimators** and their properties, including bias, consistency, **standard errors**, and **confidence intervals**, and then fit the **linear regression model** for a general (not just binary) predictor. Along the way we introduce **covariance**, the **coefficient of determination** ($R^2$), **correlation**, and **regression to the mean**.
+This unit develops the tools needed to estimate regression parameters and quantify their uncertainty. The **Central Limit Theorem** connects the behavior of large random samples to the Normal distribution from Unit 2. We use it to study **estimators** and their properties, including bias, consistency, **standard errors**, and **confidence intervals**, and then fit the **linear regression model** for a general (not just binary) predictor, building on Unit 2's covariance-based slope estimator. Along the way we define the **coefficient of determination** ($R^2$), study **correlation** in more depth, and look at autoregressive models.
 
 #### Concepts
 
-The law of large numbers, the Central Limit Theorem, estimators, sample distributions, bias and consistency, standard errors, confidence intervals, the bias-variance decomposition, fitting the single-predictor linear regression model via least squares, covariance, the coefficient of determination, correlation and their relationship to the regression slope, regression to the mean, autoregressive models and the Hurwicz bias, and hypothesis testing and $p$-values for regression models.
+The law of large numbers, the Central Limit Theorem, estimators, sample distributions, bias and consistency, standard errors, confidence intervals, the bias-variance decomposition, fitting the single-predictor linear regression model via least squares, the coefficient of determination, correlation and their relationship to the regression slope, autoregressive models and the Hurwicz bias, and hypothesis testing and $p$-values for regression models.
 
 #### Things to practice
 
@@ -369,7 +369,7 @@ For a Normal model with known $\sigma=2$, find the minimum $n$ so that the appro
 
 </details>
 
-## 3.4 The inverse problem for a linear model {#sec-3-4}
+## 3.4 Least squares and estimators for linear regression {#sec-3-4}
 
 Regression models describe input-output relationships: the input is the <span class="term">[predictor](https://en.wikipedia.org/wiki/Dependent_and_independent_variables)</span> ($X$) and the output is the <span class="term">[response variable](https://en.wikipedia.org/wiki/Dependent_and_independent_variables)</span> ($Y$). Recall from Unit 2 that a <span class="term">[linear regression](https://en.wikipedia.org/wiki/Linear_regression) model</span> is
 
@@ -387,37 +387,17 @@ $$ X \sim \text{some distribution with mean } \mu_X \text{ and variance }\sigma_
 
 We already saw examples of this with Bernoulli and Normal predictors in Unit 2.
 
-### Covariance
+### Covariance (recap)
 
-The setup above motivates the <span class="term">[covariance](https://en.wikipedia.org/wiki/Covariance_and_correlation)</span>,
+Recall from [Unit 2](../unit2/#sec-2-3) the <span class="term">[covariance](https://en.wikipedia.org/wiki/Covariance_and_correlation)</span> $\text{cov}(X,Y)=E[XY]-E[X]E[Y]$, and that for any linear regression model, regardless of the distribution of $X$,
 
-$$ \text{cov}(X,Y) = E[XY]-E[X]E[Y]. $$
+$$ \text{cov}(X,Y) = \beta_1\sigma_X^2. $$
 
-Equivalently,
+This gave us a way to *estimate* the slope from samples $(x_1,y_1),\dots,(x_n,y_n)$, without needing $X$ to be binary:
 
-$$ E\big[(Y-E[Y])(X-E[X])\big] = E[XY]-2E[X]E[Y]+E[X]E[Y] = \text{cov}(X,Y), $$
+$$ \hat\beta_1 = \frac{\sum_{i=1}^n (x_i-\bar X)(y_i-\bar Y)}{\sum_{i=1}^n (x_i-\bar X)^2}, \qquad \hat\beta_0 = \overline Y - \hat\beta_1\overline X. $$
 
-so replacing $Y$ with $X$ recovers the variance.
-
-Recall $E[X^2] = \text{var}(X)+E[X]^2 = \sigma_X^2+\mu_X^2$. For any linear regression model,
-
-$$ E[XY] = E\big[X\,E[Y\mid X]\big] = E\big[X(\beta_1X+\beta_0)\big] = \beta_1E[X^2]+\beta_0E[X] = \beta_1\sigma_X^2+\beta_1\mu_X^2+\beta_0\mu_X, $$
-
-and $E[Y]=\beta_1\mu_X+\beta_0$, so
-
-$$ \text{cov}(X,Y) = \beta_1\sigma_X^2, $$
-
-regardless of the distribution of $X$ (as long as $\sigma_X^2<\infty$).
-
-This is a crucial observation: covariance relates the slope $\beta_1$ to averages over $X$ and $Y$ &mdash; giving us a way to *estimate* the slope from samples $(x_1,y_1),\dots,(x_n,y_n)$:
-
-$$ \beta_1 \approx \frac{\sum_{i=1}^n (x_i-\bar X)(y_i-\bar Y)}{\sum_{i=1}^n (x_i-\bar X)^2}. $$
-
-In Python, `np.cov(x,y)[0,1]` computes the sample covariance and `np.cov(x,y)[0,0]` computes the sample variance of $x$, so the slope estimate is `np.cov(x,y)[0,1] / np.cov(x,y)[0,0]`. The covariance matrix is $2\times2$: its off-diagonal entries are covariances and its diagonal entries are variances.
-
-We can also estimate $\beta_0$: from $E[Y]=\beta_1\mu_X+\beta_0$,
-
-$$ \beta_0 = E[Y]-\beta_1\mu_X \approx \hat\beta_0 = \overline Y - \hat\beta_1\overline X. $$
+In Python, `np.cov(x,y)[0,1] / np.cov(x,y)[0,0]` computes $\hat\beta_1$ directly.
 
 ### Least squares interpretation
 
@@ -473,77 +453,43 @@ Now add a new data point $(X_6,Y_6)=(100,3)$ to the dataset above. Explain, with
 
 </details>
 
-## 3.5 Coefficient of determination & correlation {#sec-3-5}
+### Sample distribution of the estimator
 
-### Coefficient of determination
+$\hat\beta_1$ and $\hat\beta_0$ are computed from random data, so they are themselves random variables: if we collected a new dataset (same $x$ values, new draws of $Y$), we'd get slightly different estimates. This is the same idea as the sample distribution of $\overline Y$ from [Section 3.2](#sec-3-2), now applied to the regression slope.
 
-In most applications the goal of regression modeling is to predict $Y$ from $X$, so it's natural to look for a metric of how well these predictions can be made. Think about the best-case scenario: $\sigma_\epsilon=0$ (and $\beta_1\ne 0$), so $Y$ is *deterministic* given $X$. Here $\sigma_\epsilon$ is the same noise standard deviation $\sigma$ from the model definition above, written with a subscript now that we also need to talk about $\sigma_X$ and $\sigma_Y$ in the same breath. Predictions get worse as $\sigma_\epsilon$ grows, since $\sigma_\epsilon$ measures the variability in $Y$ for a *fixed* $X$ &mdash; but large relative to what? $\sigma_\epsilon^2$ has the units of $Y$ *squared*, so we should compare it to something with those same units: the marginal variance $\sigma_Y^2=\text{var}(Y)$. Note (check this yourself!) that
+To study this, we condition on the observed predictor values $x_1,\dots,x_n$, treating them as fixed constants &mdash; only the $Y_i$ are random. Writing $S_{xx}=\sum_{i=1}^n(x_i-\bar x)^2$, we can rewrite $\hat\beta_1$ as a weighted sum of the $Y_i$:
 
-$$ \sigma_Y^2 = \beta_1^2\sigma_X^2+\sigma_\epsilon^2 \ge \sigma_\epsilon^2, $$
+$$ \hat\beta_1 = \sum_{i=1}^n (x_i-\bar x)(Y_i-\bar Y)\big/S_{xx} = \sum_{i=1}^n w_iY_i, \qquad w_i = \frac{x_i-\bar x}{S_{xx}}, $$
 
-i.e. the total variance in $Y$ splits into variation from $\epsilon$ (factors unrelated to $X$) and $\beta_1^2\sigma_X^2$ (the spread in $X$, weighted by the squared slope).
+using $\sum_i w_i(Y_i-\bar Y) = \sum_i w_iY_i - \bar Y\sum_i w_i = \sum_i w_iY_i$, since $\sum_i w_i=\sum_i(x_i-\bar x)/S_{xx}=0$.
 
-This motivates the <span class="term">[coefficient of determination](https://en.wikipedia.org/wiki/Coefficient_of_determination)</span>,
+<div class="example" markdown="1">
+#### Example (unbiasedness of the slope estimator)
 
-$$ \rho^2 = 1-\frac{\sigma_\epsilon^2}{\sigma_Y^2} = 1-\frac{\text{var}(Y\mid X)}{\text{var}(Y)}, $$
+<u>Question:</u> show that $\hat\beta_1$ is unbiased, i.e. $E[\hat\beta_1]=\beta_1$.
 
-which lies between $0$ and $1$. When $\rho^2=1$, essentially all the variation in $Y$ comes from variation in $X$. When $\rho^2=0$ (i.e. $\sigma_\epsilon^2=\sigma_Y^2$), knowing $X$ doesn't change how variable $Y$ is &mdash; all the variation in $Y$ is due to something other than $X$.
+<u>Solution:</u> since $x_i$ is fixed, $E[Y_i]=\beta_0+\beta_1x_i$. By linearity,
 
-The sample estimate of $\rho^2$ is denoted $R^2$:
+$$ E[\hat\beta_1] = \sum_{i=1}^n w_iE[Y_i] = \sum_{i=1}^n w_i(\beta_0+\beta_1x_i) = \beta_0\underbrace{\sum_i w_i}_{=0} + \beta_1\underbrace{\sum_i w_ix_i}_{=1}, $$
 
-$$ R^2 = 1-\frac{\sum_{i=1}^n r_i^2}{\sum_{i=1}^n (Y_i-\overline Y)^2}, $$
+where $\sum_i w_ix_i=1$ because $\sum_i(x_i-\bar x)x_i = \sum_i(x_i-\bar x)^2+\bar x\sum_i(x_i-\bar x) = S_{xx}$, so $\sum_i w_ix_i = S_{xx}/S_{xx}=1$. Therefore
 
-which should make sense as the natural estimator, given the definition above.
+$$ E[\hat\beta_1] = \beta_1. $$
 
-### Correlation
+Across hypothetical repeated datasets with the same $x$'s, $\hat\beta_1$ is correct *on average*. (The same argument shows $E[\hat\beta_0]=\beta_0$.) One can similarly show $\operatorname{var}(\hat\beta_1) = \sigma^2/S_{xx}$ (we won't derive this): the more spread out the $x$'s, or the more data we have, the tighter the sample distribution of $\hat\beta_1$ is around $\beta_1$.
+</div>
 
-There's another route to $\rho^2$: standardize the predictor and response,
+The demo below makes this concrete: the predictor values $x_1,\dots,x_n$ are fixed once and for all, and each click draws a *new* set of $Y_i$'s from the model and refits $\hat\beta_0,\hat\beta_1$. Every thin line is one hypothetical dataset's fitted line; the thick line is the true regression line. The cloud of fitted lines *is* the sample distribution of $(\hat\beta_0,\hat\beta_1)$, made visible.
 
-$$ Z_X = \frac{X-\mu_X}{\sigma_X}, \qquad Z_Y = \frac{Y-\mu_Y}{\sigma_Y}. $$
+{% include_relative demos/beta-sampling.html %}
 
-This is natural since we want a dimensionless measure of association. Since $\mu_Y=\beta_0+\beta_1\mu_X$,
-
-$$ Z_Y = \frac{\beta_0+\beta_1X+\epsilon-\mu_Y}{\sigma_Y} = \frac{\beta_1(X-\mu_X)}{\sigma_Y}+\frac{\epsilon}{\sigma_Y} = \frac{\beta_1\sigma_X}{\sigma_Y}Z_X + \frac{\epsilon}{\sigma_Y}, $$
-
-so
-
-$$ Z_Y\mid Z_X \sim \text{Normal}\Big(\frac{\beta_1\sigma_X}{\sigma_Y}Z_X,\ \frac{\sigma_\epsilon^2}{\sigma_Y^2}\Big). $$
-
-This is a simple regression of $Z_Y$ on $Z_X$ with slope $b=\beta_1\sigma_X/\sigma_Y$, representing the expected change (in standard deviations of $Y$) associated with a one-standard-deviation change in $X$.
-
-This motivates defining the <span class="term">[correlation](https://en.wikipedia.org/wiki/Covariance_and_correlation) coefficient</span> $\rho$ as this slope:
-
-$$ \rho := b = \frac{\beta_1\sigma_X}{\sigma_Y}. $$
-
-Using $\text{cov}(X,Y)=\beta_1\sigma_X^2$ from above,
-
-$$ \rho = \frac{\beta_1\sigma_X}{\sigma_Y} = \frac{\text{cov}(X,Y)}{\sigma_X\sigma_Y}. $$
-
-It's usually this last formula that's taken as the *definition* of correlation, since it applies to any two random variables and doesn't require an underlying regression model. Notice that if $X,Y$ both already have standard deviation $1$, correlation and covariance coincide. The <span class="term">[Cauchy&ndash;Schwarz inequality](https://en.wikipedia.org/wiki/Cauchy%E2%80%93Schwarz_inequality)</span> guarantees $-1\le\rho\le 1$.
-
-To see this is the same $\rho^2$ as before, recall $\sigma_Y^2=\beta_1^2\sigma_X^2+\sigma_\epsilon^2$, so
-
-$$ \rho^2 = \frac{\beta_1^2\sigma_X^2}{\sigma_Y^2} = \frac{\sigma_Y^2-\sigma_\epsilon^2}{\sigma_Y^2}, $$
-
-matching the definition above. So standardizing and computing a unitless regression slope leads to the same measure of association as comparing conditional to marginal variance.
-
-### Regression to the mean
-
-Consider two standardized random variables $X,Y$ (mean $0$, variance $1$), with
-
-$$ Y\mid X \sim \text{Normal}(\rho X,\ 1-\rho^2), \qquad -1\le\rho\le 1. $$
-
-Since $X$ and $Y$ share the same marginal distribution, $E[Y\mid X]=\rho X$. This implies <span class="term">[regression to the mean](https://en.wikipedia.org/wiki/Regression_toward_the_mean)</span>: if $X$ takes an unusually large value, $E[Y\mid X]$ is closer to $0$ than $X$ itself is, provided $\lvert\rho\rvert<1$ &mdash; when correlation isn't perfect, extreme values of $X$ tend to go with less extreme values of $Y$, on average. Concretely: when $X$ is above its mean, $E[Y\mid X]$ is also above the mean but shrunk toward it by a factor $\rho$; when $X$ is below the mean, the same happens in reverse.
-
-This arises naturally in linear regression and is central to understanding correlated variables in standardized units. As discussed in class, another way to think about it: once everything is standardized, if something is unusually up, it tends to come back down; if it's unusually down, it tends to come back up &mdash; the general phenomenon of "regression."
-
-### Autoregressive models and the Hurwicz bias
+## 3.5 Autoregressive models and the Hurwicz bias {#sec-3-5}
 
 Many real variables depend on their own recent past &mdash; today's stock price on yesterday's, this month's inflation rate on last month's. A simple model for this is an <span class="term">[autoregressive model](https://en.wikipedia.org/wiki/Autoregressive_model)</span> of order 1, written AR(1):
 
 $$ Y_t = \rho\, Y_{t-1} + \epsilon_t, \qquad \epsilon_t \text{ iid with mean } 0,\ t=1,\dots,T. $$
 
-This is the same shrinkage relationship as above, with the predictor $X=Y_{t-1}$: whenever $\lvert\rho\rvert<1$, each observation is a shrunk, noisy copy of the one before it, so the series keeps "regressing to the mean" one step at a time.
+This is the same shrinkage relationship behind Unit 2's regression to the mean, with the predictor $X=Y_{t-1}$: whenever $\lvert\rho\rvert<1$, each observation is a shrunk, noisy copy of the one before it, so the series keeps "regressing to the mean" one step at a time.
 
 It's tempting to estimate $\rho$ the way we'd estimate any regression slope: run least squares of $Y_t$ on $Y_{t-1}$ over the $T-1$ consecutive pairs. But here the predictor $Y_{t-1}$ isn't handed to us from outside the model &mdash; it was generated by the same noise process one step earlier, so it's correlated with the rest of the series in a way an ordinary exogenous predictor isn't. This breaks the assumption behind least squares and introduces a systematic *downward* bias in $\hat\rho$ in any finite sample: on average, $\hat\rho$ underestimates $\rho$, making the series look less persistent than it really is. This is the **Hurwicz bias**, after Leonid Hurwicz's 1950 demonstration that ordinary least squares is biased in this setting. The estimator is still consistent &mdash; the bias shrinks to $0$ as $T\to\infty$ &mdash; but for the short series common in practice (a few dozen quarters of economic data, say) it can matter.
 
@@ -584,35 +530,6 @@ which prints
 
 At every $T$ the average estimate falls short of the true $\rho=0.6$, and the gap shrinks as $T$ grows: $\hat\rho$ is biased downward in any finite sample, but consistent.
 </div>
-
-<details class="practice-section" markdown="1">
-<summary><h3>Drill</h3></summary>
-
-<div class="exercise" markdown="1">
-#### Linear regression model parameters
-
-Suppose that for a fitted linear regression model, $\hat\beta_1=1/2$, $\hat\sigma_\epsilon=1$, and $\sigma_X^2=4$. Estimate $R^2$.
-</div>
-
-<div class="exercise" markdown="1">
-#### Correlation and units
-
-Suppose $X$ has standard deviation $10$, $Y$ has standard deviation $4$, and $\operatorname{cov}(X,Y)=20$.
-
-<ol type="a">
-  <li>Compute the correlation $\rho$.</li>
-  <li>Compute the slope of the regression of $Y$ on $X$.</li>
-  <li>Explain why correlation has no units but the regression slope does.</li>
-</ol>
-</div>
-
-<div class="exercise" markdown="1">
-#### Regression to the mean
-
-Let $X$ and $Y$ be standardized with correlation $\rho=0.6$. If $X=2$, compute $E[Y\mid X=2]$ and explain the phrase "regression to the mean" in this example.
-</div>
-
-</details>
 
 <details class="optional-section" id="sec-3-6" open markdown="1">
 <summary><h2>3.6 Hypothesis testing</h2></summary>

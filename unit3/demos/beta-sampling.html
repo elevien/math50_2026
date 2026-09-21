@@ -1,0 +1,128 @@
+<div class="demo" id="demo-beta-sampling">
+  <div class="demo-label">Interactive demo</div>
+  <h4>The sample distribution of $\hat\beta_0,\hat\beta_1$: fixed predictors, resampled $Y$</h4>
+  <div class="demo-controls">
+    <button id="beta-draw">Draw a new sample of $Y$ and refit</button>
+    <button id="beta-reset">Reset</button>
+  </div>
+  <svg id="beta-chart"></svg>
+  <p id="beta-readout" style="font-size:13px;color:#565a4e;margin-top:6px;"></p>
+</div>
+
+<script>
+(function () {
+  const chart = document.getElementById('beta-chart');
+  const readout = document.getElementById('beta-readout');
+
+  // The predictor values are fixed once and never resampled.
+  const n = 15;
+  const xs = Array.from({ length: n }, (_, i) => (i / (n - 1)) * 10);
+  const trueB0 = 2, trueB1 = 1.5, sigma = 2.5;
+
+  const xDomain = [-0.5, 10.5];
+  const yDomain = [-10, 30];
+  const width = 480, height = 300;
+  const margin = { top: 12, right: 12, bottom: 30, left: 34 };
+  const innerW = width - margin.left - margin.right;
+  const innerH = height - margin.top - margin.bottom;
+  const xToPx = (x) => ((x - xDomain[0]) / (xDomain[1] - xDomain[0])) * innerW;
+  const yToPx = (y) => innerH - ((y - yDomain[0]) / (yDomain[1] - yDomain[0])) * innerH;
+
+  let fits = []; // { slope, intercept }
+  let lastY = null;
+
+  function fitOnce() {
+    const ys = xs.map((x) => trueB0 + trueB1 * x + NotesUtils.gaussianRandom(0, sigma));
+    const xBar = NotesUtils.mean(xs), yBar = NotesUtils.mean(ys);
+    let num = 0, den = 0;
+    xs.forEach((x, i) => { num += (x - xBar) * (ys[i] - yBar); den += (x - xBar) ** 2; });
+    const slope = num / den;
+    const intercept = yBar - slope * xBar;
+    lastY = ys;
+    return { slope, intercept };
+  }
+
+  function linePx(slope, intercept) {
+    const [x0, x1] = xDomain;
+    return { x1: xToPx(x0), y1: yToPx(slope * x0 + intercept), x2: xToPx(x1), y2: yToPx(slope * x1 + intercept) };
+  }
+
+  function render() {
+    NotesUtils.clear(chart);
+    chart.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    chart.setAttribute('width', '100%');
+    const g = NotesUtils.svg('g', { transform: `translate(${margin.left},${margin.top})` });
+    chart.appendChild(g);
+
+    g.appendChild(NotesUtils.svg('line', { x1: 0, y1: innerH, x2: innerW, y2: innerH, stroke: '#9b9e91' }));
+    g.appendChild(NotesUtils.svg('line', { x1: 0, y1: 0, x2: 0, y2: innerH, stroke: '#9b9e91' }));
+
+    for (let i = 0; i <= 4; i++) {
+      const v = yDomain[0] + ((yDomain[1] - yDomain[0]) * i) / 4;
+      const y = yToPx(v);
+      g.appendChild(NotesUtils.svg('line', { x1: -4, y1: y, x2: innerW, y2: y, stroke: '#efebe2' }));
+      const label = NotesUtils.svg('text', { x: -8, y: y + 3, 'text-anchor': 'end', 'font-size': 10, fill: '#7c7f72' });
+      label.textContent = v.toFixed(0);
+      g.appendChild(label);
+    }
+    for (let i = 0; i <= 5; i++) {
+      const v = xDomain[0] + ((xDomain[1] - xDomain[0]) * i) / 5;
+      const x = xToPx(v);
+      const label = NotesUtils.svg('text', { x, y: innerH + 16, 'text-anchor': 'middle', 'font-size': 10, fill: '#7c7f72' });
+      label.textContent = v.toFixed(0);
+      g.appendChild(label);
+    }
+
+    // every past fit: a thin, semi-transparent line -- this cloud of lines
+    // *is* the sample distribution of (beta0-hat, beta1-hat)
+    fits.forEach((f) => {
+      g.appendChild(NotesUtils.svg('line', Object.assign(linePx(f.slope, f.intercept), {
+        stroke: '#1f5a6b', 'stroke-width': 1, opacity: 0.25,
+      })));
+    });
+
+    // the current sample's points
+    if (lastY) {
+      xs.forEach((x, i) => {
+        g.appendChild(NotesUtils.svg('circle', { cx: xToPx(x), cy: yToPx(lastY[i]), r: 3, fill: '#3a3a34', opacity: 0.7 }));
+      });
+    }
+
+    // the true regression line, on top
+    g.appendChild(NotesUtils.svg('line', Object.assign(linePx(trueB1, trueB0), {
+      stroke: '#b0392a', 'stroke-width': 2.5,
+    })));
+  }
+
+  function updateReadout() {
+    if (fits.length === 0) {
+      readout.textContent = `True line: \\(\\beta_0=${trueB0}\\), \\(\\beta_1=${trueB1}\\). Click the button to draw one hypothetical dataset (same $x$'s, new $Y$'s) and see its fitted line.`;
+    } else {
+      const meanB0 = NotesUtils.mean(fits.map((f) => f.intercept));
+      const meanB1 = NotesUtils.mean(fits.map((f) => f.slope));
+      readout.textContent =
+        `Replicates drawn: ${fits.length}. Average of the fitted lines so far: ` +
+        `\\(\\hat\\beta_0\\approx${meanB0.toFixed(2)}\\), \\(\\hat\\beta_1\\approx${meanB1.toFixed(2)}\\) ` +
+        `(true values: \\(\\beta_0=${trueB0}\\), \\(\\beta_1=${trueB1}\\)) -- the average fit drifts toward the true line as you draw more, illustrating unbiasedness.`;
+    }
+    if (window.MathJax && window.MathJax.typesetPromise) {
+      window.MathJax.typesetPromise([readout]);
+    }
+  }
+
+  document.getElementById('beta-draw').addEventListener('click', () => {
+    fits.push(fitOnce());
+    render();
+    updateReadout();
+  });
+  document.getElementById('beta-reset').addEventListener('click', () => {
+    fits = [];
+    lastY = null;
+    render();
+    updateReadout();
+  });
+
+  render();
+  updateReadout();
+})();
+</script>
