@@ -507,8 +507,7 @@ Consider the AR(1) model $Y_t\mid Y_{t-1}\sim\text{Normal}(\beta_1Y_{t-1}+\beta_
 </details>
 
 
-## 3.5 Autoregressive models and the Hurwicz bias {#sec-3-5}
-<summary><h2>3.6 Hypothesis testing</h2></summary>
+## 3.6 Hypothesis testing {#sec-3-6}
 
 In statistics we often infer parameters not because we care about their exact values, but because we want to use them to make a decision &mdash; e.g. in a clinical trial, whether a candidate drug is worth pursuing. This is often framed as <span class="term">[hypothesis testing](https://en.wikipedia.org/wiki/Statistical_hypothesis_testing)</span>: we assign a probability to a hypothesis (or its converse). In abstract terms, the basic procedure is:
 
