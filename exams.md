@@ -16,8 +16,9 @@ Covers [Unit 1]({{ '/unit1/' | relative_url }}) and [Unit 2]({{ '/unit2/' | rela
 **Unit 1**
 
 - The only named distributions you need to memorize are **Bernoulli**, **Uniform** and **Normal**.
-- Sample spaces, outcomes and events; the three axioms and how to use them.
+- Sample spaces, outcomes and events. 
 - Read a joint distribution off a table and compute marginal, joint and conditional probabilities from it. Determine if variables are independent. 
+- Basic concepts of continuous distributions: The definition of a **density**, **CDF** and how probabilities are calculated. 
 - Go from a model written in $\sim$ notation, such as $Y \sim \text{Bernoulli}(q)$ and $X \mid Y \sim \text{Bernoulli}(Y/4 + 1/4)$, to the joint distribution, and back.
 - Read and produce the output of simple Python code (arrays, for loops, if statements, `np.random`). Emphasis will be placed on translating simulations to probability statements.
 
@@ -79,8 +80,8 @@ $Z$ takes the value $-1$ with probability $0.2$, $0$ with probability $0.5$ and 
 Quiz scores $Y$ depend on which section a student is in. $45\%$ of students are in the morning section, where $E[Y\mid\text{morning}]=72$; the rest are in the afternoon section, where $E[Y\mid\text{afternoon}]=80$.
 
 1. Compute $E[Y]$.
-1. Suppose instead you are told $E[Y]=76.4$ and $E[Y\mid\text{morning}]=72$, but not the afternoon mean. Recover it.
-1. In one sentence, say why $E[Y]$ is *not* the average of $72$ and $80$.
+2. Suppose instead you are told $E[Y]=76.4$ and $E[Y\mid\text{morning}]=72$, but not the afternoon mean. Can you recover it from this information?
+3. In one sentence, say why $E[Y]$ is *not* the average of $72$ and $80$.
 </div>
 
 <div class="exercise" markdown="1">
@@ -198,6 +199,56 @@ Suppose $X \sim \text{Normal}(\mu_X, 4)$ and $Y \mid X \sim \text{Normal}(\beta_
 1. Compute $\operatorname{var}(Y)$.
 1. Compute the correlation $\rho$ between $X$ and $Y$.
 1. If $X$ is $2$ standard deviations above its mean, what is the predicted standardized value of $Y$? What phenomenon does this illustrate?
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 13
+
+Let $X\sim\text{Bernoulli}(1/2)$ and $Y\mid X\sim\text{Uniform}(X,2)$.
+
+1. Compute $E[Y]$ using the tower property.
+1. Compute $\operatorname{var}(Y)$ using the law of total variance.
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 14
+
+Consider the following code.
+
+```python
+n = 100_000
+x = np.random.choice([0, 1], size=n, p=[0.3, 0.7])
+
+y = np.empty(n)
+y[x == 0] = np.random.uniform(0, 2, len(y[x == 0]))
+y[x == 1] = np.random.uniform(1, 4, len(y[x == 1]))
+
+z = np.empty(n)
+z[x == 0] = np.random.uniform(-1, 1, len(z[x == 0]))
+z[x == 1] = np.random.uniform(0, 6, len(z[x == 1]))
+
+print(np.mean(z))
+```
+
+1. Write down the probability model being simulated for $(X,Y,Z)$, in $\sim$ notation.
+1. What number will `np.mean(z)` print, approximately? Show the calculation.
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 15
+
+Consider the following code.
+
+```python
+n = 100_000
+x = np.random.uniform(0, 4, n)
+y = np.random.normal(2*x + 1, np.sqrt(3), n)
+
+print(np.var(y))
+```
+
+1. Write down the probability model being simulated, in $\sim$ notation.
+1. What number will `print(np.var(y))` show, approximately? Compute it by hand using the law of total variance (you will need $\operatorname{var}(X)$ for a Uniform random variable).
 </div>
 
 

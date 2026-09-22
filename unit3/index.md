@@ -15,19 +15,19 @@ toc:
 
 <div class="unit-overview" markdown="1">
 
-This unit develops the tools needed to estimate regression parameters and quantify their uncertainty. The **Central Limit Theorem** connects the behavior of large random samples to the Normal distribution from Unit 2. We use it to study **estimators** and their properties, including bias, consistency, **standard errors**, and **confidence intervals**. We then study the **least squares estimator** for the regression coefficient in a linear regression model and look at autoregressive models.
+In this unit, we address the question of statistical error. We begin with the **Law of Large numbers** and **Central Limit Theorem**, which connects the behavior of large random samples to the Normal distribution from Unit 2. We then define an **estimator** (somthing we hav already examples of) and discuss the concepts of **bias**, **variance**,  **confidence intervals** and the sample distribution. We apply these ideas to **least squares estimator** for the regression coefficient in a linear regression model and autoregressive models. Finally we discuss **hypothesis testing** briefly. 
 
 #### Concepts
 
-The law of large numbers, the Central Limit Theorem, estimators, sample distributions, bias and consistency, standard errors, confidence intervals, the bias-variance decomposition, fitting the single-predictor linear regression model via least squares, the coefficient of determination, correlation and their relationship to the regression slope, autoregressive models and the Hurwicz bias, and hypothesis testing and $p$-values for regression models.
+The law of large numbers, the Central Limit Theorem, estimators, sample distributions, bias and consistency, standard errors, confidence intervals, the bias-variance decomposition, fitting the single-predictor linear regression model via least squares, autoregressive models and the Hurwicz bias, and hypothesis testing and $p$-values for regression models.
 
 #### Things to practice
 
 - Use the CLT to approximate the distribution of a sum or sample average, and to justify treating an estimator's sample distribution as approximately Normal.
 - Identify whether a simple estimator is biased or not, by hand if possible, or using simulations in Python.
-- Relate the regression parameters to the means and variances of the predictor and response.
-- Understand the relationship between the model parameters, correlation, and the coefficient of determination &mdash; know what each one means.
-- Interpret the output of a fitted linear regression model and assess goodness of fit (coefficient of determination).
+- Know the properties of least square estimator and what the sample distribution looks like. 
+- Perform a hypothesis test by simulating the model. 
+
 
 </div>
 
@@ -57,41 +57,6 @@ $$ P\left(\frac{S_N-N\mu}{\sqrt{N\sigma^2}}<z\right) \to P(Z<z), \qquad Z \sim \
 
 The variable $Z$ is called a <span class="term">[standard normal](https://en.wikipedia.org/wiki/Normal_distribution#Standard_normal_distribution)</span> random variable. Its CDF is common enough that we abbreviate $\Phi(z)=P(Z<z)$, and write $\phi(z)$ for its pdf. Using the properties of Normal random variables from Unit 2, we can restate the CLT informally as $S_N \approx \text{Normal}(N\mu,\ N\sigma^2)$. In the demo below, the histogram is of standardized sums $(S_N-N\mu)/\sqrt{N\sigma^2}$ and the curve is the standard Normal density: whatever distribution you draw the $X_i$ from, the histogram closes on that curve as $N$ grows.
 
-{% include_relative demos/clt.html %}
-
-<div class="example" markdown="1">
-#### Example (Binomial via the CLT)
-
-Let $Y \sim \text{Binomial}(N,q)$, with $N$ even.
-
-<u>Question:</u> use the CLT to approximate $P(Y<N/2)$. How does accuracy depend on $N$ and $q$?
-
-<u>Solution:</u> with $\mu=E[X_i]=q$ and $\sigma^2=\operatorname{var}(X_i)=q(1-q)$,
-
-$$ P(Y<N/2) = P\!\left(\frac{Y-Nq}{\sqrt{Nq(1-q)}} < \frac{N/2-Nq}{\sqrt{Nq(1-q)}}\right) $$
-
-$$ = P\!\left(\frac{Y-Nq}{\sqrt{Nq(1-q)}} < \sqrt N\,\frac{1-2q}{2\sqrt{q(1-q)}}\right) \to \Phi\!\left(\sqrt N\,\frac{1-2q}{2\sqrt{q(1-q)}}\right). $$
-
-```python
-import numpy as np
-from scipy.stats import norm, binom
-
-N, q = 200, 0.3
-trials = 100000
-
-exact = binom.cdf(N//2 - 1, N, q)
-
-z = np.sqrt(N) * (1 - 2*q) / (2 * np.sqrt(q * (1 - q)))
-clt_approx = norm.cdf(z)
-
-samples = np.random.binomial(N, q, size=trials)
-mc_estimate = np.mean(samples < N/2)
-
-print(f"Exact:       {exact:.4f}")
-print(f"CLT approx:  {clt_approx:.4f}")
-print(f"Monte Carlo: {mc_estimate:.4f}")
-```
-</div>
 
 **Note on the iid assumption:** the version of the CLT stated above assumes the $X_i$ are independent and identically distributed. There are more advanced versions that allow some dependence, but not arbitrary dependence; strong correlation can change the sample distribution substantially. For this course, check first whether iid is a reasonable approximation before using the CLT.
 
@@ -473,18 +438,16 @@ The demo below makes this concrete: the predictor values $x_1,\dots,x_n$ are fix
 
 ## 3.5 Autoregressive models and the Hurwicz bias {#sec-3-5}
 
-Many real variables depend on their own recent past &mdash; today's stock price on yesterday's, this month's inflation rate on last month's. A simple model for this is an <span class="term">[autoregressive model](https://en.wikipedia.org/wiki/Autoregressive_model)</span> of order 1, written AR(1):
+A special type of regression model where the predictor is the same quantity as the response variable but observed at a previous times is called an <span class="term">[autoregressive model](https://en.wikipedia.org/wiki/Autoregressive_model)</span>.  We consider a simple AR model where 
 
-$$ Y_t = \rho\, Y_{t-1} + \epsilon_t, \qquad \epsilon_t \text{ iid with mean } 0,\ t=1,\dots,T. $$
+$$Y_t|Y_{t-1} \sim {\rm Normal}(\beta_1 Y_{t-1} +\beta_0,\sigma^2)$$
 
-This is the same shrinkage relationship behind Unit 2's regression to the mean, with the predictor $X=Y_{t-1}$: whenever $\lvert\rho\rvert<1$, each observation is a shrunk, noisy copy of the one before it, so the series keeps "regressing to the mean" one step at a time.
-
-It's tempting to estimate $\rho$ the way we'd estimate any regression slope: run least squares of $Y_t$ on $Y_{t-1}$ over the $T-1$ consecutive pairs. But here the predictor $Y_{t-1}$ isn't handed to us from outside the model &mdash; it was generated by the same noise process one step earlier, so it's correlated with the rest of the series in a way an ordinary exogenous predictor isn't. This breaks the assumption behind least squares and introduces a systematic *downward* bias in $\hat\rho$ in any finite sample: on average, $\hat\rho$ underestimates $\rho$, making the series look less persistent than it really is. This is the **Hurwicz bias**, after Leonid Hurwicz's 1950 demonstration that ordinary least squares is biased in this setting. The estimator is still consistent &mdash; the bias shrinks to $0$ as $T\to\infty$ &mdash; but for the short series common in practice (a few dozen quarters of economic data, say) it can matter.
+We further assume that $Y_t\mid Y_{t-1}$ is independent of $Y_{t-2},Y_{t-3},...$. This is a natural starting point for modeling for many noisy processes, such as stocks or height along a lineage (mother,daugher,granddaugher). The shows how the natural least squares estimato is biased. 
 
 <div class="example" markdown="1">
-#### Example (simulating the Hurwicz bias)
+#### Example
 
-<u>Question:</u> Simulate many AR(1) series with true $\rho=0.6$, and estimate $\rho$ by least squares (regressing $Y_t$ on $Y_{t-1}$, no intercept) in each. Does the average of these estimates match $0.6$? What happens as the series gets longer?
+<u>Question:</u> Simulate many AR(1) series with true $\beta_1=0.6$ (and $\beta_0=0$), and estimate $\beta_1$ by least squares (regressing $Y_t$ on $Y_{t-1}$, no intercept) in each. Does the average of these estimates match $0.6$? What happens as the series gets longer?
 
 <u>Solution:</u>
 
@@ -492,34 +455,59 @@ It's tempting to estimate $\rho$ the way we'd estimate any regression slope: run
 import numpy as np
 
 rng = np.random.default_rng(42)
-rho = 0.6
+beta1 = 0.6
 
-def fit_rho_hat(T):
+def fit_beta1_hat(T):
     eps = rng.normal(size=T)
     Y = np.empty(T)
     Y[0] = eps[0]
     for t in range(1, T):
-        Y[t] = rho * Y[t - 1] + eps[t]
+        Y[t] = beta1 * Y[t - 1] + eps[t]
     y_lag, y = Y[:-1], Y[1:]
     return np.sum(y_lag * y) / np.sum(y_lag**2)
 
 for T in [10, 50, 200]:
-    rho_hats = [fit_rho_hat(T) for _ in range(20_000)]
-    print(f"T={T}: average rho_hat = {np.mean(rho_hats):.3f}")
+    beta1_hats = [fit_beta1_hat(T) for _ in range(20_000)]
+    print(f"T={T}: average beta1_hat = {np.mean(beta1_hats):.3f}")
 ```
 
 which prints
 
-| $T$ | average $\hat\rho$ |
+| $T$ | average $\hat\beta_1$ |
 |---|---|
 | 10 | 0.506 |
 | 50 | 0.577 |
 | 200 | 0.595 |
 
-At every $T$ the average estimate falls short of the true $\rho=0.6$, and the gap shrinks as $T$ grows: $\hat\rho$ is biased downward in any finite sample, but consistent.
+At every $T$ the average estimate falls short of the true $\beta_1=0.6$, and the gap shrinks as $T$ grows: $\hat\beta_1$ is biased downward in any finite sample, but consistent.
 </div>
 
-<details class="optional-section" id="sec-3-6" open markdown="1">
+The bias bound in the example above can be understood as follows. For the no-intercept AR(1) model, it can be shown (Hurwicz, 1950) that for large $T$,
+
+$$ E[\hat\beta_1] - \beta_1 \approx -\frac{2\beta_1}{T}. $$
+
+This matches the simulation: with $\beta_1=0.6$, the formula predicts a bias of about $-0.024$ at $T=50$ and $-0.006$ at $T=200$, both close to what we observed above (the match is worse at $T=10$, since the formula is only a leading-order approximation for large $T$). The bias vanishes as $T\to\infty$, consistent with $\hat\beta_1$ being a consistent estimator, but at any finite $T$ it pulls the estimate toward $0$ &mdash; least squares systematically underestimates how persistent the process really is. This finite-sample downward bias of the AR(1) least-squares estimator is known as the <span class="term">[Hurwicz bias](https://en.wikipedia.org/wiki/Autoregressive_model#Hurwicz_bias)</span>.
+
+<details class="practice-section" markdown="1">
+<summary><h3>Drill</h3></summary>
+
+<div class="exercise" markdown="1">
+#### The stationary distribution of an AR(1) model
+
+Consider the AR(1) model $Y_t\mid Y_{t-1}\sim\text{Normal}(\beta_1Y_{t-1}+\beta_0,\sigma^2)$ with $\lvert\beta_1\rvert<1$. As $t\to\infty$, the distribution of $Y_t$ settles down to a fixed <span class="term">[stationary distribution](https://en.wikipedia.org/wiki/Stationary_process)</span> that no longer depends on $t$ &mdash; that is, $Y_t$ and $Y_{t-1}$ have the same mean $\mu$ and the same variance $v$.
+
+<ol type="a">
+  <li>Using $E[Y_t]=E[Y_{t-1}]=\mu$ and taking the expectation of both sides of the model equation, write an equation for $\mu$ and solve for it in terms of $\beta_0,\beta_1$.</li>
+  <li>Using $\operatorname{var}(Y_t)=\operatorname{var}(Y_{t-1})=v$, and that $Y_{t-1}$ and the noise term are independent, write an equation for $v$ and solve for it in terms of $\beta_1,\sigma^2$.</li>
+  <li>Why do we need $\lvert\beta_1\rvert<1$ for a stationary distribution to exist? What happens to $v$ as $\beta_1\to1$?</li>
+  <li>Simulate one long AR(1) series with $\beta_0=1,\beta_1=0.7,\sigma^2=4$, discard the first $500$ steps as "burn-in," and compare a histogram of the remaining values to the stationary Normal distribution you derived in (a) and (b).</li>
+</ol>
+</div>
+
+</details>
+
+
+## 3.5 Autoregressive models and the Hurwicz bias {#sec-3-5}
 <summary><h2>3.6 Hypothesis testing</h2></summary>
 
 In statistics we often infer parameters not because we care about their exact values, but because we want to use them to make a decision &mdash; e.g. in a clinical trial, whether a candidate drug is worth pursuing. This is often framed as <span class="term">[hypothesis testing](https://en.wikipedia.org/wiki/Statistical_hypothesis_testing)</span>: we assign a probability to a hypothesis (or its converse). In abstract terms, the basic procedure is:
@@ -658,29 +646,7 @@ Take the two-group setup of [Section 3.6](#sec-3-6) and write $\Delta\hat\mu = \
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 3.4 &mdash; Swapping response and predictor variables
-
-Consider the linear regression model
-
-$$ X \sim \text{Normal}(\mu_x,\sigma_x^2), \qquad Y\mid X \sim \text{Normal}(\beta_1X+\beta_0,\sigma_\epsilon^2). $$
-
-This is a regression model for $Y$ given $X$. The goal of this problem is to understand the distribution of $X$ conditioned on $Y$ &mdash; the corresponding regression model for $X$. This matters in practice, and it'll sharpen your understanding of what covariance really means.
-
-For motivation: if there's no noise in $Y\mid X$ (i.e. $\sigma_\epsilon^2=0$), then
-
-$$ Y=\beta_1X+\beta_0 \implies X = \frac{1}{\beta_1}Y - \frac{\beta_0}{\beta_1}, $$
-
-so the slope of $X$ vs. $Y$ is $1/\beta_1$. It's tempting to guess that once noise is added, $X\mid Y$ is still Normal with mean $Y/\beta_1-\beta_0/\beta_1$ and variance $\sigma_\epsilon^2/\beta_1^2$ &mdash; this is <em>false</em> (see part (c)). In this problem you'll derive the correct formula.
-
-<ol type="a">
-<li>By the covariance formula from class, $\text{cov}(X,Y) = \beta_1'\sigma_Y^2$, where $\beta_1'$ is the regression slope of $X$ on $Y$ and $\sigma_Y^2$ is the marginal variance of $Y$. Using (i) $\text{cov}(X,Y)=\text{cov}(Y,X)$ (swapping $X$ and $Y$ doesn't change the covariance) and (ii) $\sigma_Y^2 = \beta_1^2\sigma_x^2+\sigma_\epsilon^2$, derive a formula for $\beta_1'$.</li>
-<li>Using part (a), show that as $\sigma_\epsilon^2\to0$ we recover the "naive" formula $\beta_1'=1/\beta_1$.</li>
-<li>Why is the naive formula $1/\beta_1$ incorrect when $\sigma_\epsilon^2>0$? In particular, why can't we simply solve for $X$ in terms of $Y$ to get the regression equation? (Hint: does $Y\mid Z$ have the same distribution as $Y$, for $Z$ the noise term?)</li>
-</ol>
-</div>
-
-<div class="exercise" markdown="1">
-#### Problem 3.5 &mdash; The random walk
+#### Problem 3.4 &mdash; The random walk
 
 The **random walk** is a foundational model across the sciences: it describes the "motion" of a variable that moves randomly over time with no memory of its past (Einstein used it to model microscopic particle motion, and it's a common rudimentary model of stock prices).
 
@@ -698,7 +664,7 @@ where $\Delta$ is a constant. Think of $X_k$ as the position of someone randomly
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 3.6 &mdash; Normal approximation to an estimator
+#### Problem 3.5 &mdash; Normal approximation to an estimator
 
 Consider $Y\mid X \sim \text{Bernoulli}(q_0+(q_1-q_0)X)$ with $X\in\lbrace 0,1 \rbrace$ &mdash; a model for a study with a control group ($X=0$) and treatment group ($X=1$); e.g. the treatment might be a heart medication and $Y=1$ a heart attack. Write $\Delta=q_1-q_0 = E[Y\mid X=1]-E[Y\mid X=0]$ for the difference in outcome probability between groups.
 
@@ -716,7 +682,7 @@ where, as in Unit 1, $N(\cdot)$ counts the rows satisfying a condition.
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 3.7 &mdash; Laplace's rule of succession
+#### Problem 3.6 &mdash; Laplace's rule of succession
 
 Let $X\sim\text{Bernoulli}(q)$ (i.e. $P(X{=}1)=q$), with samples $X_1,\dots,X_N$. We've seen that $\hat q=Y/N$ (with $Y=\sum_iX_i$) is a consistent, unbiased estimator of $q$. An alternative, <span class="term">[Laplace's rule of succession](https://en.wikipedia.org/wiki/Rule_of_succession)</span>, is $\hat q_L=(Y+1)/(N+2)$.
 

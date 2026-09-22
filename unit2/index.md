@@ -779,7 +779,9 @@ Suppose $\operatorname{var}(X)=4$, $\operatorname{var}(Y)=25$, and $\operatornam
 
 ### Coefficient of determination
 
-In most applications the goal of regression modeling is to predict $Y$ from $X$, so it's natural to look for a metric of how well these predictions can be made. Think about the best-case scenario: $\sigma_\epsilon=0$ (and $\beta_1\ne 0$), so $Y$ is *deterministic* given $X$. Here $\sigma_\epsilon$ is the same noise standard deviation $\sigma$ from the model definition above, written with a subscript now that we also need to talk about $\sigma_X$ and $\sigma_Y$ in the same breath. Predictions get worse as $\sigma_\epsilon$ grows, since $\sigma_\epsilon$ measures the variability in $Y$ for a *fixed* $X$ &mdash; but large relative to what? $\sigma_\epsilon^2$ has the units of $Y$ *squared*, so we should compare it to something with those same units: the marginal variance $\sigma_Y^2=\text{var}(Y)$. Note (check this yourself!) that
+In most applications the goal of regression modeling is to predict $Y$ from $X$, so it's natural to look for a metric of how well these predictions can be made. Think about the best-case scenario: $\sigma_\epsilon=0$ (and $\beta_1\ne 0$), so $Y$ is *deterministic* given $X$. Here $\sigma_\epsilon$ is the same noise standard deviation $\sigma$ from the model definition above, but we want to distinguish between $\sigma_X$ and $\sigma_Y$. 
+
+Predictions get worse as $\sigma_\epsilon$ grows, since $\sigma_\epsilon$ measures the variability in $Y$ for a *fixed* $X$. However large relative to what? $\sigma_\epsilon^2$ has the units of $Y$ *squared*, so we should compare it to something with those same units: the marginal variance $\sigma_Y^2=\text{var}(Y)$. Note (check this yourself!) that
 
 $$ \sigma_Y^2 = \beta_1^2\sigma_X^2+\sigma_\epsilon^2 \ge \sigma_\epsilon^2, $$
 
@@ -799,7 +801,7 @@ which should make sense as the natural estimator, given the definition above.
 
 ### Correlation
 
-[Section 2.3](#sec-2-3) already introduced the correlation coefficient $\rho=\beta_1\sigma_X/\sigma_Y=\operatorname{cov}(X,Y)/(\sigma_X\sigma_Y)$ to explain regression to the mean. Here's a more careful derivation, which also shows why it matches the $\rho^2$ defined above. Standardize the predictor and response,
+[Section 2.3](#sec-2-3) already introduced the squared correlation coefficient $\rho=\beta_1\sigma_X/\sigma_Y=\operatorname{cov}(X,Y)/(\sigma_X\sigma_Y)$ to explain regression to the mean. Here we show how to view this as the square of a signed quantity (positive or negative). Standardize the predictor and response,
 
 $$ Z_X = \frac{X-\mu_X}{\sigma_X}, \qquad Z_Y = \frac{Y-\mu_Y}{\sigma_Y}. $$
 
@@ -919,5 +921,27 @@ Write Python code that:
   <li>estimates $E[\operatorname{var}(Y\mid X)]$ (within-group) and $\operatorname{var}(E[Y\mid X])$ (between-group) from the simulated data, and adds them together;</li>
   <li>compares that sum to the sample variance of all of $Y$ taken together, and confirms they closely agree;</li>
   <li>by hand, computes the exact value of $\operatorname{var}(Y)$ using the law of total variance, and states how closely it matches part (c).</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 2.5 &mdash; Swapping response and predictor variables
+
+Consider the linear regression model
+
+$$ X \sim \text{Normal}(\mu_x,\sigma_x^2), \qquad Y\mid X \sim \text{Normal}(\beta_1X+\beta_0,\sigma_\epsilon^2). $$
+
+This is a regression model for $Y$ given $X$. The goal of this problem is to understand the distribution of $X$ conditioned on $Y$ &mdash; the corresponding regression model for $X$. This matters in practice, and it'll sharpen your understanding of what covariance really means.
+
+For motivation: if there's no noise in $Y\mid X$ (i.e. $\sigma_\epsilon^2=0$), then
+
+$$ Y=\beta_1X+\beta_0 \implies X = \frac{1}{\beta_1}Y - \frac{\beta_0}{\beta_1}, $$
+
+so the slope of $X$ vs. $Y$ is $1/\beta_1$. It's tempting to guess that once noise is added, $X\mid Y$ is still Normal with mean $Y/\beta_1-\beta_0/\beta_1$ and variance $\sigma_\epsilon^2/\beta_1^2$ &mdash; this is <em>false</em> (see part (c)). In this problem you'll derive the correct formula.
+
+<ol type="a">
+<li>By the covariance formula from class, $\text{cov}(X,Y) = \beta_1'\sigma_Y^2$, where $\beta_1'$ is the regression slope of $X$ on $Y$ and $\sigma_Y^2$ is the marginal variance of $Y$. Using (i) $\text{cov}(X,Y)=\text{cov}(Y,X)$ (swapping $X$ and $Y$ doesn't change the covariance) and (ii) $\sigma_Y^2 = \beta_1^2\sigma_x^2+\sigma_\epsilon^2$, derive a formula for $\beta_1'$.</li>
+<li>Using part (a), show that as $\sigma_\epsilon^2\to0$ we recover the "naive" formula $\beta_1'=1/\beta_1$.</li>
+<li>Why is the naive formula $1/\beta_1$ incorrect when $\sigma_\epsilon^2>0$? In particular, why can't we simply solve for $X$ in terms of $Y$ to get the regression equation? (Hint: does $Y\mid Z$ have the same distribution as $Y$, for $Z$ the noise term?)</li>
 </ol>
 </div>
