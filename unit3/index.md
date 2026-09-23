@@ -92,7 +92,7 @@ Let $Y = \sum_{i=1}^N X_i$ where $X_1,\dots,X_N$ are iid $\text{Bernoulli}(q)$ (
 
 ## 3.2 Estimators, bias & consistency {#sec-3-2}
 
-We've already danced around the concept of statistical inference and parameter estimation: recall that $\hat q = \overline Y$ is an estimator of the parameter $q$ for a Bernoulli distribution, and more generally we've gone back and forth between "data world" (sample means, histograms) and "math world" (expectation, density) via sample averages.
+We've already aluded to concept of statistical inference and parameter estimation.  Recall that $\hat q = \overline Y$ is an estimator of the parameter $q$ for a Bernoulli distribution, and more generally we've gone back and forth between "data world" (sample means, histograms) and "math world" (expectation, density) via sample averages.
 
 **Statistical inference is the process of estimating the parameters of a distribution (e.g. $\mu$ and $\sigma$) from samples of $Y$, *and* expressing our uncertainty in these estimates.** The "expressing uncertainty" part is what we haven't yet discussed formally.
 
@@ -408,7 +408,7 @@ Now add a new data point $(X_6,Y_6)=(100,3)$ to the dataset above. Explain, with
 
 ### Sample distribution of the estimator
 
-$\hat\beta_1$ and $\hat\beta_0$ are computed from random data, so they are themselves random variables: if we collected a new dataset (same $x$ values, new draws of $Y$), we'd get slightly different estimates. This is the same idea as the sample distribution of $\overline Y$ from [Section 3.2](#sec-3-2), now applied to the regression slope.
+$\hat\beta_1$ and $\hat\beta_0$ are computed from random data, so they are themselves random variables. If we collected a new dataset (same $x$ values, new draws of $Y$), we'd get slightly different estimates. This is the same idea as the sample distribution of $\overline Y$ from [Section 3.2](#sec-3-2), now applied to the regression slope.
 
 To study this, we condition on the observed predictor values $x_1,\dots,x_n$, treating them as fixed constants &mdash; only the $Y_i$ are random. Writing $S_{xx}=\sum_{i=1}^n(x_i-\bar x)^2$, we can rewrite $\hat\beta_1$ as a weighted sum of the $Y_i$:
 
