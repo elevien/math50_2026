@@ -652,7 +652,7 @@ where $\epsilon$ is the noise or error term. Let us summarize the assumptions be
   <li><strong>Exogeneity of $\epsilon$:</strong> $E[\epsilon\mid X]=0$, so after accounting for $X$, the leftover error has mean zero at every value of $X$. A predictor satisfying this is called <span class="term"><a href="https://en.wikipedia.org/wiki/Exogenous_and_endogenous_variables">exogenous</a></span>; if it fails, $X$ is <span class="term"><a href="https://en.wikipedia.org/wiki/Exogenous_and_endogenous_variables">endogenous</a></span>. </li>
 </ol>
 
-For example, suppose $X$ indicates whether a student attended a study-skills workshop and $Y$ is their exam score. If $X$ is assigned by a coin flip (a randomized trial), then whatever unmeasured factors drive $\epsilon$ are, on average, balanced between the two groups and as a result $E[\epsilon\mid X]=0$.  But if students instead self-select into the workshop, the more motivated or more anxious students may be the ones who choose to attend, so unmeasured motivation is now correlated with $X$, making $X$ endogenous. 
+For example, suppose $X$ indicates whether a student attended a study-skills workshop and $Y$ is their exam score. If $X$ is assigned by a coin flip (a randomized trial), the unmeasured factors drive $\epsilon$ are equally split between the two groups. Therefore $E[\epsilon\mid X]=0$.  But if students instead self-select into the workshop, the more motivated or more anxious students may be the ones who choose to attend and $X$ endogenous. 
 
 <div class="example" id="ex-diffmeans" markdown="1">
 #### Example (binary predictor: the difference of means)
@@ -823,7 +823,7 @@ Using $\text{cov}(X,Y)=\beta_1\sigma_X^2$ from [Section 2.3](#sec-2-3),
 
 $$ \rho = \frac{\beta_1\sigma_X}{\sigma_Y} = \frac{\text{cov}(X,Y)}{\sigma_X\sigma_Y}. $$
 
-It's usually this last formula that's taken as the *definition* of correlation, since it applies to any two random variables and doesn't require an underlying regression model. Notice that if $X,Y$ both already have standard deviation $1$, correlation and covariance coincide. The <span class="term">[Cauchy&ndash;Schwarz inequality](https://en.wikipedia.org/wiki/Cauchy%E2%80%93Schwarz_inequality)</span> guarantees $-1\le\rho\le 1$.
+It's usually this last formula that's taken as the *definition* of correlation, since it applies to any two random variables and doesn't require an underlying regression model. Notice that if $X,Y$ both already have standard deviation $1$, correlation and covariance are equal.
 
 To see this is the same $\rho^2$ as before, recall $\sigma_Y^2=\beta_1^2\sigma_X^2+\sigma_\epsilon^2$, so
 
