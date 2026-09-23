@@ -14,7 +14,7 @@ toc:
 
 <div class="unit-overview" markdown="1">
 
-This unit introduces **probability models** as a framework for reasoning about uncertainty in data. The primary goal is to learn the mathematical language and notation needed to talk about statistical models (probability theory). We will start in the setting of probability models where the outcomes are a finite set (like the roll of a die). We'll then extend the framework to **continuous** random variables and probability densities, which we'll need once we meet the Normal distribution in Unit 2.
+This unit introduces **probability models** as a framework for reasoning about uncertainty in data. The primary goal is to learn the mathematical language and notation needed to talk about statistical models (probability theory). We will start with probability models where the outcomes are a finite set (like the roll of a die). We'll then extend the framework to **continuous** random variables and probability densities which we will use for most of the course. 
 
 #### Concepts
 
@@ -103,7 +103,7 @@ Suppose we sample two people independently from the population and, for each, re
 
 $$ S = \lbrace (0,0), (0,1), (1,0), (1,1)\rbrace, $$
 
-and some distribution $P_{X_1,X_2}(x_1,x_2)$, which we call the <span class="term">[joint distribution](https://en.wikipedia.org/wiki/Joint_probability_distribution)</span> of $X_1$ and $X_2$. Because the two people are independent, the chance of any particular pair is just the chance of the first diagnosis times the chance of the second: the chance of no diagnosis, then a diagnosis, for instance, is $(1-p)\cdot p$. Reasoning the same way about all four outcomes gives
+and some distribution $P_{X_1,X_2}(x_1,x_2)$, which we call the <span class="term">[joint distribution](https://en.wikipedia.org/wiki/Joint_probability_distribution)</span> of $X_1$ and $X_2$. Because the two people are independent, the chance of any particular pair is just the chance of the first diagnosis times the chance of the second. 
 
 $$ P(0,0) = (1-p)^2, \quad P(0,1) = (1-p)p, \quad P(1,0) = p(1-p), \quad P(1,1) = p^2. $$
 
@@ -131,9 +131,9 @@ Let $C \in \lbrace 0,1 \rbrace$ indicate whether a randomly chosen person is dia
 
 A few natural questions about this table foreshadow ideas we'll make precise in the next section:
 
-- *How likely is a randomly chosen person to be diagnosed, regardless of gender?* Add across the row: $P(C=1) = 0.0021+0.0019 = 0.004$, i.e. $0.4\%$ overall. Summing out one variable like this is called <span class="term">marginalizing</span> it.
-- *Does knowing someone's gender change their risk?* Restricting to the $G=M$ column and renormalizing gives $P(C=1,G=M)/P(G=M) = 0.0021/0.492 \approx 0.0043$ for men, versus $0.0019/0.508 \approx 0.0037$ for women. This is <span class="term">conditioning</span> on gender.
-- *Are $C$ and $G$ independent?* These conditional risks are close to each other and to the overall $0.4\%$, so before age $50$ gender barely moves the needle &mdash; unlike later in life, when colorectal cancer incidence in men runs $40$&ndash;$50\%$ higher than in women. So $C$ and $G$ are close to <span class="term">independent</span> in this age range, even though they aren't at older ages.
+- *How likely is a randomly chosen person to be diagnosed, regardless of gender?* To address this we add across $M$ to obtain  $P(C=1) = 0.0021+0.0019 = 0.004$ or $0.4\%$ overall. Summing over one variable like this is called <span class="term">marginalizing</span> it.
+- *Does knowing someone's gender change their risk?* 
+- *Are $C$ and $G$ independent?* These conditional risks are close to each other and to the overall $0.4\%$, so before age $50$ gender barely affects cancer risk. 
 </div>
 
 <details class="practice-section" markdown="1">
@@ -282,7 +282,7 @@ while
 
 $$ P(A=1)P(C=1) = 0.5 \times 0.6 = 0.3, $$
 
-this particular cell is consistent with independence between $A$ and $C$. To prove independence, however, we would need to check the product rule for every possible pair of values.
+this particular cell is consistent with independence between $A$ and $C$.However, to prove independent we would need to check the product rule for every possible pair of values.
 
 </div>
 
@@ -639,13 +639,13 @@ The same computations look like this on a DataFrame `df` with columns `"X"`, `"Y
 
 A probability is always the *fraction of rows satisfying a condition*, i.e. `.mean()` of a boolean array or column; conditioning just means restricting to a subset of rows first with `[...]` or `.loc[...]` before you take that average.
 
-The DataFrame table is shown so you can *read* pandas code when it appears in examples or datasets, not because you need to memorize its syntax. On exams, the numpy array versions above are the ones you're expected to know cold.
+The DataFrame table is shown so you can *read* pandas code when it appears in examples or datasets. You don't need to know this for exams. 
 
 ### Seeding random number generators
 
-The `np.random` calls above aren't truly random: they're a deterministic algorithm that produces a sequence of numbers designed to *look* random, called a <span class="term">[pseudorandom number generator](https://en.wikipedia.org/wiki/Pseudorandom_number_generator)</span> (PRNG). A PRNG starts from a number called the <span class="term">[seed](https://en.wikipedia.org/wiki/Random_seed)</span>, and the entire sequence of "random" draws it produces is completely determined by that seed. In other words, the same seed reproduces the exact same numbers each time the code is run.
+The `np.random` calls above aren't truly random.  They run a deterministic algorithm that produces a sequence of numbers designed to *look* random. We call this a <span class="term">[pseudorandom number generator](https://en.wikipedia.org/wiki/Pseudorandom_number_generator)</span> (PRNG). A PRNG starts from a number called the <span class="term">[seed](https://en.wikipedia.org/wiki/Random_seed)</span>, and the entire sequence of "random" draws it produces is completely determined by that seed. The same seed reproduces the exact same numbers each time the code is run.
 
-This matters because simulation results should be <span class="term">[reproducible](https://en.wikipedia.org/wiki/Reproducibility)</span>. If you're debugging a simulation, comparing two models on "the same" simulated data, or handing code to someone else to check your work, you want the randomness to be fixed while everything else changes. Leaving the seed unset means every run gives a different answer, which makes it impossible to tell whether a changed result came from a real effect or just from new random numbers.
+This is useful because simulations should be <span class="term">[reproducible](https://en.wikipedia.org/wiki/Reproducibility)</span>. If you're debugging a simulation, comparing two models on "the same" simulated data, or sharing code to check your work, you want the randomness to be fixed.
 
 In `numpy`, the recommended way to do this is to create an explicit generator object with `np.random.default_rng(seed)` and draw from that object, as in
 
@@ -664,7 +664,7 @@ One reading treats probability as a *frequency*: if we imagine repeating the fli
 
 But this particular coin isn't going to be reflipped. Rather, it already landed, and the outcome is fixed, even though we don't know it. A second reading treats the 90% instead as a *degree of belief*: a number summarizing how confident we are that it's heads, given whatever evidence we have (maybe we saw it wobble, or we know this coin is biased). Under this view, probability doesn't require imagining repeated trials at all and therefore can quantify uncertainty about a single, already-determined fact.
 
-Both readings obey the same rules of probability, so for the mathematics we've developed so far it won't matter which one you have in mind. But the distinction is real, and it will resurface directly once we get to statistical inference.
+Both readings obey the same rules of probability, so for the mathematics we've developed so far it won't matter which one you have in mind.
 
 <details class="practice-section" markdown="1">
 <summary><h3>Drill</h3></summary>
