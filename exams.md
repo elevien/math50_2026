@@ -29,9 +29,9 @@ Covers [Unit 1]({{ '/unit1/' | relative_url }}) and [Unit 2]({{ '/unit2/' | rela
 - Standardize a Normal variable, and use the bell curve shape (68 / 95 / 99.7) to estimate probabilities.
 - The distribution of $aX+b$, and of a sum of independent Normals.
 - The single-predictor model $Y \mid X \sim \text{Normal}(\beta_0+\beta_1X, \sigma^2)$, its equivalent form $Y = \beta_0+\beta_1X+\epsilon$, and what each parameter controls.
-- For a **binary** predictor, why $\beta_1 = E[Y\mid X{=}1]-E[Y\mid X{=}0]$, and why the difference of group averages estimates it.
+- For a **binary** predictor, why $\beta_1 = E[Y\mid X{=}1]-E[Y\mid X{=}0]$.
 - Assumptions of linear regression model
-- $\operatorname{cov}(X,Y)=\beta_1\sigma_X^2$ for a general (not necessarily binary) predictor, and the resulting formula for $\hat\beta_1$ from data.
+- $\operatorname{cov}(X,Y)=\beta_1\sigma_X^2$ for a general (not necessarily binary) predictor.
 - The correlation $\rho = \operatorname{cov}(X,Y)/(\sigma_X\sigma_Y) = \beta_1\sigma_X/\sigma_Y$, and **regression to the mean**. 
 
 
