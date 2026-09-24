@@ -470,7 +470,7 @@ $$ P_X(0)=0.2,\ P_X(1)=0.5,\ P_X(2)=0.3, \qquad P_Y(0)=0.4,\ P_Y(1)=0.4,\ P_Y(2)
 
 A measurement of a random variable is a <span class="term">[sample](https://en.wikipedia.org/wiki/Sample_(statistics))</span>, and <span class="term">[statistical inference](https://en.wikipedia.org/wiki/Statistical_inference)</span> is the process of estimating the parameters $\theta$ of a distribution from a sample. In statistics we seek to answer questions like:
 
-- Suppose we don't have information about every student in the college. A survey of five students from this class finds $4$ YESes and $1$ NO. What is our best prediction of the fraction of students in the whole college who would say YES? What assumption are we making when we answer this?
+- Suppose we don't have information about every student in the college. The class is surveyed and there ar  $4$ YESes and $1$ NO. What is our best prediction of the fraction of students in the whole college who would say YES? What assumption are we making when we answer this?
 - How many experiments do we need to run to know whether a drug is effective?
 
 We'll discuss statistical inference in detail in Unit 3. For now, we usually assume (though it's not strictly true) that we're given independent samples of the same random variable. We call this <span class="term">[iid](https://en.wikipedia.org/wiki/Independent_and_identically_distributed_random_variables)</span> data (independent and identically distributed): each sample has the same distribution, and the value of any particular sample has no influence on the others. This is the situation when flipping a coin repeatedly, for example.
