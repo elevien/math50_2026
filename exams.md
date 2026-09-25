@@ -140,24 +140,15 @@ In a randomized trial, $X=1$ for treatment and $X=0$ for control, with $Y \mid X
 <div class="exercise" markdown="1">
 #### Problem 9
 
-Consider the model $X \sim \text{Bernoulli}(1/2)$, $Y \mid X \sim \text{Normal}(1+3X,\ 4)$. One of the following implements it correctly.
+Let $X \sim \text{Bernoulli}(1/2)$ and $Y \mid X \sim \text{Normal}(1+3X,\ 4)$. Three students describe the marginal distribution of $Y$:
 
-```python
-# A
-x = np.random.choice([0, 1], p=[0.5, 0.5], size=n)
-y = np.random.normal(1 + 3*x, 4, n)
+- **Student A:** $Y \sim \text{Normal}(2.5,\ 4)$, since the noise variance is $4$.
+- **Student B:** $Y \sim \text{Normal}(2.5,\ 6.25)$.
+- **Student C:** $Y$ is not Normal, but $E[Y]=2.5$ and $\operatorname{var}(Y)=6.25$.
 
-# B
-x = np.random.choice([0, 1], p=[0.5, 0.5], size=n)
-y = np.random.normal(1 + 3*x, 2, n)
-
-# C
-x = np.random.normal(0.5, 1, n)
-y = np.random.normal(1 + 3*x, 2, n)
-```
-
-1. Which one is correct?
-1. For each of the other two, say precisely which part of the model it gets wrong.
+1. Compute $E[Y]$ using the tower property and $\operatorname{var}(Y)$ using the law of total variance, $\operatorname{var}(Y)=E[\operatorname{var}(Y\mid X)]+\operatorname{var}(E[Y\mid X])$.
+1. Which student is correct? For each of the others, say precisely what they get wrong.
+1. Now suppose $X \sim \text{Normal}(1/2,\ 1/4)$ instead (the same mean and variance as the Bernoulli), with $Y \mid X$ unchanged. What is the distribution of $Y$ now, and which student is correct in this case? What does this say about which features of $Y$ depend only on the mean and variance of $X$, and which depend on its whole distribution?
 </div>
 
 <div class="exercise" markdown="1">
@@ -238,7 +229,7 @@ print(np.mean(z))
 Consider the following code.
 
 ```python
-n = 100_000
+n = 100000
 x = np.random.uniform(0, 4, n)
 y = np.random.normal(2*x + 1, np.sqrt(3), n)
 
@@ -257,6 +248,66 @@ Let $X \sim \text{Bernoulli}(1/3)$ and $Y \mid X \sim \text{Uniform}(0,\,1+X)$.
 1. Compute $E[Y\mid X=0]$ and $E[Y\mid X=1]$, and then compute $E[Y]$ using the tower property.
 1. Compute $E[XY]$.
 1. Compute $\operatorname{cov}(X,Y)$.
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 17
+
+The **law of total variance** says that for random variables $X$ and $Y$,
+
+$$ \operatorname{var}(Y) = E\big[\operatorname{var}(Y\mid X)\big] + \operatorname{var}\big(E[Y\mid X]\big). $$
+
+The first term is the average spread of $Y$ within each value of $X$, and the second is the spread of the conditional means across values of $X$.
+
+1. Derive the law of total covariance. (Hint: start from $\operatorname{var}(Y)=E[Y^2]-E[Y]^2$)
+2. Use it to compute $\operatorname{var}(Y)$ when $X \sim \text{Bernoulli}(1/3)$ and $Y \mid X \sim \text{Uniform}(0,\,1+X)$.
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 18
+
+Let $Z_X=(X-\mu_X)/\sigma_X$ and $Z_Y=(Y-\mu_Y)/\sigma_Y$ be the standardized versions of $X$ and $Y$. The **correlation** $\rho$ of $X$ and $Y$ is defined as the regression coefficient of $Z_X$ when regressing $Z_Y$ on $Z_X$, that is, $E[Z_Y\mid Z_X]=\rho Z_X$.
+
+Suppose $Y \mid X \sim \text{Normal}(\beta_0+\beta_1X,\ \sigma_\epsilon^2)$.
+
+1. Derive $\rho=\beta_1\sigma_X/\sigma_Y$.
+1. Using $\operatorname{cov}(X,Y)=\beta_1\sigma_X^2$, show that $\rho=\operatorname{cov}(X,Y)/(\sigma_X\sigma_Y)$.
+1. Show that the noise variance in the regression of $Z_Y$ on $Z_X$ is $1-\rho^2$, and conclude that $-1\le\rho\le1$.
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 19
+
+Answer each of the following in a few sentences.
+
+1. Is it true that $\operatorname{cov}(X,Y)=0$ means $X$ and $Y$ are independent? Justify your answer.
+1. We already have the standard deviation to measure spread. What motivates defining the coefficient of variation $\operatorname{CV}=\sigma/\mu$?
+1. Why do we define linear regression *models* (a probability distribution for $Y\mid X$) before talking about linear regression on data (fitting a line to points)?
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 20
+
+The plot below shows $300$ samples $(x_i,y_i)$ from a linear regression model $Y\mid X\sim\text{Normal}(\beta_0+\beta_1X,\ \sigma_\epsilon^2)$ where $X\in\lbrace0,1\rbrace$. Exactly half of the points have $x=0$. The points are jittered horizontally so that they don't overlap.
+
+<img src="{{ '/public/exam_practice/midterm1_binary_scatter.png' | relative_url }}" alt="Scatter plot of y against a binary x with gridlines" style="max-width: 100%; width: 480px;">
+
+1. Estimate $E[Y\mid X=0]$ and $E[Y\mid X=1]$ from the plot, and use them to estimate $\beta_0$ and $\beta_1$.
+2. Estimate $\sigma_\epsilon$ visually from this plot.
+3. Using your estimates, compute $\operatorname{cov}(X,Y)$ and $\operatorname{var}(Y)$.
+4. Now relabel the groups by defining $X'=1-X$ and fit the same kind of model with $X'$ as the predictor. What are $\beta_0'$, $\beta_1'$, $\operatorname{cov}(X',Y)$ and $\operatorname{var}(Y)$?
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 21
+
+Each of the scatter plots below shows $200$ samples $(x_i,y_i)$.
+
+<img src="{{ '/public/exam_practice/midterm1_scatter_models.png' | relative_url }}" alt="Four scatter plots labeled (a) to (d)" style="max-width: 100%; width: 640px;">
+
+1. For each plot, say whether the data could plausibly have been generated by a linear regression model $Y\mid X\sim\text{Normal}(\beta_0+\beta_1X,\ \sigma_\epsilon^2)$. If not, state the assumption that fails. 
+2. For a plot that could have come from such a model, estimate $\beta_0$, $\beta_1$ and $\sigma_\epsilon$ from the plot, and say whether $\operatorname{cov}(X,Y)$ is positive or negative.
+3. Can exogeneity be checked by looking at a scatter plot of $(x_i,y_i)$ alone? Explain.
 </div>
 
 
