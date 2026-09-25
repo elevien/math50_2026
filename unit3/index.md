@@ -432,7 +432,7 @@ $$ E[\hat\beta_1] = \beta_1. $$
 Across hypothetical repeated datasets with the same $x$'s, $\hat\beta_1$ is correct *on average*. (The same argument shows $E[\hat\beta_0]=\beta_0$.) One can similarly show $\operatorname{var}(\hat\beta_1) = \sigma^2/S_{xx}$ (we won't derive this): the more spread out the $x$'s, or the more data we have, the tighter the sample distribution of $\hat\beta_1$ is around $\beta_1$.
 </div>
 
-The demo below makes this concrete: the predictor values $x_1,\dots,x_n$ are fixed once and for all, and each click draws a *new* set of $Y_i$'s from the model and refits $\hat\beta_0,\hat\beta_1$. Every thin line is one hypothetical dataset's fitted line; the thick line is the true regression line. The cloud of fitted lines *is* the sample distribution of $(\hat\beta_0,\hat\beta_1)$, made visible.
+
 
 {% include_relative demos/beta-sampling.html %}
 
