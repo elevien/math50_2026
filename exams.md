@@ -31,8 +31,7 @@ Covers [Unit 1]({{ '/unit1/' | relative_url }}) and [Unit 2]({{ '/unit2/' | rela
 - The single-predictor model $Y \mid X \sim \text{Normal}(\beta_0+\beta_1X, \sigma^2)$, its equivalent form $Y = \beta_0+\beta_1X+\epsilon$, and what each parameter controls.
 - For a **binary** predictor, why $\beta_1 = E[Y\mid X{=}1]-E[Y\mid X{=}0]$.
 - Assumptions of linear regression model
-- $\operatorname{cov}(X,Y)=\beta_1\sigma_X^2$ for a general (not necessarily binary) predictor.
-- The correlation $\rho = \operatorname{cov}(X,Y)/(\sigma_X\sigma_Y) = \beta_1\sigma_X/\sigma_Y$, and **regression to the mean**. 
+- $\operatorname{cov}(X,Y)=\beta_1\sigma_X^2$
 
 
 ### Practice problems
@@ -177,7 +176,7 @@ An experiment tests whether *believing* an activity is exercise improves health,
 Consider the following code.
 
 ```python
-n = 100_000
+n = 100000
 x = np.random.choice([0, 1], size=n)
 y = np.random.normal(3 + 4*x, 2, n)
 
@@ -185,20 +184,19 @@ result = np.mean(y[x == 1]) - np.mean(y[x == 0])
 print(result)
 ```
 
-1. What value will `result` be close to? Show your reasoning.
+
 1. Write down the model being simulated for `y` in the form $Y\mid X \sim \text{Normal}(\beta_0+\beta_1X,\ \sigma^2)$, giving the values of $\beta_0$, $\beta_1$ and $\sigma^2$.
 1. What is `result` an estimate of, in terms of $\beta_0$ and $\beta_1$?
+1. In `numpy`, `np.cov(x,y)[0,1]` returns the covariance between `x` and `y`. Write down numpy code that gives another way of computing `result`. 
 </div>
 
 <div class="exercise" markdown="1">
 #### Problem 12
 
-Suppose $X \sim \text{Normal}(\mu_X, 4)$ and $Y \mid X \sim \text{Normal}(\beta_0+3X,\ 64)$.
+Suppose $X \sim \text{Normal}(\mu_X, 4)$ and $Y \mid X \sim \text{Normal}(3X,\ 64)$.
 
 1. Compute $\operatorname{cov}(X,Y)$.
 1. Compute $\operatorname{var}(Y)$.
-1. Compute the correlation $\rho$ between $X$ and $Y$.
-1. If $X$ is $2$ standard deviations above its mean, what is the predicted standardized value of $Y$? What phenomenon does this illustrate?
 </div>
 
 <div class="exercise" markdown="1">
@@ -206,8 +204,8 @@ Suppose $X \sim \text{Normal}(\mu_X, 4)$ and $Y \mid X \sim \text{Normal}(\beta_
 
 Let $X\sim\text{Bernoulli}(1/2)$ and $Y\mid X\sim\text{Uniform}(X,2)$.
 
-1. Compute $E[Y]$ using the tower property.
-1. Compute $\operatorname{var}(Y)$ using the law of total variance.
+1. Compute $E[Y]$. 
+2. Write Python code to generate samples from this model. 
 </div>
 
 <div class="exercise" markdown="1">
@@ -230,8 +228,8 @@ z[x == 1] = np.random.uniform(0, 6, len(z[x == 1]))
 print(np.mean(z))
 ```
 
-1. Write down the probability model being simulated for $(X,Y,Z)$, in $\sim$ notation.
-1. What number will `np.mean(z)` print, approximately? Show the calculation.
+1. Write down the probability model being simulated for $(X,Y,Z)$, in $\sim$ notation. Are $Y$ and $Z$ independent? 
+2. What number will `np.mean(z)` print, approximately? 
 </div>
 
 <div class="exercise" markdown="1">
@@ -248,7 +246,17 @@ print(np.var(y))
 ```
 
 1. Write down the probability model being simulated, in $\sim$ notation.
-1. What number will `print(np.var(y))` show, approximately? Compute it by hand using the law of total variance (you will need $\operatorname{var}(X)$ for a Uniform random variable).
+2. What number will `print(np.var(y))` show, approximately? 
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 16
+
+Let $X \sim \text{Bernoulli}(1/3)$ and $Y \mid X \sim \text{Uniform}(0,\,1+X)$.
+
+1. Compute $E[Y\mid X=0]$ and $E[Y\mid X=1]$, and then compute $E[Y]$ using the tower property.
+1. Compute $E[XY]$.
+1. Compute $\operatorname{cov}(X,Y)$.
 </div>
 
 
