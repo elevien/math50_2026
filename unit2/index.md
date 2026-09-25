@@ -269,7 +269,7 @@ print("E[Y | X=0] estimated within group:", mean_given_hs0)
 print("E[Y | X=1] estimated within group:", mean_given_hs1)
 ```
 
-This code is doing the same operation as the definition: it restricts the rows to a condition, then averages $Y$ inside that restricted sample space. If the two conditional averages differ substantially, then $E[Y\mid X=x]$ depends on $x$, which is evidence that $X$ and $Y$ are not independent in this dataset.
+
 
 </div>
 
@@ -348,7 +348,7 @@ $$ = \Big(\sum_x xP(X=x)\Big)\Big(\sum_y yP(Y=y)\Big) = E[X]E[Y]. $$
 
 $$ \operatorname{var}(X) = \underbrace{E[\operatorname{var}(X\mid Y)]}_{\text{within-group variance}} + \underbrace{\operatorname{var}(E[X\mid Y])}_{\text{between-group variance}}. $$
 
-The total variance splits into the average spread *within* each group, plus how much the group *means* themselves vary.</li>
+This shows that the total variance may be decomposed *within* each group and the variation between group *means* themselves.</li>
 </ol>
 
 <div class="example" markdown="1">
@@ -730,22 +730,20 @@ In Python, `np.cov(x, y)[0, 1]` computes the sample covariance and `np.cov(x, y)
 
 ### Regression to the mean
 
-Standardizing both variables, $Z_X=(X-\mu_X)/\sigma_X$ and $Z_Y=(Y-\mu_Y)/\sigma_Y$, turns the slope into a unitless quantity
+Suppose we standardize both variables $Z_X=(X-\mu_X)/\sigma_X$ and $Z_Y=(Y-\mu_Y)/\sigma_Y$. You can show (and should!) that the regression coefficient of $Z_X$ on $Z_Y$ is 
 
 $$ \rho := \frac{\beta_1\sigma_X}{\sigma_Y} = \frac{\operatorname{cov}(X,Y)}{\sigma_X\sigma_Y}, $$
 
-called the <span class="term">[correlation](https://en.wikipedia.org/wiki/Covariance_and_correlation)</span> between $X$ and $Y$ (we'll study its properties, including why $-1\le\rho\le1$, in Unit 3). A short calculation shows $E[Z_Y\mid Z_X]=\rho Z_X$.
-
-Whenever $\lvert\rho\rvert<1$, this means an unusually large $Z_X$ predicts a *less* extreme $Z_Y$ &mdash; shrunk toward $0$ by the factor $\rho$. This is <span class="term">[regression to the mean](https://en.wikipedia.org/wiki/Regression_toward_the_mean)</span>: extreme values of $X$ tend to go with less extreme values of $Y$, on average.
+which we call the <span class="term">[correlation](https://en.wikipedia.org/wiki/Covariance_and_correlation)</span> between $X$ and $Y$. It follows that $E[Z_Y\mid Z_X]=\rho Z_X$.
 
 <div class="example" markdown="1">
 #### Example (regression to the mean)
 
-Suppose exam 1 and exam 2 scores, standardized, have correlation $\rho=0.6$.
+Suppose exam 1 and exam 2 scores have correlation $\rho=0.6$.
 
 <u>Question:</u> a student scores $2$ standard deviations above the mean on exam 1. What's their predicted standardized score on exam 2?
 
-<u>Solution:</u> $E[Z_Y\mid Z_X=2] = 0.6 \times 2 = 1.2$. The predicted score is still above average, but less extreme than exam 1's &mdash; not because the student got worse, but because an unusually high score is partly luck, and luck doesn't repeat.
+<u>Solution:</u> $E[Z_Y\mid Z_X=2] = 0.6 \times 2 = 1.2$. This is not because the student got worse, but because of the phenomena of regression to the mean. 
 </div>
 
 <details class="practice-section" markdown="1">
@@ -920,7 +918,7 @@ Write Python code that:
   <li>simulates $N=100{,}000$ samples of $(X,Y)$ from this model;</li>
   <li>estimates $E[\operatorname{var}(Y\mid X)]$ (within-group) and $\operatorname{var}(E[Y\mid X])$ (between-group) from the simulated data, and adds them together;</li>
   <li>compares that sum to the sample variance of all of $Y$ taken together, and confirms they closely agree;</li>
-  <li>by hand, computes the exact value of $\operatorname{var}(Y)$ using the law of total variance, and states how closely it matches part (c).</li>
+  <li>by hand, computes the exact value of $\operatorname{var}(Y)$ using the law of total variance. </li>
 </ol>
 </div>
 

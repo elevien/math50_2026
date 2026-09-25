@@ -14,7 +14,7 @@ toc:
 
 <div class="unit-overview" markdown="1">
 
-This unit introduces **probability models** as a framework for reasoning about uncertainty in data. The primary goal is to learn the mathematical language and notation needed to talk about statistical models (probability theory). We will start with probability models where the outcomes are a finite set (like the roll of a die). We'll then extend the framework to **continuous** random variables and probability densities which we will use for most of the course. 
+This unit introduces **probability models**, a framework for reasoning about randomness. The primary goal is to learn the mathematical language and notation needed to talk about statistical models (what we call probability theory). We will start with models where the outcomes are a finite set (like a coin flip or the roll of a die). We'll then define **continuous** random variables and probability densities which we will use for most of the course. 
 
 #### Concepts
 
@@ -23,10 +23,10 @@ Probability models, random variables, sample spaces, outcomes and events, probab
 #### Things to practice
 
 - Move fluently between representations of the same model: words, tables, formulas, diagrams, simulations, and empirical counts from data.
-- Translate between mathematical definitions and code: recognize where sample spaces, probabilities, conditioning, independence assumptions, and repeated sampling appear in a simulation (on exams you will not be asked to write code, but you may be asked to explain what a few lines of code are doing).
-- Compute and interpret joint, marginal, and conditional probabilities, then use them to decide whether variables are independent.
+- Translate between mathematical definitions and code (on exams you will not be asked to write code, but you may be asked to explain what a few lines of code are doing).
+- Work with joint, marginal, and conditional probabilities. Use them to decide whether variables are independent.
 - Explain the difference between exact probability statements, estimates from finite samples, and subjective uncertainty about a single unknown outcome.
-- Reason about continuous random variables using intervals, densities, and conditioning, without treating density values themselves as probabilities.
+- Reason about continuous random variables using intervals, densities, and conditioning.
 
 </div>
 
@@ -66,7 +66,7 @@ A direct consequence of these axioms is the <span class="term">[complement rule]
 
 $$ P(U^c) = 1 - P(U). $$
 
-This is often the easiest way to compute the probability of an "at least one" event: rather than adding up every way at least one thing happens, compute the probability that *none* of them happen and subtract from $1$.
+This is often the easiest way to compute the probability of an "at least one" event. That is, we compute the probability that *none* of them happen and subtract from $1$.
 
 Probabilities $P(\{x\})$ (that is, probabilities of outcomes) are called the  <span class="term">[probability distribution](https://en.wikipedia.org/wiki/Probability_distribution)</span>. We'll write this in equivalent ways:
 
@@ -121,7 +121,7 @@ The tree below builds these four probabilities branch by branch. Each path from 
 <div class="example" markdown="1">
 #### Example (colon cancer diagnosis and gender)
 
-Let $C \in \lbrace 0,1 \rbrace$ indicate whether a randomly chosen person is diagnosed with colorectal cancer before age $50$, and let $G \in \lbrace M, F\rbrace$ be their gender. Combining the roughly even split of the U.S. population by gender with the cumulative before-age-$50$ diagnosis rates reported by the [American Cancer Society](https://www.cancer.org/content/dam/cancer-org/research/cancer-facts-and-statistics/annual-cancer-facts-and-figures/2024/mr7-probability-by-age-2024.pdf) &mdash; $0.42\%$ of men (about $1$ in $239$) and $0.38\%$ of women (about $1$ in $265$) &mdash; gives the joint distribution
+Let $C \in \lbrace 0,1 \rbrace$ indicate whether a randomly chosen person is diagnosed with colorectal cancer before age $50$, and let $G \in \lbrace M, F\rbrace$ be their gender.
 
 <table class="prob-table">
 <tr><th>$P(C,G)$</th><th>$G=M$</th><th>$G=F$</th></tr>
@@ -131,9 +131,9 @@ Let $C \in \lbrace 0,1 \rbrace$ indicate whether a randomly chosen person is dia
 
 A few natural questions about this table foreshadow ideas we'll make precise in the next section:
 
-- *How likely is a randomly chosen person to be diagnosed, regardless of gender?* To address this we add across $M$ to obtain  $P(C=1) = 0.0021+0.0019 = 0.004$ or $0.4\%$ overall. Summing over one variable like this is called <span class="term">marginalizing</span> it.
+- *How likely is a randomly chosen person to be diagnosed, regardless of gender?* To address this we add across $M$ to obtain  $P(C=1) = 0.0021+0.0019 = 0.004$ or $0.4\%$ overall. Summing over one variable in this way is called <span class="term">marginalizing</span> it.
 - *Does knowing someone's gender change their risk?* 
-- *Are $C$ and $G$ independent?* These conditional risks are close to each other and to the overall $0.4\%$, so before age $50$ gender barely affects cancer risk. 
+- *Are $C$ and $G$ independent?* Will known someones gender chance how we access their risk of diagnosis?
 </div>
 
 <details class="practice-section" markdown="1">
@@ -658,13 +658,13 @@ rather than the older, unseeded global functions like `np.random.choice(...)` us
 
 #### Note on probabilities as frequency vs. belief
 
-Consider the coin from the example above, but suppose it's already been flipped and is now covered by a cup. Heads or tails is already decided, just hidden from us. If someone says "there's a 90% probability it landed heads," what does that number actually refer to?
+Consider the coin from the example above, but suppose it's already been flipped and is now covered by a cup. The outcome (heads or tails) has, at this point, already been decided but is hidden from us. If someone says "there's a 90% probability it landed heads," what does that number mean?
 
-One reading treats probability as a *frequency*: if we imagine repeating the flip (or repeating "situations like this one") many times, heads would come up in 90% of them. This is the interpretation behind the sampling picture above, where $N(x)/n \to P(X=x)$ as $n$ grows.
+One interpretation views probability as a *frequency*. In this case, if we imagine repeating the flip (or repeating "situations like this one") many times, heads would come up in 90% of them. This is the interpretation of the sampling picture above, where $N(x)/n \to P(X=x)$ as $n$ grows.
 
-But this particular coin isn't going to be reflipped. Rather, it already landed, and the outcome is fixed, even though we don't know it. A second reading treats the 90% instead as a *degree of belief*: a number summarizing how confident we are that it's heads, given whatever evidence we have (maybe we saw it wobble, or we know this coin is biased). Under this view, probability doesn't require imagining repeated trials at all and therefore can quantify uncertainty about a single, already-determined fact.
+But this particular coin has already landed, and the outcome is fixed and unknown. A second interpretation treats the 90% instead as a *degree of belief*. In this view, the probability is a number summarizing how confident we are that it's heads, given whatever evidence we have. Under this view, probability doesn't require imagining repeated trials at all and therefore can quantify uncertainty about a single, already-determined fact.
 
-Both readings obey the same rules of probability, so for the mathematics we've developed so far it won't matter which one you have in mind.
+The actual calculations are, for the most part, the same in both views. More will be said about this later. 
 
 <details class="practice-section" markdown="1">
 <summary><h3>Drill</h3></summary>
