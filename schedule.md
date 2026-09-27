@@ -21,11 +21,11 @@ Before going through Unit 1, please review [Unit 0]({{ '/unit0/' | relative_url 
 | **Week 2** | | | | |
 | Mon Sept 21 | [Unit 1]({{ '/unit1/' | relative_url }}) | 1.4 Continuous distributions | [Slides]({{ '/unit1/slides-09-21.pdf' | relative_url }}) | |
 | Wed Sept 23 | [Unit 2]({{ '/unit2/' | relative_url }}) | 2.1 Expectation and conditional expectation| [Slides]({{ '/unit2/slides-09-23.pdf' | relative_url }}) | |
-| Fri Sept 25 | [Unit 2]({{ '/unit2/' | relative_url }}) | Variance; 2.2 The Normal distribution; 2.3 Linear regression as a conditionally Normal model and covariance; 2.4 Coefficient of determination and correlation | [Slides]({{ '/unit2/slides-09-25.pdf' | relative_url }}) | Assignment 1 due on canvas|
+| Fri Sept 25 | [Unit 2]({{ '/unit2/' | relative_url }}) | Variance; 2.2 The Normal distribution; 2.3 Linear regression as a conditionally Normal model and covariance | [Slides]({{ '/unit2/slides-09-25.pdf' | relative_url }}) | Assignment 1 due on canvas|
 | **Week 3** | | | | |
-| Mon Sept 28 | [Unit 2]({{ '/unit2/' | relative_url }}) | 2.3/2.4 cont.; review | | Last day of Midterm 1 material |
+| Mon Sept 28 | [Unit 2]({{ '/unit2/' | relative_url }}) | 2.3 cont.; review | | Last day of Midterm 1 material |
 | Wed Sept 30 | | **Midterm 1**  | [Slides]({{ '/unit3/slides-09-30.pdf' | relative_url }}) |  |
-| Fri Oct 2 | [Unit 3]({{ '/unit3/' | relative_url }}) | 3.2 Estimators, bias and consistency | [Slides]({{ '/unit3/slides-10-02.pdf' | relative_url }}) | |
+| Fri Oct 2 | [Unit 3]({{ '/unit3/' | relative_url }}) |2.4 Coefficient of determination and correlation; 3.2 Estimators, bias and consistency | [Slides]({{ '/unit3/slides-10-02.pdf' | relative_url }}) | |
 | **Week 4** | | | | |
 | Mon Oct 5 | [Unit 3]({{ '/unit3/' | relative_url }}) | 3.3 Confidence intervals; 3.4 Least squares and estimators for linear regression | [Slides]({{ '/unit3/slides-10-05.pdf' | relative_url }}) | |
 | Wed Oct 7 | [Unit 3]({{ '/unit3/' | relative_url }}) | 3.4 cont.: sample distribution of the estimator; 3.6 Hypothesis testing | [Slides]({{ '/unit3/slides-10-07.pdf' | relative_url }}) | |
