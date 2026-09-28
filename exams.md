@@ -259,7 +259,7 @@ $$ \operatorname{var}(Y) = E\big[\operatorname{var}(Y\mid X)\big] + \operatornam
 
 The first term is the average spread of $Y$ within each value of $X$, and the second is the spread of the conditional means across values of $X$.
 
-1. Derive the law of total covariance. (Hint: start from $\operatorname{var}(Y)=E[Y^2]-E[Y]^2$)
+1. Derive the law of total variance. (Hint: start from $\operatorname{var}(Y)=E[Y^2]-E[Y]^2$)
 2. Use it to compute $\operatorname{var}(Y)$ when $X \sim \text{Bernoulli}(1/3)$ and $Y \mid X \sim \text{Uniform}(0,\,1+X)$.
 </div>
 
