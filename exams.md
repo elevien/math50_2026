@@ -29,7 +29,7 @@ Covers [Unit 1]({{ '/unit1/' | relative_url }}) and [Unit 2]({{ '/unit2/' | rela
 - Standardize a Normal variable, and use the bell curve shape (68 / 95 / 99.7) to estimate probabilities.
 - The distribution of $aX+b$, and of a sum of independent Normals.
 - The single-predictor model $Y \mid X \sim \text{Normal}(\beta_0+\beta_1X, \sigma^2)$, its equivalent form $Y = \beta_0+\beta_1X+\epsilon$, and what each parameter controls.
-- For a **binary** predictor, why $\beta_1 = E[Y\mid X{=}1]-E[Y\mid X{=}0]$.
+- Why $\beta_1 = E[Y\mid X{=}x+1]-E[Y\mid X{=}x]$.
 - Assumptions of linear regression model
 - $\operatorname{cov}(X,Y)=\beta_1\sigma_X^2$
 
@@ -154,11 +154,11 @@ Let $X \sim \text{Bernoulli}(1/2)$ and $Y \mid X \sim \text{Normal}(1+3X,\ 4)$. 
 <div class="exercise" markdown="1">
 #### Problem 10
 
-An experiment tests whether *believing* an activity is exercise improves health, independent of any change in actual physical activity. Housekeeping staff at a single hotel are split into a control group and a treatment group; the treatment group is told that their daily work already meets recommended exercise guidelines, while the control group is told nothing. Everyone keeps doing their normal job at the same hotel. Several weeks later, health measurements (e.g. blood pressure) are taken for both groups and the group averages are compared.
+An experiment tests whether *believing* an activity is exercise improves health, independent of any change in actual physical activity. Housekeeping staff at a single hotel are split into a control group and a treatment group; the treatment group is told that their daily work already meets recommended exercise guidelines, while the control group is told nothing. Several weeks later, health measurements (e.g. blood pressure) are taken for both groups and the group averages are compared.
 
 1. The description doesn't say how workers were assigned to the two groups. What is the best way to do this assignment, and why?
-1. Suppose that instead, workers were free to choose which group they wanted to join. Using the definition of exogeneity, explain why the difference between the two group averages would then be hard to interpret as the effect of the message itself.
-1. Even with the assignment from (a), give one reason that having both groups work at the same hotel could still bias the comparison, and suggest a fix.
+2. Suppose that instead, workers were free to choose which group they wanted to join. Using the definition of exogeneity, explain why the difference between the two group averages would then be hard to interpret as the effect of the message itself.
+3. Even with the assignment from (a), give one reason that having both groups work at the same hotel could still bias the comparison, and suggest a fix.
 </div>
 
 <div class="exercise" markdown="1">
