@@ -23,7 +23,7 @@ Before going through Unit 1, please review [Unit 0]({{ '/unit0/' | relative_url 
 | Wed Sept 23 | [Unit 2]({{ '/unit2/' | relative_url }}) | 2.1 Expectation and conditional expectation| [Slides]({{ '/unit2/slides-09-23.pdf' | relative_url }}) | |
 | Fri Sept 25 | [Unit 2]({{ '/unit2/' | relative_url }}) | Variance; 2.2 The Normal distribution; 2.3 Linear regression as a conditionally Normal model and covariance | [Slides]({{ '/unit2/slides-09-25.pdf' | relative_url }}) | Assignment 1 due on canvas|
 | **Week 3** | | | | |
-| Mon Sept 28 | [Unit 2]({{ '/unit2/' | relative_url }}) | 2.3 cont.; review | | Last day of Midterm 1 material |
+| Mon Sept 28 | [Unit 2]({{ '/unit2/' | relative_url }}) | 2.3 cont.; review | [Slides]({{ '/unit2/slides-09-28.pdf' | relative_url }}) | Last day of Midterm 1 material |
 | Wed Sept 30 | | **Midterm 1**  | [Slides]({{ '/unit3/slides-09-30.pdf' | relative_url }}) |  |
 | Fri Oct 2 | [Unit 3]({{ '/unit3/' | relative_url }}) |2.4 Coefficient of determination and correlation; 3.2 Estimators, bias and consistency | [Slides]({{ '/unit3/slides-10-02.pdf' | relative_url }}) | |
 | **Week 4** | | | | |
