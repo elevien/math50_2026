@@ -1,6 +1,6 @@
 ---
 layout: notes
-title: "Unit 3: Estimators, and uncertainty Quantification for single-Predictor Regression"
+title: "Unit 3: Estimators and Uncertainty Quantification for Single-Predictor Regression"
 unit_title: "Unit 3"
 unit_subtitle: "The CLT, uncertainty quantification, and single-predictor regression"
 toc:
@@ -15,7 +15,7 @@ toc:
 
 <div class="unit-overview" markdown="1">
 
-In this unit, we address the question of statistical error. We begin with the **Law of Large numbers** and **Central Limit Theorem**, which connects the behavior of large random samples to the Normal distribution from Unit 2. We then define an **estimator** (somthing we hav already examples of) and discuss the concepts of **bias**, **variance**,  **confidence intervals** and the sample distribution. We apply these ideas to **least squares estimator** for the regression coefficient in a linear regression model and autoregressive models. Finally we discuss **hypothesis testing** briefly. 
+In this unit, we address the question of statistical error. We begin with the **Law of Large Numbers** and **Central Limit Theorem**, which connects the behavior of large random samples to the Normal distribution from Unit 2. We then define an **estimator** (something we have already seen examples of) and discuss the concepts of **bias**, **variance**, **confidence intervals**, and the sample distribution. We apply these ideas to the **least squares estimator** for the regression coefficient in a linear regression model and autoregressive models. Finally, we discuss **hypothesis testing** briefly.
 
 #### Concepts
 
@@ -25,7 +25,7 @@ The law of large numbers, the Central Limit Theorem, estimators, sample distribu
 
 - Use the CLT to approximate the distribution of a sum or sample average, and to justify treating an estimator's sample distribution as approximately Normal.
 - Identify whether a simple estimator is biased or not, by hand if possible, or using simulations in Python.
-- Know the properties of least square estimator and what the sample distribution looks like. 
+- Know the properties of the least squares estimator and what its sample distribution looks like.
 - Perform a hypothesis test by simulating the model. 
 
 
@@ -92,7 +92,7 @@ Let $Y = \sum_{i=1}^N X_i$ where $X_1,\dots,X_N$ are iid $\text{Bernoulli}(q)$ (
 
 ## 3.2 Estimators, bias & consistency {#sec-3-2}
 
-We've already aluded to concept of statistical inference and parameter estimation.  Recall that $\hat q = \overline Y$ is an estimator of the parameter $q$ for a Bernoulli distribution, and more generally we've gone back and forth between "data world" (sample means, histograms) and "math world" (expectation, density) via sample averages.
+We've already alluded to the concept of statistical inference and parameter estimation. Recall that $\hat q = \overline Y$ is an estimator of the parameter $q$ for a Bernoulli distribution, and more generally we've gone back and forth between "data world" (sample means, histograms) and "math world" (expectation, density) via sample averages.
 
 **Statistical inference is the process of estimating the parameters of a distribution (e.g. $\mu$ and $\sigma$) from samples of $Y$, *and* expressing our uncertainty in these estimates.** The "expressing uncertainty" part is what we haven't yet discussed formally.
 
@@ -100,7 +100,7 @@ In general, an <span class="term">[estimator](https://en.wikipedia.org/wiki/Esti
 
 ### Sample distribution and standard errors
 
-We call the distribution of $\hat\theta$ over many replications of our data the <span class="term">[sample distribution](https://en.wikipedia.org/wiki/Sampling_distribution)</span>. We use <span class="term">[replicate](https://en.wikipedia.org/wiki/Replication_(statistics))</span> to mean a different realization of the *entire* dataset (as opposed to the individual samples *within* a dataset) &mdash; the terminology is a little confusing: the sample distribution is the distribution of $\hat\theta$ over many replicates, but each replicate itself consists of many samples. The demo below makes the distinction concrete: the pale bars are a histogram of the $N$ *samples* $Y_i$ inside the latest replicate, while the solid bars collect one estimate $\hat\mu=\overline Y$ per replicate &mdash; that second histogram is the sample distribution, compared against the theoretical $\text{Normal}(\mu,\sigma^2/N)$ curve.
+We call the distribution of $\hat\theta$ over many replications of our data the <span class="term">[sample distribution](https://en.wikipedia.org/wiki/Sampling_distribution)</span>. We use <span class="term">[replicate](https://en.wikipedia.org/wiki/Replication_(statistics))</span> to mean a different realization of the *entire* dataset (as opposed to the individual samples *within* a dataset) &mdash; the terminology is a little confusing: the sample distribution is the distribution of $\hat\theta$ over many replicates, but each replicate itself consists of many samples. The demo below makes the distinction concrete: the pale bars (top) are a histogram of the $N$ *samples* $Y_i$ inside the latest replicate, while the solid bars (bottom) collect one estimate $\hat\mu=\overline Y$ per replicate &mdash; that second histogram is the sample distribution, compared against the theoretical $\text{Normal}(\mu,\sigma^2/N)$ curve.
 
 {% include_relative demos/replicates.html %}
 
@@ -438,11 +438,11 @@ Across hypothetical repeated datasets with the same $x$'s, $\hat\beta_1$ is corr
 
 ## 3.5 Autoregressive models and the Hurwicz bias {#sec-3-5}
 
-A special type of regression model where the predictor is the same quantity as the response variable but observed at a previous times is called an <span class="term">[autoregressive model](https://en.wikipedia.org/wiki/Autoregressive_model)</span>.  We consider a simple AR model where 
+A special type of regression model where the predictor is the same quantity as the response variable but observed at a previous time is called an <span class="term">[autoregressive model](https://en.wikipedia.org/wiki/Autoregressive_model)</span>. We consider a simple AR model where
 
 $$Y_t|Y_{t-1} \sim {\rm Normal}(\beta_1 Y_{t-1} +\beta_0,\sigma^2)$$
 
-We further assume that $Y_t\mid Y_{t-1}$ is independent of $Y_{t-2},Y_{t-3},...$. This is a natural starting point for modeling for many noisy processes, such as stocks or height along a lineage (mother,daugher,granddaugher). The shows how the natural least squares estimato is biased. 
+We further assume that $Y_t\mid Y_{t-1}$ is independent of $Y_{t-2},Y_{t-3},...$. This is a natural starting point for modeling many noisy processes, such as stocks or height along a lineage (mother, daughter, granddaughter). The example below shows how the natural least squares estimator is biased.
 
 <div class="example" markdown="1">
 #### Example
@@ -542,18 +542,18 @@ $$ \hat T = \frac{\hat\beta_1}{\text{se}(\hat\beta_1)}. $$
 
 Since $\sigma$ is known, $\text{se}(\hat\beta_1)$ is known too, so from the sample distribution's perspective this is just division by a constant.
 
-Let $\hat\beta_1^*$ denote the measured effect <em>under the null hypothesis</em> &mdash; a replicate generated assuming $\beta_1=0$. Then $\hat\beta_1^*$ has the sample distribution shifted to be centered at zero:
+Let $\hat\beta_1^{\ast}$ denote the measured effect <em>under the null hypothesis</em> &mdash; a replicate generated assuming $\beta_1=0$. Then $\hat\beta_1^{\ast}$ has the sample distribution shifted to be centered at zero:
 
-$$ \hat\beta_1^* \sim \text{Normal}\Big(0,\ \frac{4\sigma^2}{N}\Big). $$
+$$ \hat\beta_1^{\ast} \sim \text{Normal}\Big(0,\ \frac{4\sigma^2}{N}\Big). $$
 
 We can now answer the question posed in step 3: if the null hypothesis were true, how likely would we be to see a $\lvert\hat T\rvert$ at least as large as what we observed? This is the $p$-value,
 
-$$ p_v = P\big(\lvert\hat T^*\rvert > \lvert\hat T\rvert \mid \hat T\big), $$
+$$ p_v = P\big(\lvert\hat T^{\ast}\rvert > \lvert\hat T\rvert \mid \hat T\big), $$
 
-where $\hat T^*$ is the test statistic computed from $\hat\beta_1^*$ (probability taken over its distribution), while $\hat T$ is fixed by our actual data.
+where $\hat T^{\ast}$ is the test statistic computed from $\hat\beta_1^{\ast}$ (probability taken over its distribution), while $\hat T$ is fixed by our actual data.
 </div>
 
-The demo below shows both sides of this at once. On the left is the null distribution of $\hat\beta_1^*$ with the two-sided $p$-value shaded &mdash; the chance of seeing something at least as extreme as $\hat\beta_1$. On the right is the $95\%$ confidence interval for $\hat\beta_1$, drawn against $0$.
+The demo below shows both sides of this at once. On the left is the null distribution of $\hat\beta_1^{\ast}$ with the two-sided $p$-value shaded &mdash; the chance of seeing something at least as extreme as $\hat\beta_1$. On the right is the $95\%$ confidence interval for $\hat\beta_1$, drawn against $0$.
 
 {% include_relative demos/pvalueCI.html %}
 
@@ -562,8 +562,6 @@ The example above is unusually simple ($\sigma$ known, binary predictor); in gen
 ### $p$-values and confidence intervals
 
 The $p$-value is about the "tail" of the sample distribution &mdash; its far ends. There's a natural connection to confidence intervals, which also measure the width of the sample distribution. In the simple Normal case above, testing $H_0:\beta_1=0$ at the $5\%$ level is equivalent to checking whether $0$ is outside the $95\%$ confidence interval for $\beta_1$. More generally, the two-sided $p$-value is the smallest significance level at which the null value would be excluded by the corresponding two-sided confidence interval.
-
-</details>
 
 ## Problems {#problems}
 

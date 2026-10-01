@@ -9,8 +9,9 @@
     <button id="rep-hundred">Run 100 more replicates</button>
     <button id="rep-reset">Reset</button>
   </div>
-  <svg id="rep-chart"></svg>
-  <p class="demo-caption">$Y \sim \text{Normal}(\mu,\sigma^2)$ with $\mu=0$, $\sigma=1.5$ fixed. The wide, pale bars are the $N$ individual samples $Y_i$ from the latest replicate; the narrow, solid bars are $\hat\mu$ collected one per replicate, compared against the theoretical $\text{Normal}(\mu,\sigma^2/N)$ curve.</p>
+  <svg id="rep-chart-samples"></svg>
+  <svg id="rep-chart-means"></svg>
+  <p class="demo-caption">$Y \sim \text{Normal}(\mu,\sigma^2)$ with $\mu=0$, $\sigma=1.5$ fixed. The pale bars (top) are the $N$ individual samples $Y_i$ from the latest replicate; the solid bars (bottom) are $\hat\mu$ collected one per replicate, compared against the theoretical $\text{Normal}(\mu,\sigma^2/N)$ curve.</p>
 </div>
 
 <script>
@@ -18,7 +19,8 @@
   const MU = 0, SIGMA = 1.5;
   const nSlider = document.getElementById('rep-n');
   const nVal = document.getElementById('rep-n-val');
-  const chart = document.getElementById('rep-chart');
+  const sampleChart = document.getElementById('rep-chart-samples');
+  const meanChart = document.getElementById('rep-chart-means');
   const mk = NotesUtils.svg;
 
   // Fixed once, from the constants above: never recomputed from accumulated
@@ -54,23 +56,51 @@
     }));
   }
 
+  // Both panels share X_DOMAIN and histWithCurve's default width/margins, so
+  // x positions line up vertically between them.
+  const W = 480, M_LEFT = 34, M_RIGHT = 12, M_TOP = 16, M_BOTTOM = 30;
+  const EST_COLOR = '#a2542c';
+
+  // Dashed vertical line at the latest replicate's mu-hat, linking the top
+  // panel (where it is computed) to the bottom panel (where it is collected).
+  function markLatestMean(container, height) {
+    if (!lastSamples.length) return;
+    const m = means[means.length - 1];
+    const px = M_LEFT + ((m - X_DOMAIN[0]) / (X_DOMAIN[1] - X_DOMAIN[0])) * (W - M_LEFT - M_RIGHT);
+    container.appendChild(mk('line', {
+      x1: px, y1: M_TOP, x2: px, y2: height - M_BOTTOM,
+      stroke: EST_COLOR, 'stroke-width': 2, 'stroke-dasharray': '5 3',
+    }));
+  }
+
   function render() {
     const n = N();
     const theorySE = SIGMA / Math.sqrt(n);
-    NotesUtils.histWithCurve(chart, {
-      series: [
-        { bins: histogram(lastSamples), color: '#1f5a6b', opacity: 0.3 },
-        { bins: histogram(means), color: '#a2542c', opacity: 0.8 },
-      ],
+    const xTicks = [{ x: MU, label: 'μ = ' + MU.toFixed(1) }];
+
+    const topH = 170;
+    NotesUtils.histWithCurve(sampleChart, {
+      height: topH,
+      series: [{ bins: histogram(lastSamples), color: '#1f5a6b', opacity: 0.3 }],
+      xDomain: X_DOMAIN,
+      xTicks,
+      legend: [{ name: 'this replicate’s samples', color: '#1f5a6b' }],
+    });
+    markLatestMean(sampleChart, topH);
+
+    const botH = 220;
+    NotesUtils.histWithCurve(meanChart, {
+      height: botH,
+      series: [{ bins: histogram(means), color: EST_COLOR, opacity: 0.8 }],
       curve: (x) => NotesUtils.normalPdf(x, MU, theorySE),
       xDomain: X_DOMAIN,
-      xTicks: [{ x: MU, label: 'μ = ' + MU.toFixed(1) }],
+      xTicks,
       legend: [
-        { name: 'this replicate’s samples', color: '#1f5a6b' },
-        { name: 'replicate estimates μ̂', color: '#a2542c' },
+        { name: 'replicate estimates μ̂', color: EST_COLOR },
         { name: 'Normal(μ, σ²/N)', color: '#b08a2a' },
       ],
     });
+    markLatestMean(meanChart, botH);
   }
 
   nSlider.addEventListener('input', () => {
