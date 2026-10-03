@@ -28,10 +28,10 @@ Before going through Unit 1, please review [Unit 0]({{ '/unit0/' | relative_url 
 | Fri Oct 2 | [Unit 3]({{ '/unit3/' | relative_url }}) | 2.4 Coefficient of determination and correlation; 3.2 Estimators, bias and consistency | [Slides]({{ '/unit3/slides-10-02.pdf' | relative_url }}) | |
 | **Week 4** | | | | |
 | Mon Oct 5 | [Unit 3]({{ '/unit3/' | relative_url }}) | 3.2 cont.: estimators; 3.3 Confidence intervals; 3.4 Least squares and estimators for linear regression | [Slides]({{ '/unit3/slides-10-05.pdf' | relative_url }}) | |
-| Wed Oct 7 | [Unit 3]({{ '/unit3/' | relative_url }}) | 3.4 cont.: sample distribution of the estimator; 3.6 Hypothesis testing | [Slides]({{ '/unit3/slides-10-07.pdf' | relative_url }}) | |
-| Fri Oct 9 | [Unit 3]({{ '/unit3/' | relative_url }}) | 3.5 Autoregressive models and the Hurwicz bias | [Slides]({{ '/unit3/slides-10-09.pdf' | relative_url }}) | Assignment 2 due on canvas |
+| Wed Oct 7 | [Unit 3]({{ '/unit3/' | relative_url }}) | 3.4 cont.: sample distribution of the least squares estimator; 3.6 Hypothesis testing | [Slides]({{ '/unit3/slides-10-07.pdf' | relative_url }}) | |
+| Fri Oct 9 | [Unit 3]({{ '/unit3/' | relative_url }}) | 3.5 Autoregressive models and the Hurwicz bias | [Slides]({{ '/unit3/slides-10-09.pdf' | relative_url }}) | |
 | **Week 5** | | | | |
-| Mon Oct 12 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.1 Study design and confounding; 4.2 Multiple-predictor regression | [Slides]({{ '/unit4/slides-10-12.pdf' | relative_url }}) | |
+| Mon Oct 12 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.1 Study design and confounding; 4.2 Multiple-predictor regression | [Slides]({{ '/unit4/slides-10-12.pdf' | relative_url }}) | Assignment 2 due on canvas |
 | Wed Oct 14 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.2 cont.: omitted variable bias; Simpson's paradox | [Slides]({{ '/unit4/slides-10-14.pdf' | relative_url }}) | |
 | Fri Oct 16 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.3 Covariance matrices: a linear algebra view | [Slides]({{ '/unit4/slides-10-16.pdf' | relative_url }}) | |
 | **Week 6** | | | | |
