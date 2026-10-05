@@ -376,7 +376,7 @@ Then: which of these is unbiased but *not* consistent, and which is consistent b
 A quantity is Normally distributed with known $\sigma=6$. You collect $n=36$ samples and observe $\overline X = 21.5$.
 
 1. Compute $\text{se}(\hat\mu)$ and the approximate 95% confidence interval.
-1. How many samples would you need for the margin of error to be at most $0.5$?
+1. How many samples would you need for the 95% confidence interval to be no wider than $\overline X \pm 0.5$?
 1. A classmate says "there is a 95% chance the true mean is between 19.5 and 23.5." Say what is wrong with this and give the correct statement.
 </div>
 

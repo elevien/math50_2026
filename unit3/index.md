@@ -298,13 +298,13 @@ but this is different from the interval above, since here we've replaced $\hat\t
 
 Suppose we're designing an experiment. Our model is Normal and, from previous experience, we have a ballpark estimate of the standard deviation, $\sigma=1$.
 
-<u>Question:</u> roughly how many samples do we need for the $95\%$ confidence interval to have margin of error less than $1$?
+<u>Question:</u> roughly how many samples do we need for the $95\%$ confidence interval to be no wider than $\hat\mu\pm 1$?
 
 <u>Solution:</u> the standard error based on $n$ samples is $\sigma/\sqrt n = 1/\sqrt n$, so the CI is
 
 $$ \Big[\hat\mu - \frac{1.96}{\sqrt n},\ \ \hat\mu + \frac{1.96}{\sqrt n}\Big], $$
 
-with width $2\times 1.96/\sqrt n = 3.92/\sqrt n$. This interval contains the true value for $95\%$ of replicates, so margin of error less than $1$ means width $<2$:
+with width $2\times 1.96/\sqrt n = 3.92/\sqrt n$. This interval contains the true value for $95\%$ of replicates, so we need width $<2$:
 
 $$ \frac{3.92}{\sqrt n} < 2 \implies \sqrt n > 1.96 \implies n > (1.96)^2 \approx 3.84. $$
 
