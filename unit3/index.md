@@ -82,7 +82,7 @@ Let $Y = \sum_{i=1}^N X_i$ where $X_1,\dots,X_N$ are iid $\text{Bernoulli}(q)$ (
 
 <ol type="a">
   <li>Use the CLT to approximate the distribution of $Y$.</li>
-  <li>Use that approximation to estimate $P(Y<N/2)$ when $N=200$ and $q=0.3$.</li>
+  <li>Use that approximation to estimate $P(Y<70)$ when $N=200$ and $q=0.3$.</li>
   <li>Write Python code using <code>scipy.stats.norm</code> and <code>scipy.stats.binom</code> to compare the CLT approximation with the exact Binomial probability.</li>
   <li>Explain why the approximation should improve as $N$ increases.</li>
 </ol>
@@ -270,6 +270,74 @@ $$ \hat\sigma_0^2 = \frac12\big[(Y_1-\overline Y)^2+(Y_2-\overline Y)^2\big], \q
 <li>Show that $\hat\sigma_0^2 = \frac14(Y_1-Y_2)^2$.</li>
 <li>Using $\text{var}(Y_1-Y_2)=2\sigma^2$, compute $E[\hat\sigma_0^2]$ in terms of $\sigma^2$.</li>
 <li>Confirm this matches $\frac{n-1}{n}\sigma^2$ for $n=2$.</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Bias, variance and MSE from a table
+
+An estimator $\hat\theta$ of $\theta=2$ has the sample distribution below.
+
+| $\hat\theta$ | $1$ | $2$ | $4$ |
+|:---:|:---:|:---:|:---:|
+| probability | $0.25$ | $0.5$ | $0.25$ |
+
+<ol type="a">
+<li>Compute the bias of $\hat\theta$.</li>
+<li>Compute $\text{var}(\hat\theta)$.</li>
+<li>Compute $\text{MSE}_{\hat\theta}=E[(\hat\theta-\theta)^2]$ directly from the table, and check that it equals $\text{var}(\hat\theta)+\text{bias}^2$.</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### A weighted average
+
+Let $Y_1,Y_2$ be independent with $E[Y_i]=\mu$ and $\text{var}(Y_i)=\sigma^2$, and for a number $0\le w\le1$ let
+
+$$ \hat\mu_w = wY_1+(1-w)Y_2. $$
+
+<ol type="a">
+<li>Show that $\hat\mu_w$ is unbiased for every $w$.</li>
+<li>Find $\text{var}(\hat\mu_w)$. Which $w$ makes it smallest, and what is the smallest value?</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Shrinking the sample mean
+
+Let $Y_1,\dots,Y_N\sim\text{Normal}(\mu,\sigma^2)$ and, for a fixed number $a\ge0$, consider
+
+$$ \hat\mu_a=\frac{\overline Y}{1+a}. $$
+
+<ol type="a">
+<li>Find the bias and the variance of $\hat\mu_a$. What is its sample distribution?</li>
+<li>Write down $\text{MSE}_{\hat\mu_a}$. Is $\hat\mu_a$ consistent when $a>0$?</li>
+<li>Suppose the true mean is small compared with the standard error, $\mu^2\le\sigma^2/N$. Show that $\text{MSE}_{\hat\mu_a}<\text{MSE}_{\overline Y}$ for every $a>0$. What does this say about whether unbiased estimators are always best?</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Estimating $\mu^2$
+
+Let $Y_1,\dots,Y_N\sim\text{Normal}(\mu,\sigma^2)$. To estimate $\mu^2$ we use $\overline Y^{\,2}$.
+
+<ol type="a">
+<li>Using $\text{var}(\overline Y)=E[\overline Y^{\,2}]-E[\overline Y]^2$, show that $E[\overline Y^{\,2}]=\mu^2+\sigma^2/N$.</li>
+<li>Is $\overline Y^{\,2}$ an unbiased estimator of $\mu^2$? Is it consistent?</li>
+<li>Even though $\overline Y$ is unbiased for $\mu$, $\overline Y^{\,2}$ is not unbiased for $\mu^2$. In one sentence, why not?</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Estimating $q$ from the variance
+
+Let $Y_1,\dots,Y_N\sim\text{Bernoulli}(q)$ and suppose we know $q<1/2$. Besides $\hat q=\overline Y$, we could estimate the variance with $\hat\sigma_0^2=\frac1N\sum_i(Y_i-\overline Y)^2$ and then solve $\hat\sigma_0^2=q(1-q)$ for $q$.
+
+<ol type="a">
+<li>Expanding the square gives $\hat\sigma_0^2=\frac1N\sum_iY_i^2-\overline Y^{\,2}$. Since each $Y_i$ is $0$ or $1$, $Y_i^2=Y_i$. Use this to show that $\hat\sigma_0^2=\overline Y(1-\overline Y)$.</li>
+<li>Solve $v=q(1-q)$ for $q$. There are two solutions; which one should we use, and why do we need to know $q<1/2$?</li>
+<li>Plug in $v=\hat\sigma_0^2$ and show that the new estimator is $\min(\overline Y,\,1-\overline Y)$.</li>
+<li>Is this estimator biased? (Hint: compare it with $\overline Y$.)</li>
 </ol>
 </div>
 
@@ -679,15 +747,33 @@ where, as in Unit 1, $N(\cdot)$ counts the rows satisfying a condition.
 </div>
 
 <div class="exercise" markdown="1">
-#### Problem 3.6 &mdash; Laplace's rule of succession
+#### Problem 3.6 &mdash; Pseudo-counts: generalizing Laplace's rule of succession
 
-Let $X\sim\text{Bernoulli}(q)$ (i.e. $P(X{=}1)=q$), with samples $X_1,\dots,X_N$. We've seen that $\hat q=Y/N$ (with $Y=\sum_iX_i$) is a consistent, unbiased estimator of $q$. An alternative, <span class="term">[Laplace's rule of succession](https://en.wikipedia.org/wiki/Rule_of_succession)</span>, is $\hat q_L=(Y+1)/(N+2)$.
+Let $X_1,\dots,X_N\sim\text{Bernoulli}(q)$ and $Y=\sum_iX_i$. In class we saw <span class="term">[Laplace's rule of succession](https://en.wikipedia.org/wiki/Rule_of_succession)</span>, $\hat q_L=(Y+1)/(N+2)$, which pretends we have already seen one extra heads and one extra tails. More generally, we can pretend we have already seen $a\ge0$ extra heads and $b\ge0$ extra tails, called <span class="term">[pseudo-counts](https://en.wikipedia.org/wiki/Pseudocount)</span>:
 
-The motivation: think of $X$ as a biased coin, and suppose we know it's possible to get either heads or tails. Using $\hat q$, a sequence of all heads (or all tails) gives $\hat q=1$ (or $0$) &mdash; ignoring the fact we know both outcomes are possible. To correct this, $\hat q_L$ pretends we've seen two additional observations, one heads and one tails (hence $Y+1$ over $N+2$). This is a simple example of incorporating *prior* information &mdash; here, that a coin has two sides, however unlikely one might seem &mdash; into an estimator.
+$$ \hat q_{a,b}=\frac{Y+a}{N+a+b}. $$
+
+Laplace's rule is $a=b=1$, and $\hat q=Y/N$ is $a=b=0$. The pseudo-counts encode a *prior* guess about $q$ (namely $a/(a+b)$), and $a+b$ says how strongly we hold that guess.
 
 <ol type="a">
-<li>Derive $\text{MSE}_{\hat q_L} = E[(\hat q_L-q)^2]$ and decompose it into variance and squared bias, in terms of $q$ and $N$.</li>
-<li>Is $\hat q_L$ unbiased? Is it consistent?</li>
-<li>Now compute $\text{MSE}_{\hat q}$ (its bias is zero, so this should be straightforward from the standard error). Surprisingly, $\text{MSE}_{\hat q} > \text{MSE}_{\hat q_L}$ for some values of $N,q$ &mdash; for which values? This is surprising since $\hat q$ seems like it should be the best guess of $q$!</li>
+<li>Find the bias and the variance of $\hat q_{a,b}$ in terms of $q$, $N$, $a$ and $b$, and write down $\text{MSE}_{\hat q_{a,b}}$.</li>
+<li>For which value of $q$ is $\hat q_{a,b}$ unbiased? Interpret this in terms of the prior guess. Is $\hat q_{a,b}$ consistent for fixed $a,b$?</li>
+<li>What happens to $\hat q_{a,b}$, its bias and its variance as $a+b\to\infty$ with $a/(a+b)$ and $N$ held fixed? Explain in words what it means to hold a prior guess "infinitely strongly."</li>
+<li>Take the symmetric case $a=b=c$. Find the condition on $q$, $N$ and $c$ under which $\text{MSE}_{\hat q_{c,c}}<\text{MSE}_{\hat q}$. For $N=10$, plot both MSEs vs. $q$ for a few values of $c$. When would you choose a large $c$?</li>
+<li>Check your formulas from (a) with a simulation for one choice of $a,b,N,q$.</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 3.7 &mdash; Estimating the end of a Uniform distribution
+
+Let $Y_1,\dots,Y_N\sim\text{Uniform}(0,L)$ where $L$ is unknown. Two ideas for estimating $L$ are
+
+$$ \hat L_1=\max_i Y_i, \qquad \hat L_2=2\overline Y. $$
+
+<ol type="a">
+<li>Without computing anything, say whether you think each estimator is biased, and if so in which direction. (Hint: can $\hat L_1$ ever be larger than $L$? What is $E[Y_i]$?)</li>
+<li>Check your answers with a simulation: for $L=1$ and $N=5$, generate many replicates of the data, compute $\hat L_1$ and $\hat L_2$ for each, and estimate the bias and the variance of both estimators.</li>
+<li>Repeat for a few larger $N$. Are both estimators consistent? Which has the smaller MSE?</li>
 </ol>
 </div>
