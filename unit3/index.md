@@ -691,14 +691,15 @@ earnk = df["earnk"].to_numpy()
 height = df["height"].to_numpy()
 ```
 
-pandas is used only to load the CSV; work with the numpy arrays `male`, `earn`, `earnk`, and `height` defined above (`statsmodels` accepts numpy arrays directly).
+pandas is used only to load the CSV; work with the numpy arrays `male`, `earn`, `earnk`, and `height` defined above.
 
 You'll study the association between earnings and gender, and how it depends on height. Later we'll see a better way to answer this question using regression with multiple predictors, but this more elementary approach highlights some key aspects of regression analysis.
 
 <ol type="a">
 <li>What do you expect the association between gender and earnings to be? Where do your expectations come from (news, intuition, other courses you've taken)?</li>
-<li>Using <code>statsmodels</code>, perform a linear regression with gender (the array <code>male</code>) as the predictor and earnings as the response. You can use either <code>earnk</code> or <code>earn</code>, just keep track of units. Is there a statistically significant effect? Is the direction and size of the effect what you expected?</li>
-<li>Using <code>statsmodels</code>, perform a linear regression with height as the predictor and earnings as the response. Answer the same questions as in part (b).</li>
+<li>Write a function <code>fit(x, y)</code> that takes two numpy arrays and returns the least squares estimates $\hat\beta_0,\hat\beta_1$, the estimate $\hat\sigma^2=\text{SSR}/(n-2)$ of the noise variance, the standard error $\text{se}(\hat\beta_1)=\hat\sigma/\sqrt{S_{xx}}$ (with $S_{xx}=\sum_i(x_i-\bar x)^2$), the test statistic $\hat T=\hat\beta_1/\text{se}(\hat\beta_1)$, and the two-sided $p$-value $2\big(1-\Phi(|\hat T|)\big)$ (use <code>scipy.stats.norm.cdf</code> for $\Phi$).</li>
+<li>Use your function to fit a linear regression with gender (the array <code>male</code>) as the predictor and earnings as the response. You can use either <code>earnk</code> or <code>earn</code>, just keep track of units. Check that $\hat\beta_1$ equals the difference between the average earnings of men and women. Is there a statistically significant effect? Is the direction and size of the effect what you expected?</li>
+<li>Now fit a linear regression with height as the predictor and earnings as the response. Answer the same questions as in part (c).</li>
 <li>You should have found an association between both (gender, earnings) and (height, earnings). A natural question: is the height/earnings association simply a byproduct of men being taller on average? To check, separate the data into males and females and fit the height &rarr; earnings regression separately within each group.</li>
 <li>Based on the previous part, what do you conclude? Is the association between height and earnings solely due to the association between gender and height, or does it look partially due to height itself?</li>
 </ol>
