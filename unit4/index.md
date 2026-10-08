@@ -73,7 +73,7 @@ so once we control for ears, the coefficient of eye color drops from $1/6$ to $0
 <details class="optional-section" open markdown="1">
 <summary><strong>Aside: other study designs</strong> <span class="optional-badge">(optional)</span></summary>
 
-A few other designs come up often enough to name. A <span class="term">[case-control study](https://en.wikipedia.org/wiki/Case%E2%80%93control_study)</span> works backward from the outcome: it samples people who already have $Y=1$ (cases) and $Y=0$ (controls), then looks back at their history of $X$. A <span class="term">[cross-sectional study](https://en.wikipedia.org/wiki/Cross-sectional_study)</span> measures $X$ and $Y$ at a single point in time, with no notion of before and after. A <span class="term">[natural experiment](https://en.wikipedia.org/wiki/Natural_experiment)</span> looks for a real-world situation where $X$ was effectively randomized by circumstance, such as a lottery, policy threshold, or eligibility rule.
+There are many other study designs: A <span class="term">[case-control study](https://en.wikipedia.org/wiki/Case%E2%80%93control_study)</span> works backward from the outcome by sampling people who already have $Y=1$ (cases) and $Y=0$ (controls), then looks back at their history of $X$. A <span class="term">[cross-sectional study](https://en.wikipedia.org/wiki/Cross-sectional_study)</span> measures $X$ and $Y$ at a single point in time, with no notion of before and after. A <span class="term">[natural experiment](https://en.wikipedia.org/wiki/Natural_experiment)</span> looks for a real-world situation where $X$ was effectively randomized by circumstance, such as a lottery, policy threshold, or eligibility rule.
 
 </details>
 
@@ -81,7 +81,7 @@ A few other designs come up often enough to name. A <span class="term">[case-con
 <summary><h3>Drill</h3></summary>
 
 <div class="exercise" markdown="1">
-#### Naming the design
+#### Identifying study designs
 
 For each study, name the design and say whether a difference in average $Y$ between the $X$ groups can be read causally.
 
@@ -93,7 +93,7 @@ For each study, name the design and say whether a difference in average $Y$ betw
 </div>
 
 <div class="exercise" markdown="1">
-#### Spotting a confounder
+#### Confounding variables
 
 A dataset shows that towns with more ice-cream shops per capita have more drownings per capita.
 
@@ -252,7 +252,7 @@ We again consider children's test scores, comparing the two-predictor fit above 
 
 <u>Question:</u> what's the difference between the coefficient of $X_{\text{hs}}$ when it's the only predictor and when $X_{\text{iq}}$ is also included? How are the two related?
 
-<u>Solution:</u> using only mother's high-school education, we get $\hat\beta_{\text{hs}}' \approx 12$ and $\hat\beta_0' \approx 78$ (using $\beta'$ for the single-predictor coefficients), so $\hat y = 12X_{\text{hs}} + 78$ &mdash; while with both predictors, the coefficient of $X_{\text{hs}}$ is about half that.
+<u>Solution:</u> using only mother's high-school education, we get $\hat\beta_{\text{hs}}^{\prime} \approx 12$ and $\hat\beta_0^{\prime} \approx 78$ (using $\beta^{\prime}$ for the single-predictor coefficients), so $\hat y = 12X_{\text{hs}} + 78$ &mdash; while with both predictors, the coefficient of $X_{\text{hs}}$ is about half that.
 
 In the one-predictor model, a coefficient of $12$ means a student whose mother went to high school does $12$ points better on average, i.e. we're predicting
 
@@ -289,11 +289,11 @@ The important thing above is that the two predictors are *not* independent. If t
 
 $$ \beta_1' = \beta_1 + \beta_2\big(E[X_2\mid X_1{=}1]-E[X_2\mid X_1{=}0]\big), $$
 
-where $\beta_1'$ is the regression coefficient of $X_1$ *without* $X_2$ in the model.
+where $\beta_1^{\prime}$ is the regression coefficient of $X_1$ *without* $X_2$ in the model.
 
 ### Simpson's paradox
 
-In the example above, $\beta_1'$ and $\beta_1$ can even have different signs, depending on the relationship between the predictors. This effect is called <span class="term">[Simpson's "paradox"](https://en.wikipedia.org/wiki/Simpson%27s_paradox)</span> &mdash; not really a paradox, just a consequence of correlation between predictors shifting the single-predictor coefficient, as illustrated above.
+In the example above, $\beta_1^{\prime}$ and $\beta_1$ can even have different signs, depending on the relationship between the predictors. This effect is called <span class="term">[Simpson's "paradox"](https://en.wikipedia.org/wiki/Simpson%27s_paradox)</span> &mdash; not really a paradox, just a consequence of correlation between predictors shifting the single-predictor coefficient, as illustrated above.
 
 <div class="example" markdown="1">
 #### Example (Simpson's paradox with two binary predictors)
@@ -308,7 +308,7 @@ Consider two binary predictors $X_1,X_2\in\lbrace0,1\rbrace$ with joint distribu
 
 and suppose $Y\mid(X_1,X_2) = X_1 - 2X_2+\epsilon$.
 
-<u>Question:</u> compute the single-predictor regression coefficient $\beta_1'$ of $X_1$ on $Y$.
+<u>Question:</u> compute the single-predictor regression coefficient $\beta_1^{\prime}$ of $X_1$ on $Y$.
 
 <u>Solution:</u> first, the conditional means of $X_2$ given $X_1$:
 
@@ -325,13 +325,13 @@ Note the sign flip: the two-predictor model says increasing $X_1$ *increases* $Y
 
 ### Effect of adding predictors on $R^2$
 
-Adding a new predictor to a regression model can never *decrease* $R^2$. Let $R^2_{1\,\mathrm{pred}}$ be the $R^2$ for $Y=\beta_1X_1+\epsilon'$, and $R^2_{2\,\mathrm{pred}}$ the $R^2$ for $Y=\beta_1X_1+\beta_2X_2+\epsilon$. Since $R^2=1-\operatorname{var}(\mathrm{residual})/\operatorname{var}(Y)$, $R^2$ increases whenever the residual variance decreases.
+Adding a new predictor to a regression model can never *decrease* $R^2$. Let $R^2\_{1\,\mathrm{pred}}$ be the $R^2$ for $Y=\beta_1X_1+\epsilon^{\prime}$, and $R^2\_{2\,\mathrm{pred}}$ the $R^2$ for $Y=\beta_1X_1+\beta_2X_2+\epsilon$. Since $R^2=1-\operatorname{var}(\mathrm{residual})/\operatorname{var}(Y)$, $R^2$ increases whenever the residual variance decreases.
 
-The key point: the error term $\epsilon'$ in the reduced (single-predictor) model is *not* the same as $\beta_2X_2+\epsilon$ &mdash; it absorbs the variation in $Y$ that's correlated with $X_2$ but unaccounted for once we drop it. Since $X_1,X_2$ are generally correlated, part of the systematic variation explained by $X_2$ gets treated as noise in the single-predictor model:
+The key point: the error term $\epsilon^{\prime}$ in the reduced (single-predictor) model is *not* the same as $\beta_2X_2+\epsilon$ &mdash; it absorbs the variation in $Y$ that's correlated with $X_2$ but unaccounted for once we drop it. Since $X_1,X_2$ are generally correlated, part of the systematic variation explained by $X_2$ gets treated as noise in the single-predictor model:
 
 $$ \operatorname{var}(\epsilon') = \operatorname{var}(Y\mid X_1) = \operatorname{var}(\beta_1X_1+\beta_2X_2+\epsilon\mid X_1) = \beta_2^2\,\operatorname{var}(X_2\mid X_1)+\sigma_\epsilon^2 \ge \sigma_\epsilon^2, $$
 
-hence $R^2_{2\,\text{pred}} \ge R^2_{1\,\text{pred}}$, with equality only when the extra term vanishes: either $\beta_2=0$ ($X_2$ has no effect on $Y$) or $\text{var}(X_2\mid X_1)=0$ ($X_2$ is already determined by $X_1$). So adding predictors either improves the fit or leaves it unchanged &mdash; never worse.
+hence $R^2\_{2\,\text{pred}} \ge R^2\_{1\,\text{pred}}$, with equality only when the extra term vanishes: either $\beta_2=0$ ($X_2$ has no effect on $Y$) or $\text{var}(X_2\mid X_1)=0$ ($X_2$ is already determined by $X_1$). So adding predictors either improves the fit or leaves it unchanged &mdash; never worse.
 
 
 <details class="practice-section" markdown="1">
@@ -355,9 +355,9 @@ A regression of monthly rent $Y$ (in dollars) on floor area $X_1$ (in square fee
 For a binary predictor $X_1$, the two-predictor fit gives $\beta_1=2$ and $\beta_2=5$, and the predictors satisfy $E[X_2\mid X_1{=}1]-E[X_2\mid X_1{=}0]=-0.4$.
 
 <ol type="a">
-  <li>Compute the single-predictor coefficient $\beta_1'$ of $X_1$ alone.</li>
+  <li>Compute the single-predictor coefficient $\beta_1^{\prime}$ of $X_1$ alone.</li>
   <li>Someone who only fits $X_1$ concludes that $X_1$ is unrelated to $Y$. In one sentence, say what they have missed.</li>
-  <li>What would $\beta_1'$ be if $X_1$ and $X_2$ were independent?</li>
+  <li>What would $\beta_1^{\prime}$ be if $X_1$ and $X_2$ were independent?</li>
 </ol>
 </div>
 
@@ -392,13 +392,13 @@ as
 
 $$ \begin{bmatrix} \text{cov}(X_1,Y) \\ \text{cov}(X_2,Y) \end{bmatrix} = \Sigma \begin{bmatrix} \beta_1 \\ \beta_2 \end{bmatrix}. $$
 
-This is consistent with the formula above: dividing the first equation by $\text{var}(X_1)$ recovers $\beta_1' = \beta_1+\beta_2\beta_{1,2}$, where $\beta_{1,2}=\text{cov}(X_1,X_2)/\text{var}(X_1)$ is the (single-predictor) regression coefficient of $X_1$ with $X_2$ as the response. This generalizes to many predictors: in general, $\Sigma$ is a $K\times K$ matrix with entries $\Sigma_{i,j}=\text{cov}(X_i,X_j)$.
+This is consistent with the formula above: dividing the first equation by $\text{var}(X_1)$ recovers $\beta_1^{\prime} = \beta_1+\beta_2\beta_{1,2}$, where $\beta_{1,2}=\text{cov}(X_1,X_2)/\text{var}(X_1)$ is the (single-predictor) regression coefficient of $X_1$ with $X_2$ as the response. This generalizes to many predictors: in general, $\Sigma$ is a $K\times K$ matrix with entries $\Sigma_{i,j}=\text{cov}(X_i,X_j)$.
 
 Letting $\Sigma^{-1}$ denote the matrix inverse ($\Sigma^{-1}\Sigma=I$), we can solve for the coefficients:
 
 $$ \begin{bmatrix} \beta_1 \\ \beta_2 \end{bmatrix} = \Sigma^{-1}\begin{bmatrix} \text{cov}(X_1,Y) \\ \text{cov}(X_2,Y) \end{bmatrix} = \frac{1}{\sigma_{X_1}^2\sigma_{X_2}^2-\text{cov}(X_1,X_2)^2} \begin{bmatrix} \sigma_{X_2}^2 & -\text{cov}(X_1,X_2) \\ -\text{cov}(X_1,X_2) & \sigma_{X_1}^2 \end{bmatrix} \begin{bmatrix} \text{cov}(X_1,Y) \\ \text{cov}(X_2,Y) \end{bmatrix}. $$
 
-Compare this to the single-predictor formula $\beta_1' = \text{cov}(X,Y)/\text{var}(X)$: here $\Sigma^{-1}$ plays the role of $1/\text{var}(X)$, and the vector of $\beta$s and $Y$-$X$ covariances play the roles of $\beta_1$ and $\text{cov}(X,Y)$. If $\Sigma=I$ (uncorrelated, unit-variance predictors), each $\beta_i$ can be solved for separately, recovering the single-predictor formulas.
+Compare this to the single-predictor formula $\beta_1^{\prime} = \text{cov}(X,Y)/\text{var}(X)$: here $\Sigma^{-1}$ plays the role of $1/\text{var}(X)$, and the vector of $\beta$s and $Y$-$X$ covariances play the roles of $\beta_1$ and $\text{cov}(X,Y)$. If $\Sigma=I$ (uncorrelated, unit-variance predictors), each $\beta_i$ can be solved for separately, recovering the single-predictor formulas.
 
 We don't usually bother with closed-form solutions once there are many predictors &mdash; they get complicated fast. But for two predictors,
 
@@ -430,7 +430,7 @@ with $b\in[0,1]$. Note $b=\beta_{1,2}$: the single-predictor regression coeffici
 <ol type="a">
 <li>Show that $\text{var}(X_1)=\text{var}(X_2)=1$ and $\text{cov}(X_1,X_2)=b$.</li>
 <li>Express $\beta_1$ in terms of $b$, $\text{cov}(X_1,Y)$, and $\text{cov}(X_2,Y)$.</li>
-<li>Find the single-predictor coefficient $\beta_1'$ when only $X_1$ is used.</li>
+<li>Find the single-predictor coefficient $\beta_1^{\prime}$ when only $X_1$ is used.</li>
 </ol>
 
 <u>Solution:</u>
@@ -477,8 +477,8 @@ Suppose $\sigma_{X_1}^2=\sigma_{X_2}^2=1$, $\text{cov}(X_1,X_2)=0.5$, $\text{cov
 
 <ol type="a">
   <li>Write out $\Sigma$ and solve $\Sigma\beta = (\text{cov}(X_1,Y),\text{cov}(X_2,Y))^\top$ for $\beta_1,\beta_2$.</li>
-  <li>Compute the single-predictor coefficient $\beta_1'=\text{cov}(X_1,Y)/\sigma_{X_1}^2$.</li>
-  <li>Here $\beta_1'=\beta_1$ even though the predictors are correlated. Which term in $\beta_1'=\beta_1+\beta_2\beta_{1,2}$ explains that?</li>
+  <li>Compute the single-predictor coefficient $\beta_1^{\prime}=\text{cov}(X_1,Y)/\sigma_{X_1}^2$.</li>
+  <li>Here $\beta_1^{\prime}=\beta_1$ even though the predictors are correlated. Which term in $\beta_1^{\prime}=\beta_1+\beta_2\beta_{1,2}$ explains that?</li>
 </ol>
 </div>
 
@@ -536,7 +536,7 @@ Take two standardized predictors with correlation $\rho$, so
 
 $$ \Sigma = \begin{bmatrix}1 & \rho \\ \rho & 1\end{bmatrix}. $$
 
-Use $\hat\beta \sim \operatorname{Normal}_2\big(\beta,\ (\sigma_\epsilon^2/N)\Sigma^{-1}\big)$ with $\sigma_\epsilon^2=1$ and $N=100$.
+Use $\hat\beta \sim \operatorname{Normal}\_2\big(\beta,\ (\sigma\_\epsilon^2/N)\Sigma^{-1}\big)$ with $\sigma_\epsilon^2=1$ and $N=100$.
 
 <ol type="a">
   <li>Write $\text{se}(\hat\beta_1)$ as a function of $\rho$.</li>
@@ -684,7 +684,7 @@ Suppose we have a large amount of data from the model
 
 $$ X_1 \sim \text{Normal}(0,1), \qquad X_2\mid X_1 \sim \text{Normal}(3X_1,1), \qquad Y\mid(X_1,X_2) \sim \text{Normal}(X_1-2X_2,\,1). $$
 
-If we perform a single-predictor regression of $Y$ on $X_2$ alone, what is the regression coefficient $\beta_2'$?
+If we perform a single-predictor regression of $Y$ on $X_2$ alone, what is the regression coefficient $\beta_2^{\prime}$?
 </div>
 
 <div class="exercise" markdown="1">
@@ -701,8 +701,8 @@ Consider two binary predictors $X_1,X_2\in\lbrace0,1\rbrace$ with joint distribu
 and suppose $Y\mid(X_1,X_2) = X_1+cX_2+\epsilon$.
 
 <ol type="a">
-<li>Compute the single-predictor regression coefficient $\beta_1'$ (in terms of $c$).</li>
-<li>Compute the single-predictor regression coefficient $\beta_2'$ (in terms of $c$).</li>
+<li>Compute the single-predictor regression coefficient $\beta_1^{\prime}$ (in terms of $c$).</li>
+<li>Compute the single-predictor regression coefficient $\beta_2^{\prime}$ (in terms of $c$).</li>
 <li>For which values of $c$ does the model exhibit Simpson's paradox?</li>
 </ol>
 </div>
@@ -717,7 +717,7 @@ $$ \Sigma = \begin{bmatrix} 10 & 2 \\ 2 & 10 \end{bmatrix}. $$
 Suppose $Y = 0.5X_1-1.5X_2+\epsilon$, $\epsilon\sim\text{Normal}(0,1)$.
 
 <ol type="a">
-<li>Compute the single-predictor regression coefficient $\beta_1'$ for $Y$ on $X_1$.</li>
+<li>Compute the single-predictor regression coefficient $\beta_1^{\prime}$ for $Y$ on $X_1$.</li>
 <li>Does Simpson's paradox occur in this setup? Explain.</li>
 </ol>
 </div>
@@ -762,7 +762,7 @@ $$ Y = 1.0+2.0X_1+4.0X_2+\epsilon_1, $$
 
 and the (unobserved) relationship between the predictors is $X_2 = 0.5+0.5X_1+\epsilon_2$, with $E[\epsilon_1]=E[\epsilon_2]=0$.
 
-The researcher instead runs the regression $Y = \beta_0+\hat\beta_1X_1+\epsilon_1'$ using only $X_1$.
+The researcher instead runs the regression $Y = \beta_0+\hat\beta_1X_1+\epsilon_1^{\prime}$ using only $X_1$.
 
 <u>Question:</u> what is the expected value (approximately) of the coefficient $\hat\beta_1$ the researcher will estimate?
 </div>

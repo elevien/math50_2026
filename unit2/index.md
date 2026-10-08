@@ -82,7 +82,7 @@ To summarize what we just saw (which should be intuitively clear):
 
 $$ E[Y] \approx \overline{Y}. $$
 
-Sometimes we write $\mathbb E$ instead of $E$ to distinguish it from other variables named $E$. If we have a function $g: S \to S'$ from the sample space to some other space, then $g(Y)$ is a new random variable with sample space $S'$ &mdash; but we don't usually need the distribution of $X=g(Y)$ to compute its expectation, since
+Sometimes we write $\mathbb E$ instead of $E$ to distinguish it from other variables named $E$. If we have a function $g: S \to S^{\prime}$ from the sample space to some other space, then $g(Y)$ is a new random variable with sample space $S^{\prime}$ &mdash; but we don't usually need the distribution of $X=g(Y)$ to compute its expectation, since
 
 $$ E[X] = E[g(Y)] = \sum_{y \in S} g(y)\,P(Y=y). $$
 
@@ -938,8 +938,8 @@ $$ Y=\beta_1X+\beta_0 \implies X = \frac{1}{\beta_1}Y - \frac{\beta_0}{\beta_1},
 so the slope of $X$ vs. $Y$ is $1/\beta_1$. It's tempting to guess that once noise is added, $X\mid Y$ is still Normal with mean $Y/\beta_1-\beta_0/\beta_1$ and variance $\sigma_\epsilon^2/\beta_1^2$ &mdash; this is <em>false</em> (see part (c)). In this problem you'll derive the correct formula.
 
 <ol type="a">
-<li>By the covariance formula from class, $\text{cov}(X,Y) = \beta_1'\sigma_Y^2$, where $\beta_1'$ is the regression slope of $X$ on $Y$ and $\sigma_Y^2$ is the marginal variance of $Y$. Using (i) $\text{cov}(X,Y)=\text{cov}(Y,X)$ (swapping $X$ and $Y$ doesn't change the covariance) and (ii) $\sigma_Y^2 = \beta_1^2\sigma_x^2+\sigma_\epsilon^2$, derive a formula for $\beta_1'$.</li>
-<li>Using part (a), show that as $\sigma_\epsilon^2\to0$ we recover the "naive" formula $\beta_1'=1/\beta_1$.</li>
+<li>By the covariance formula from class, $\text{cov}(X,Y) = \beta_1^{\prime}\sigma_Y^2$, where $\beta_1^{\prime}$ is the regression slope of $X$ on $Y$ and $\sigma_Y^2$ is the marginal variance of $Y$. Using (i) $\text{cov}(X,Y)=\text{cov}(Y,X)$ (swapping $X$ and $Y$ doesn't change the covariance) and (ii) $\sigma_Y^2 = \beta_1^2\sigma_x^2+\sigma_\epsilon^2$, derive a formula for $\beta_1^{\prime}$.</li>
+<li>Using part (a), show that as $\sigma_\epsilon^2\to0$ we recover the "naive" formula $\beta_1^{\prime}=1/\beta_1$.</li>
 <li>Why is the naive formula $1/\beta_1$ incorrect when $\sigma_\epsilon^2>0$? In particular, why can't we simply solve for $X$ in terms of $Y$ to get the regression equation? (Hint: does $Y\mid Z$ have the same distribution as $Y$, for $Z$ the noise term?)</li>
 </ol>
 </div>
