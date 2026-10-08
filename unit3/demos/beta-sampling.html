@@ -1,128 +1,142 @@
 <div class="demo" id="demo-beta-sampling">
   <div class="demo-label">Interactive demo</div>
-  <h4>The sample distribution of $\hat\beta_0,\hat\beta_1$: fixed predictors, resampled $Y$</h4>
   <div class="demo-controls">
-    <button id="beta-draw">Draw a new sample of $Y$ and refit</button>
-    <button id="beta-reset">Reset</button>
+    <label>$N$ = <input id="beta-n" type="range" min="5" max="200" step="1" value="20"><span id="beta-n-val">20</span></label>
+    <label>$\sigma_\epsilon$ = <input id="beta-sig" type="range" min="0.25" max="3" step="0.25" value="1"><span id="beta-sig-val">1</span></label>
+    <label>$\sigma_X$ = <input id="beta-sx" type="range" min="0.25" max="2" step="0.25" value="1"><span id="beta-sx-val">1</span></label>
+    <button id="beta-new">New dataset</button>
   </div>
   <svg id="beta-chart"></svg>
-  <p id="beta-readout" style="font-size:13px;color:#565a4e;margin-top:6px;"></p>
+  <p style="font-size:13px;color:#565a4e;margin-top:6px;">Top: one dataset from $Y\mid X\sim\text{Normal}(\beta_0+\beta_1X,\sigma_\epsilon^2)$ with $\beta_0=1$, $\beta_1=2$, its fitted line (red), the $95\%$ interval for the line (shaded) and the true line (dashed). Bottom: $\hat\beta_1$ over $2000$ replicates with the same $x$'s, and the Normal approximation $\text{Normal}(\beta_1,\sigma_\epsilon^2/S_{xx})$ (dashed).</p>
 </div>
 
 <script>
 (function () {
   const chart = document.getElementById('beta-chart');
-  const readout = document.getElementById('beta-readout');
+  const ctl = {
+    n: document.getElementById('beta-n'),
+    sig: document.getElementById('beta-sig'),
+    sx: document.getElementById('beta-sx'),
+  };
 
-  // The predictor values are fixed once and never resampled.
-  const n = 15;
-  const xs = Array.from({ length: n }, (_, i) => (i / (n - 1)) * 10);
-  const trueB0 = 2, trueB1 = 1.5, sigma = 2.5;
+  const B0 = 1, B1 = 2, R = 2000;
+  const DATA = '#1f5a6b', RED = '#b0392a', GRID = '#efebe2', AXIS = '#9b9e91', LABEL = '#7c7f72';
 
-  const xDomain = [-0.5, 10.5];
-  const yDomain = [-10, 30];
-  const width = 480, height = 300;
-  const margin = { top: 12, right: 12, bottom: 30, left: 34 };
+  const width = 480, margin = { left: 34, right: 12 };
   const innerW = width - margin.left - margin.right;
-  const innerH = height - margin.top - margin.bottom;
-  const xToPx = (x) => ((x - xDomain[0]) / (xDomain[1] - xDomain[0])) * innerW;
-  const yToPx = (y) => innerH - ((y - yDomain[0]) / (yDomain[1] - yDomain[0])) * innerH;
+  const top = { y0: 12, h: 220, xDom: [-4.5, 4.5], yDom: [-9, 11] };
+  const bot = { y0: 272, h: 110, xDom: [0, 4] };
+  const height = bot.y0 + bot.h + 34;
 
-  let fits = []; // { slope, intercept }
-  let lastY = null;
+  let z = [], e = [];   // standardized x's and noise for the displayed dataset
+  let N, sigma, sigmaX;
 
-  function fitOnce() {
-    const ys = xs.map((x) => trueB0 + trueB1 * x + NotesUtils.gaussianRandom(0, sigma));
-    const xBar = NotesUtils.mean(xs), yBar = NotesUtils.mean(ys);
-    let num = 0, den = 0;
-    xs.forEach((x, i) => { num += (x - xBar) * (ys[i] - yBar); den += (x - xBar) ** 2; });
-    const slope = num / den;
-    const intercept = yBar - slope * xBar;
-    lastY = ys;
-    return { slope, intercept };
+  function newDraws() {
+    z = Array.from({ length: N }, () => NotesUtils.gaussianRandom(0, 1));
+    e = Array.from({ length: N }, () => NotesUtils.gaussianRandom(0, 1));
   }
 
-  function linePx(slope, intercept) {
-    const [x0, x1] = xDomain;
-    return { x1: xToPx(x0), y1: yToPx(slope * x0 + intercept), x2: xToPx(x1), y2: yToPx(slope * x1 + intercept) };
+  function fit(xs, ys) {
+    const xBar = NotesUtils.mean(xs), yBar = NotesUtils.mean(ys);
+    let num = 0, sxx = 0;
+    xs.forEach((x, i) => { num += (x - xBar) * (ys[i] - yBar); sxx += (x - xBar) ** 2; });
+    const b1 = num / sxx;
+    return { b0: yBar - b1 * xBar, b1, xBar, sxx };
+  }
+
+  function text(g, x, y, str, attrs) {
+    const t = NotesUtils.svg('text', Object.assign({ x, y, 'font-size': 10, fill: LABEL }, attrs || {}));
+    t.textContent = str;
+    g.appendChild(t);
   }
 
   function render() {
+    N = parseInt(ctl.n.value, 10);
+    sigma = parseFloat(ctl.sig.value);
+    sigmaX = parseFloat(ctl.sx.value);
+    document.getElementById('beta-n-val').textContent = N;
+    document.getElementById('beta-sig-val').textContent = sigma;
+    document.getElementById('beta-sx-val').textContent = sigmaX;
+    if (z.length !== N) newDraws();
+
+    // the displayed dataset: moving sigma_X stretches the same points
+    const xs = z.map((v) => sigmaX * v);
+    const ys = xs.map((x, i) => B0 + B1 * x + sigma * e[i]);
+    const f = fit(xs, ys);
+    let ssr = 0;
+    xs.forEach((x, i) => { ssr += (ys[i] - f.b0 - f.b1 * x) ** 2; });
+    const sigHat = Math.sqrt(ssr / (N - 2));
+
+    // replicates conditional on X: same xs, new noise
+    const b1s = new Array(R);
+    for (let r = 0; r < R; r++) {
+      let num = 0;
+      for (let i = 0; i < N; i++) {
+        num += (xs[i] - f.xBar) * (B0 + B1 * xs[i] + NotesUtils.gaussianRandom(0, sigma));
+      }
+      b1s[r] = num / f.sxx; // sum_i (x_i - xbar) y_i / Sxx equals the least squares slope
+    }
+    const se = sigma / Math.sqrt(f.sxx);
+
     NotesUtils.clear(chart);
     chart.setAttribute('viewBox', `0 0 ${width} ${height}`);
     chart.setAttribute('width', '100%');
-    const g = NotesUtils.svg('g', { transform: `translate(${margin.left},${margin.top})` });
-    chart.appendChild(g);
+    const clip = NotesUtils.svg('clipPath', { id: 'beta-clip' });
+    clip.appendChild(NotesUtils.svg('rect', { x: 0, y: 0, width: innerW, height: top.h }));
+    chart.appendChild(clip);
 
-    g.appendChild(NotesUtils.svg('line', { x1: 0, y1: innerH, x2: innerW, y2: innerH, stroke: '#9b9e91' }));
-    g.appendChild(NotesUtils.svg('line', { x1: 0, y1: 0, x2: 0, y2: innerH, stroke: '#9b9e91' }));
-
-    for (let i = 0; i <= 4; i++) {
-      const v = yDomain[0] + ((yDomain[1] - yDomain[0]) * i) / 4;
-      const y = yToPx(v);
-      g.appendChild(NotesUtils.svg('line', { x1: -4, y1: y, x2: innerW, y2: y, stroke: '#efebe2' }));
-      const label = NotesUtils.svg('text', { x: -8, y: y + 3, 'text-anchor': 'end', 'font-size': 10, fill: '#7c7f72' });
-      label.textContent = v.toFixed(0);
-      g.appendChild(label);
+    // ---------- top panel: data, fit, 95% band, true line ----------
+    const tx = (x) => ((x - top.xDom[0]) / (top.xDom[1] - top.xDom[0])) * innerW;
+    const ty = (y) => top.h - ((y - top.yDom[0]) / (top.yDom[1] - top.yDom[0])) * top.h;
+    const g1 = NotesUtils.svg('g', { transform: `translate(${margin.left},${top.y0})` });
+    chart.appendChild(g1);
+    for (let v = -5; v <= 10; v += 5) {
+      g1.appendChild(NotesUtils.svg('line', { x1: 0, y1: ty(v), x2: innerW, y2: ty(v), stroke: GRID }));
+      text(g1, -6, ty(v) + 3, String(v), { 'text-anchor': 'end' });
     }
-    for (let i = 0; i <= 5; i++) {
-      const v = xDomain[0] + ((xDomain[1] - xDomain[0]) * i) / 5;
-      const x = xToPx(v);
-      const label = NotesUtils.svg('text', { x, y: innerH + 16, 'text-anchor': 'middle', 'font-size': 10, fill: '#7c7f72' });
-      label.textContent = v.toFixed(0);
-      g.appendChild(label);
-    }
+    for (let v = -4; v <= 4; v += 2) text(g1, tx(v), top.h + 14, String(v), { 'text-anchor': 'middle' });
+    text(g1, innerW / 2, top.h + 27, 'x', { 'text-anchor': 'middle', 'font-style': 'italic', 'font-size': 11 });
+    text(g1, -26, top.h / 2, 'y', { 'text-anchor': 'middle', 'font-style': 'italic', 'font-size': 11 });
+    g1.appendChild(NotesUtils.svg('line', { x1: 0, y1: top.h, x2: innerW, y2: top.h, stroke: AXIS }));
+    g1.appendChild(NotesUtils.svg('line', { x1: 0, y1: 0, x2: 0, y2: top.h, stroke: AXIS }));
 
-    // every past fit: a thin, semi-transparent line -- this cloud of lines
-    // *is* the sample distribution of (beta0-hat, beta1-hat)
-    fits.forEach((f) => {
-      g.appendChild(NotesUtils.svg('line', Object.assign(linePx(f.slope, f.intercept), {
-        stroke: '#1f5a6b', 'stroke-width': 1, opacity: 0.25,
-      })));
+    const plot = NotesUtils.svg('g', { 'clip-path': 'url(#beta-clip)' });
+    g1.appendChild(plot);
+    const grid = []; for (let k = 0; k <= 60; k++) grid.push(top.xDom[0] + (k / 60) * (top.xDom[1] - top.xDom[0]));
+    const half = (x) => 1.96 * sigHat * Math.sqrt(1 / N + (x - f.xBar) ** 2 / f.sxx);
+    const upper = grid.map((x) => `${tx(x)},${ty(f.b0 + f.b1 * x + half(x))}`);
+    const lower = grid.slice().reverse().map((x) => `${tx(x)},${ty(f.b0 + f.b1 * x - half(x))}`);
+    plot.appendChild(NotesUtils.svg('polygon', { points: upper.concat(lower).join(' '), fill: RED, opacity: 0.18 }));
+    const ends = top.xDom;
+    plot.appendChild(NotesUtils.svg('line', { x1: tx(ends[0]), y1: ty(f.b0 + f.b1 * ends[0]), x2: tx(ends[1]), y2: ty(f.b0 + f.b1 * ends[1]), stroke: RED, 'stroke-width': 2 }));
+    plot.appendChild(NotesUtils.svg('line', { x1: tx(ends[0]), y1: ty(B0 + B1 * ends[0]), x2: tx(ends[1]), y2: ty(B0 + B1 * ends[1]), stroke: '#222', 'stroke-width': 1.2, 'stroke-dasharray': '5,4' }));
+    xs.forEach((x, i) => plot.appendChild(NotesUtils.svg('circle', { cx: tx(x), cy: ty(ys[i]), r: N > 80 ? 2 : 3, fill: DATA, opacity: 0.8 })));
+
+    // ---------- bottom panel: histogram of beta1-hat ----------
+    const bx = (b) => ((b - bot.xDom[0]) / (bot.xDom[1] - bot.xDom[0])) * innerW;
+    const nb = 60, bw = (bot.xDom[1] - bot.xDom[0]) / nb;
+    const counts = new Array(nb).fill(0);
+    b1s.forEach((b) => { const k = Math.floor((b - bot.xDom[0]) / bw); if (k >= 0 && k < nb) counts[k] += 1; });
+    const dens = counts.map((c) => c / (R * bw));
+    const pdf = (b) => Math.exp(-0.5 * ((b - B1) / se) ** 2) / (se * Math.sqrt(2 * Math.PI));
+    const yMax = Math.max(Math.max(...dens), pdf(B1)) * 1.05;
+    const by = (d) => bot.h - (d / yMax) * bot.h;
+    const g2 = NotesUtils.svg('g', { transform: `translate(${margin.left},${bot.y0})` });
+    chart.appendChild(g2);
+    dens.forEach((d, k) => {
+      if (d > 0) g2.appendChild(NotesUtils.svg('rect', { x: bx(bot.xDom[0] + k * bw) + 0.5, y: by(d), width: Math.max(bx(bw) - bx(0) - 1, 0.5), height: bot.h - by(d), fill: DATA, opacity: 0.75 }));
     });
-
-    // the current sample's points
-    if (lastY) {
-      xs.forEach((x, i) => {
-        g.appendChild(NotesUtils.svg('circle', { cx: xToPx(x), cy: yToPx(lastY[i]), r: 3, fill: '#3a3a34', opacity: 0.7 }));
-      });
-    }
-
-    // the true regression line, on top
-    g.appendChild(NotesUtils.svg('line', Object.assign(linePx(trueB1, trueB0), {
-      stroke: '#b0392a', 'stroke-width': 2.5,
-    })));
+    const pts = []; for (let k = 0; k <= 200; k++) { const b = bot.xDom[0] + (k / 200) * (bot.xDom[1] - bot.xDom[0]); pts.push(`${bx(b)},${by(pdf(b))}`); }
+    g2.appendChild(NotesUtils.svg('polyline', { points: pts.join(' '), fill: 'none', stroke: RED, 'stroke-width': 1.6, 'stroke-dasharray': '5,3' }));
+    g2.appendChild(NotesUtils.svg('line', { x1: bx(B1), y1: 0, x2: bx(B1), y2: bot.h, stroke: '#222', 'stroke-width': 0.8 }));
+    g2.appendChild(NotesUtils.svg('line', { x1: 0, y1: bot.h, x2: innerW, y2: bot.h, stroke: AXIS }));
+    [0, 1, 2, 3, 4].forEach((v) => text(g2, bx(v), bot.h + 14, v === B1 ? 'β₁ = 2' : String(v), { 'text-anchor': 'middle' }));
+    text(g2, innerW / 2, bot.h + 27, 'β̂₁', { 'text-anchor': 'middle', 'font-size': 11 });
+    text(g2, innerW, 10, `se(β̂₁) = σε/√Sₓₓ = ${se.toFixed(2)}`, { 'text-anchor': 'end', 'font-size': 11, fill: '#3a3a34' });
   }
 
-  function updateReadout() {
-    if (fits.length === 0) {
-      readout.textContent = `True line: \\(\\beta_0=${trueB0}\\), \\(\\beta_1=${trueB1}\\). Click the button to draw one hypothetical dataset (same $x$'s, new $Y$'s) and see its fitted line.`;
-    } else {
-      const meanB0 = NotesUtils.mean(fits.map((f) => f.intercept));
-      const meanB1 = NotesUtils.mean(fits.map((f) => f.slope));
-      readout.textContent =
-        `Replicates drawn: ${fits.length}. Average of the fitted lines so far: ` +
-        `\\(\\hat\\beta_0\\approx${meanB0.toFixed(2)}\\), \\(\\hat\\beta_1\\approx${meanB1.toFixed(2)}\\) ` +
-        `(true values: \\(\\beta_0=${trueB0}\\), \\(\\beta_1=${trueB1}\\)).`;
-    }
-    if (window.MathJax && window.MathJax.typesetPromise) {
-      window.MathJax.typesetPromise([readout]);
-    }
-  }
-
-  document.getElementById('beta-draw').addEventListener('click', () => {
-    fits.push(fitOnce());
-    render();
-    updateReadout();
-  });
-  document.getElementById('beta-reset').addEventListener('click', () => {
-    fits = [];
-    lastY = null;
-    render();
-    updateReadout();
-  });
-
+  ['n', 'sig', 'sx'].forEach((k) => ctl[k].addEventListener('input', render));
+  document.getElementById('beta-new').addEventListener('click', () => { newDraws(); render(); });
   render();
-  updateReadout();
 })();
 </script>

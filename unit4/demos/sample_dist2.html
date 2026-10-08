@@ -1,0 +1,114 @@
+<div class="demo" id="demo-sampledist2">
+  <div class="demo-label">Interactive demo</div>
+  <h4>Two views of the same fitted planes</h4>
+  <div class="demo-controls">
+    <label>$b={\rm cov}(X_1,X_2)$ = <input id="sd2-b" type="range" min="-0.95" max="0.95" step="0.05" value="0.9"><span id="sd2-b-val">0.90</span></label>
+    <label>$\sigma$ = <input id="sd2-sigma" type="range" min="0.2" max="2" step="0.1" value="0.6"><span id="sd2-sigma-val">0.6</span></label>
+    <button id="sd2-run">Re-fit 30 replicate planes</button>
+  </div>
+  <div style="display:flex; gap:1em; flex-wrap:wrap;">
+    <svg id="sd2-chart-u" viewBox="0 0 230 200" style="flex:1 1 220px; min-width:200px;"></svg>
+    <svg id="sd2-chart-v" viewBox="0 0 230 200" style="flex:1 1 220px; min-width:200px;"></svg>
+  </div>
+</div>
+
+<script>
+(function () {
+  const mk = NotesUtils.svg;
+  const bSlider = document.getElementById('sd2-b');
+  const sigmaSlider = document.getElementById('sd2-sigma');
+  const bVal = document.getElementById('sd2-b-val');
+  const sigmaVal = document.getElementById('sd2-sigma-val');
+  const chartU = document.getElementById('sd2-chart-u');
+  const chartV = document.getElementById('sd2-chart-v');
+
+  const TRUE_B1 = 1, TRUE_B2 = -1, N = 40, K = 30;
+  const SQRT2 = Math.SQRT2;
+
+  function b() { return parseFloat(bSlider.value); }
+  function sigma() { return parseFloat(sigmaSlider.value); }
+
+  function ols2(X1, X2, Y) {
+    const x1Bar = NotesUtils.mean(X1), x2Bar = NotesUtils.mean(X2), yBar = NotesUtils.mean(Y);
+    let s11 = 0, s22 = 0, s12 = 0, c1 = 0, c2 = 0;
+    for (let i = 0; i < X1.length; i++) {
+      const d1 = X1[i] - x1Bar, d2 = X2[i] - x2Bar, dy = Y[i] - yBar;
+      s11 += d1 * d1; s22 += d2 * d2; s12 += d1 * d2; c1 += d1 * dy; c2 += d2 * dy;
+    }
+    s11 /= X1.length; s22 /= X1.length; s12 /= X1.length; c1 /= X1.length; c2 /= X1.length;
+    const det = s11 * s22 - s12 * s12;
+    if (Math.abs(det) < 1e-9) return null;
+    return { beta1: (c1 * s22 - c2 * s12) / det, beta2: (c2 * s11 - c1 * s12) / det };
+  }
+
+  function fitOne() {
+    const bb = b(), s = sigma();
+    const X1 = [], X2 = [], Y = [];
+    for (let i = 0; i < N; i++) {
+      const x1 = NotesUtils.gaussianRandom(0, 1);
+      const x2 = NotesUtils.gaussianRandom(bb * x1, Math.sqrt(Math.max(1e-4, 1 - bb * bb)));
+      X1.push(x1); X2.push(x2);
+      Y.push(TRUE_B1 * x1 + TRUE_B2 * x2 + NotesUtils.gaussianRandom(0, s));
+    }
+    return ols2(X1, X2, Y);
+  }
+
+  function drawSpaghetti(container, slopes, trueSlope) {
+    const width = 230, height = 200, margin = { top: 12, right: 10, bottom: 24, left: 28 };
+    const innerW = width - margin.left - margin.right, innerH = height - margin.top - margin.bottom;
+    const xDomain = [-3, 3];
+    const maxAbs = Math.max(1, ...slopes.map((m) => Math.abs(m) * 3));
+    const yDomain = [-maxAbs, maxAbs];
+    NotesUtils.clear(container);
+    const g = mk('g', { transform: `translate(${margin.left},${margin.top})` });
+    container.appendChild(g);
+    const xToPx = (x) => ((x - xDomain[0]) / (xDomain[1] - xDomain[0])) * innerW;
+    const yToPx = (y) => innerH - ((y - yDomain[0]) / (yDomain[1] - yDomain[0])) * innerH;
+    g.appendChild(mk('line', { x1: 0, y1: innerH, x2: innerW, y2: innerH, stroke: '#9b9e91' }));
+    g.appendChild(mk('line', { x1: xToPx(0), y1: 0, x2: xToPx(0), y2: innerH, stroke: '#d8d2c5' }));
+    slopes.forEach((m) => {
+      g.appendChild(mk('line', {
+        x1: xToPx(xDomain[0]), y1: yToPx(m * xDomain[0]),
+        x2: xToPx(xDomain[1]), y2: yToPx(m * xDomain[1]),
+        stroke: '#1f5a6b', 'stroke-width': 1, opacity: 0.35,
+      }));
+    });
+    g.appendChild(mk('line', {
+      x1: xToPx(xDomain[0]), y1: yToPx(trueSlope * xDomain[0]),
+      x2: xToPx(xDomain[1]), y2: yToPx(trueSlope * xDomain[1]),
+      stroke: '#a2542c', 'stroke-width': 1.5, 'stroke-dasharray': '4,3',
+    }));
+  }
+
+  function render() {
+    const slopesU = [], slopesV = [];
+    for (let k = 0; k < K; k++) {
+      const fit = fitOne();
+      if (!fit) continue;
+      slopesU.push((fit.beta1 + fit.beta2) / SQRT2);
+      slopesV.push((fit.beta1 - fit.beta2) / SQRT2);
+    }
+    drawSpaghetti(chartU, slopesU, (TRUE_B1 + TRUE_B2) / SQRT2);
+    drawSpaghetti(chartV, slopesV, (TRUE_B1 - TRUE_B2) / SQRT2);
+
+    const seU = slopesU.length > 1 ? Math.sqrt(NotesUtils.variance(slopesU)) : NaN;
+    const seV = slopesV.length > 1 ? Math.sqrt(NotesUtils.variance(slopesV)) : NaN;
+
+    const uLbl = mk('text', { x: 115, y: 189, 'text-anchor': 'middle', 'font-size': 10, fill: '#565a4e' });
+    uLbl.textContent = `u view (X₁=X₂) — se ≈ ${seU.toFixed(3)}`;
+    chartU.appendChild(uLbl);
+    const vLbl = mk('text', { x: 115, y: 189, 'text-anchor': 'middle', 'font-size': 10, fill: '#565a4e' });
+    vLbl.textContent = `v view (X₁=−X₂) — se ≈ ${seV.toFixed(3)}`;
+    chartV.appendChild(vLbl);
+  }
+
+  [bSlider, sigmaSlider].forEach((s) => s.addEventListener('input', () => {
+    bVal.textContent = b().toFixed(2);
+    sigmaVal.textContent = sigma().toFixed(1);
+    render();
+  }));
+  document.getElementById('sd2-run').addEventListener('click', render);
+
+  render();
+})();
+</script>

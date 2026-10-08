@@ -167,15 +167,15 @@ It is therefore unbiased, but *not* consistent, since $\text{se}(\hat\mu_2) = \s
 <div class="example" markdown="1">
 #### Example (Bessel's correction)
 
-Now consider estimating the variance of $Y \sim \text{Normal}(\mu,\sigma^2)$. Given samples $Y_1,\dots,Y_n$, the natural way to estimate $\sigma^2$ is
+Now consider estimating the variance of $Y \sim \text{Normal}(\mu,\sigma^2)$. Given samples $Y_1,\dots,Y_N$, the natural way to estimate $\sigma^2$ is
 
-$$ \text{var}(Y) = E\big[(Y-E[Y])^2\big] \approx \hat\sigma_0^2 := \frac1n\sum_{i=1}^n (Y_i-\overline Y)^2. $$
+$$ \text{var}(Y) = E\big[(Y-E[Y])^2\big] \approx \hat\sigma_0^2 := \frac1N\sum_{i=1}^N (Y_i-\overline Y)^2. $$
 
 It turns out $\hat\sigma_0^2$ is *biased* &mdash; in fact
 
-$$ \hat\sigma^2 := \frac{1}{n-1}\sum_{i=1}^n (Y_i-\overline Y)^2 = \frac{n}{n-1}\hat\sigma_0^2 $$
+$$ \hat\sigma^2 := \frac{1}{N-1}\sum_{i=1}^N (Y_i-\overline Y)^2 = \frac{N}{N-1}\hat\sigma_0^2 $$
 
-is unbiased. The correction factor $n/(n-1)$ is called <span class="term">[Bessel's correction](https://en.wikipedia.org/wiki/Bessel%27s_correction)</span>.
+is unbiased. The correction factor $N/(N-1)$ is called <span class="term">[Bessel's correction](https://en.wikipedia.org/wiki/Bessel%27s_correction)</span>.
 
 <u>Question:</u> confirm with simulated data that $\hat\sigma_0^2$ is biased while $\hat\sigma^2$ is not.
 </div>
@@ -211,13 +211,13 @@ Sometimes the "right" estimator for a parameter is obvious &mdash; that's the ca
 
 Recall the Binomial pmf,
 
-$$ P(Y) = \binom{n}{Y} q^Y (1-q)^{n-Y}. $$
+$$ P(Y) = \binom{N}{Y} q^Y (1-q)^{N-Y}. $$
 
 In statistics we sometimes call this the <span class="term">[likelihood](https://en.wikipedia.org/wiki/Likelihood_function)</span>, written $L(Y\mid q)$ &mdash; the notation suggests we're thinking of $P$ as a distribution conditioned on a particular parameter value. More generally, the likelihood is the probability of the observed data given the parameters; this notation foreshadows Bayesian thinking, where the parameters themselves are treated as random variables (more on that later).
 
-The equation above tells us how likely it is to observe $Y$ YESes among $n$ people surveyed. It seems reasonable that this shouldn't be too small, since that would mean our results are an anomaly &mdash; the larger $L(Y\mid q)$ is, the more "likely" our data. This suggests estimating $q$ by the value $\hat q$ that makes $L(Y\mid q)$ largest: the <span class="term">[maximum likelihood estimate](https://en.wikipedia.org/wiki/Maximum_likelihood_estimation)</span> (MLE). Using calculus (try it!), the maximizer is
+The equation above tells us how likely it is to observe $Y$ YESes among $N$ people surveyed. It seems reasonable that this shouldn't be too small, since that would mean our results are an anomaly &mdash; the larger $L(Y\mid q)$ is, the more "likely" our data. This suggests estimating $q$ by the value $\hat q$ that makes $L(Y\mid q)$ largest: the <span class="term">[maximum likelihood estimate](https://en.wikipedia.org/wiki/Maximum_likelihood_estimation)</span> (MLE). Using calculus (try it!), the maximizer is
 
-$$ \hat q_{\text{MLE}} = \frac{Y}{n}. $$
+$$ \hat q_{\text{MLE}} = \frac{Y}{N}. $$
 
 For a Normal distribution with mean $\mu$ and variance $\sigma^2$, the MLEs are the usual sample mean and (biased) sample variance we've already seen.
 
@@ -262,14 +262,14 @@ $$ \hat\mu_A=\overline X, \qquad \hat\mu_B=\frac{1}{N}\sum_{i=1}^N X_i+\frac{2}{
 <div class="exercise" markdown="1">
 #### Bessel's correction
 
-For $n=2$ iid samples $Y_1,Y_2$ with mean $\mu$ and variance $\sigma^2$,
+For $N=2$ iid samples $Y_1,Y_2$ with mean $\mu$ and variance $\sigma^2$,
 
 $$ \hat\sigma_0^2 = \frac12\big[(Y_1-\overline Y)^2+(Y_2-\overline Y)^2\big], \qquad \overline Y = \frac{Y_1+Y_2}{2}. $$
 
 <ol type="a">
 <li>Show that $\hat\sigma_0^2 = \frac14(Y_1-Y_2)^2$.</li>
 <li>Using $\text{var}(Y_1-Y_2)=2\sigma^2$, compute $E[\hat\sigma_0^2]$ in terms of $\sigma^2$.</li>
-<li>Confirm this matches $\frac{n-1}{n}\sigma^2$ for $n=2$.</li>
+<li>Confirm this matches $\frac{N-1}{N}\sigma^2$ for $N=2$.</li>
 </ol>
 </div>
 
@@ -351,6 +351,8 @@ $$ \Big[\hat\theta - 1.96\,\text{se}(\hat\theta),\ \ \hat\theta + 1.96\,\text{se
 
 For an approximately Normal sample distribution, $95\%$ of values lie within $1.96$ standard errors of its center; this is why the resulting intervals have about $95\%$ coverage.
 
+**When the Normal approximation is not quite right: the $t$ distribution.** In practice we plug an estimate $\hat\sigma$ into the standard error. For Normal data, $(\hat\mu-\mu)/\text{se}(\hat\mu)$ with $\text{se}(\hat\mu)=\hat\sigma/\sqrt N$ is then not exactly $\text{Normal}(0,1)$: it has a <span class="term">[$t$ distribution](https://en.wikipedia.org/wiki/Student%27s_t-distribution)</span> with $N-1$ degrees of freedom ($N-2$ for the slope of a regression line), which has heavier tails because $\hat\sigma$ is itself random. The $95\%$ multiplier is then a bit larger than $1.96$: about $2.78$ for $N=5$, $2.26$ for $N=10$, $2.05$ for $N=30$. For $N\gtrsim30$ the difference is negligible, which is why we use $1.96$ throughout; for small $N$, use the $t$ multiplier (e.g. `scipy.stats.t.ppf(0.975, N-1)`). Software such as `statsmodels` reports $t$-based $p$-values and intervals, so its numbers may differ slightly from the Normal ones.
+
 Note that samples from *this* interval do not have the same distribution as $\hat\theta$ over replicates of our data. Put another way: if we draw many samples from our estimated sample distribution, their spread is not the same as the spread of $\hat\theta$ we'd get by actually running the experiment many times. The correct interpretation of the 95%-CI is: **if we generate many replicates of the data, the true value $\theta$ will fall inside the CI for $95\%$ of them.**
 
 Technically, it is *not* true that there's a $95\%$ chance the true value lies in the particular 95%-CI computed from one dataset. To see why, note that $\theta$ has a $95\%$ chance of lying in
@@ -364,19 +366,15 @@ but this is different from the interval above, since here we've replaced $\hat\t
 <div class="example" markdown="1">
 #### Example (sample size for a target CI width)
 
-Suppose we're designing an experiment. Our model is Normal and, from previous experience, we have a ballpark estimate of the standard deviation, $\sigma=1$.
+Suppose we're designing an experiment. Our model is $Y_1,\dots,Y_N\sim\text{Normal}(\mu,\sigma^2)$, we will estimate $\mu$ with $\hat\mu=\overline Y$, and from previous experiments we have the estimate $\sigma\approx1$.
 
-<u>Question:</u> roughly how many samples do we need for the $95\%$ confidence interval to be no wider than $\hat\mu\pm 1$?
+<u>Question:</u> how large must $N$ be so the $95\%$ confidence interval, $\hat\mu\pm1.96\,\text{se}(\hat\mu)$, is no wider than $\hat\mu\pm 0.25$?
 
-<u>Solution:</u> the standard error based on $n$ samples is $\sigma/\sqrt n = 1/\sqrt n$, so the CI is
+<u>Solution:</u> the standard error based on $N$ samples is $\sigma/\sqrt N \approx 1/\sqrt N$, so we need
 
-$$ \Big[\hat\mu - \frac{1.96}{\sqrt n},\ \ \hat\mu + \frac{1.96}{\sqrt n}\Big], $$
+$$ \frac{1.96}{\sqrt N} \le 0.25 \implies \sqrt N \ge 7.84 \implies N \ge (7.84)^2 \approx 61.5, $$
 
-with width $2\times 1.96/\sqrt n = 3.92/\sqrt n$. This interval contains the true value for $95\%$ of replicates, so we need width $<2$:
-
-$$ \frac{3.92}{\sqrt n} < 2 \implies \sqrt n > 1.96 \implies n > (1.96)^2 \approx 3.84. $$
-
-We can check this by running many replicates for each $n$ (as in the class notebook).
+so $N=62$. Since $\sigma\approx1$ is itself only an estimate, this is approximate too. We can check it by running many replicates for each $N$ (as in the class notebook).
 </div>
 
 <details class="practice-section" markdown="1">
@@ -397,53 +395,127 @@ Suppose an estimator has $\hat\theta=4.8$ and $\operatorname{se}(\hat\theta)=0.7
 <div class="exercise" markdown="1">
 #### Target width
 
-For a Normal model with known $\sigma=2$, find the minimum $n$ so that the approximate $95\%$ confidence interval for $\mu$ has total width at most $1$.
+For a Normal model with known $\sigma=2$, find the minimum $N$ so that the approximate $95\%$ confidence interval for $\mu$ has total width at most $1$.
 </div>
 
 </details>
 
 ## 3.4 Least squares and estimators for linear regression {#sec-3-4}
 
-We now discuss the estimator for the regression coefficient in a single predictor linear regression model. Recall from Unit 2 that a <span class="term">[linear regression](https://en.wikipedia.org/wiki/Linear_regression) model</span> is
+We now discuss estimators for the parameters of a single-predictor linear regression model. Recall from Unit 2 that a <span class="term">[linear regression](https://en.wikipedia.org/wiki/Linear_regression) model</span> is
 
-$$ Y = \beta_0+\beta_1X+\epsilon,\qquad \epsilon\sim\text{Normal}(0,\sigma^2), $$
+$$ Y\mid X\sim\text{Normal}(\beta_0+\beta_1X,\ \sigma_\epsilon^2), \qquad\text{i.e.}\qquad Y=\beta_0+\beta_1X+\epsilon,\quad \epsilon\sim\text{Normal}(0,\sigma_\epsilon^2). $$
 
-The input is the <span class="term">[predictor](https://en.wikipedia.org/wiki/Dependent_and_independent_variables)</span> ($X$) and the output is the <span class="term">[response variable](https://en.wikipedia.org/wiki/Dependent_and_independent_variables)</span> ($Y$). 
+The input is the <span class="term">[predictor](https://en.wikipedia.org/wiki/Dependent_and_independent_variables)</span> ($X$) and the output is the <span class="term">[response variable](https://en.wikipedia.org/wiki/Dependent_and_independent_variables)</span> ($Y$). Our data are $N$ pairs $(X_1,Y_1),\dots,(X_N,Y_N)$.
 
-Also recall from [Unit 2](../unit2/#sec-2-3) the <span class="term">[covariance](https://en.wikipedia.org/wiki/Covariance_and_correlation)</span> $\text{cov}(X,Y)=E[XY]-E[X]E[Y]$, and that for any linear regression model, regardless of the distribution of $X$,
+### Estimating $\beta_0$ and $\beta_1$
 
-$$ \text{cov}(X,Y) = \beta_1\sigma_X^2. $$
+Recall from [Unit 2](../unit2/#sec-2-3) the <span class="term">[covariance](https://en.wikipedia.org/wiki/Covariance_and_correlation)</span> $\text{cov}(X,Y)=E[XY]-E[X]E[Y]$, and that for any linear regression model, regardless of the distribution of $X$,
 
-This gave us a way to *estimate* the slope from samples $(x_1,y_1),\dots,(x_n,y_n)$, without needing $X$ to be binary:
+$$ \beta_1 = \frac{\text{cov}(X,Y)}{\sigma_X^2}. $$
 
-$$ \hat\beta_1 = \frac{\sum_{i=1}^n (x_i-\bar X)(y_i-\bar Y)}{\sum_{i=1}^n (x_i-\bar X)^2}, \qquad \hat\beta_0 = \overline Y - \hat\beta_1\overline X. $$
+To estimate the covariance from data, it helps to write it in a different form. Start from $E\big[(X-E[X])(Y-E[Y])\big]$ and simplify:
+
+$$
+\begin{aligned}
+E\big[(X-E[X])(Y-E[Y])\big]
+&= E\big[XY - E[Y]X - E[X]Y + E[X]E[Y]\big] && \text{(expand)}\\
+&= E[XY] - E[Y]E[X] - E[X]E[Y] + E[X]E[Y] && \text{(linearity; $E[X],E[Y]$ are just numbers)}\\
+&= E[XY] - E[X]E[Y] = \text{cov}(X,Y).
+\end{aligned}
+$$
+
+Similarly $\sigma_X^2 = E\big[(X-E[X])^2\big]$. Now replace each expectation with a sample average, $E[\,\cdot\,]\to\frac1N\sum_i$, and $E[X],E[Y]$ with $\overline X,\overline Y$:
+
+$$ \text{cov}(X,Y)\approx\frac1N\sum_{i=1}^N (X_i-\overline X)(Y_i-\overline Y), \qquad \sigma_X^2\approx\frac1N\sum_{i=1}^N (X_i-\overline X)^2 . $$
+
+The $\frac1N$'s cancel in the ratio, and taking expectations of the model, $E[Y]=\beta_0+\beta_1E[X]$, gives $\beta_0$. So
+
+$$ \boxed{\hat\beta_1 = \frac{\sum_{i=1}^N (X_i-\overline X)(Y_i-\overline Y)}{\sum_{i=1}^N (X_i-\overline X)^2}, \qquad \hat\beta_0 = \overline Y - \hat\beta_1\overline X.} $$
 
 In Python, `np.cov(x,y)[0,1] / np.cov(x,y)[0,0]` computes $\hat\beta_1$ directly.
 
-### Least squares interpretation
+### Least squares, SSR and SST
 
-Suppose we plot the $(X,Y)$ points. Regardless of where they came from (a Normal model or not), we can compute $\hat\beta_1$ and $\hat\beta_0$ as above. These are known as <span class="term">[least squares](https://en.wikipedia.org/wiki/Ordinary_least_squares)</span> estimators, because it turns out they're exactly the values that minimize the sum of squared differences between the data points and the line $\hat\beta_1x+\hat\beta_0$ &mdash; i.e. they minimize the <span class="term">[residual sum of squares](https://en.wikipedia.org/wiki/Residual_sum_of_squares)</span> (RSS),
+The <span class="term">[residuals](https://en.wikipedia.org/wiki/Errors_and_residuals)</span> are the vertical distances from each point to the fitted line,
 
-$$ \text{RSS} = \sum_{i=1}^n r_i^2, \qquad r_i = Y_i - (\hat\beta_1X_i+\hat\beta_0). $$
+$$ r_i = Y_i-(\hat\beta_0+\hat\beta_1X_i), $$
 
-There are many other ways we could draw a line through a set of points; minimizing RSS happens to be the right choice under the assumption that the data come from a linear regression model, as above. In the demo below the vertical segments are the residuals $r_i$. Try to fit the line by eye first, then compare against the true minimizer of RSS.
+and we define two sums of squares:
+
+$$ \text{SSR}=\sum_{i=1}^N r_i^2, \qquad \text{SST}=\sum_{i=1}^N (Y_i-\overline Y)^2 . $$
+
+SSR is the <span class="term">[sum of squared residuals](https://en.wikipedia.org/wiki/Residual_sum_of_squares)</span>, also called the residual sum of squares (RSS) or the sum of squared errors (SSE). SST is the <span class="term">[total sum of squares](https://en.wikipedia.org/wiki/Total_sum_of_squares)</span>, also written TSS or $SS_{\text{tot}}$. (Be careful when reading other sources: some books use "SSR" for the *regression* sum of squares, $\text{SST}-\text{SSE}$, which is a different quantity.)
+
+Regardless of where the $(X,Y)$ points came from (a Normal model or not), $\hat\beta_0$ and $\hat\beta_1$ above are exactly the values that give the line with the smallest SSR:
+
+$$ (\hat\beta_0,\hat\beta_1) = \operatorname*{argmin}_{b_0,\,b_1}\ \sum_{i=1}^N \big(Y_i - b_0 - b_1X_i\big)^2, $$
+
+which is why they are called the <span class="term">[least squares](https://en.wikipedia.org/wiki/Ordinary_least_squares)</span> estimators. There are many other ways we could draw a line through a set of points (for example minimizing $\sum_i\lvert r_i\rvert$, or the perpendicular distances to the line); minimizing SSR happens to be the right choice under the assumption that the data come from a linear regression model. In the demo below the vertical segments are the residuals $r_i$. Try to fit the line by eye first, then compare against the true minimizer of SSR.
 
 {% include_relative demos/rss.html %}
+
+SSR and SST also give us estimators of the remaining quantities in the model:
+
+$$ \boxed{\hat\sigma_\epsilon^2=\frac{\text{SSR}}{N-2}}, \qquad \boxed{\hat\rho^2=R^2=1-\frac{\text{SSR}}{\text{SST}}}. $$
+
+We divide by $N-2$ rather than $N$ because two parameters ($\beta_0,\beta_1$) were estimated from the same data; like Bessel's correction in [Section 3.2](#sec-3-2), this makes $\hat\sigma_\epsilon^2$ unbiased. $R^2$ estimates $\rho^2$, the fraction of the variation in $Y$ explained by $X$; for a single predictor it equals the squared sample correlation between $X$ and $Y$.
 
 <div class="example" markdown="1">
 #### Example (marketing data)
 
-Consider data on advertising budgets and sales for a company; we'll explore whether the TV advertising budget is associated with higher sales.
+The <span class="term">[Advertising data](https://www.statlearning.com/resources-second-edition)</span> (from *An Introduction to Statistical Learning*) records, for $N=200$ markets, the budgets spent on TV, radio and newspaper advertising for a product (in thousands of dollars) and the product's sales (in thousands of units). We'll explore whether the TV budget is associated with higher sales, with $X$ the TV budget and $Y$ the sales:
 
-<u>Question:</u> fit the data to a linear regression model with the TV budget as the predictor and sales as the response.
+```python
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+df = pd.read_csv("https://www.statlearning.com/s/Advertising.csv")
+x = df["TV"].to_numpy()
+y = df["sales"].to_numpy()
+```
+
+<u>Question:</u> fit a linear regression model with the TV budget as the predictor and sales as the response.
 
 <ol type="a">
-<li>What are the estimates of $\beta_0$ and $\beta_1$?</li>
+<li>Compute $\hat\beta_0$, $\hat\beta_1$, SSR, SST, $\hat\sigma_\epsilon$ and $R^2$. Interpret $\hat\beta_1$ and $R^2$.</li>
 <li>Plot the regression line together with a scatter plot of the data.</li>
-<li>Using the fitted $\hat\beta_0,\hat\beta_1$, simulate $10$ "fake" datasets with the same $x$ values and number of points as the real data, and compare their plots to the real data &mdash; does the model look reasonable?</li>
+<li>Using the fitted $\hat\beta_0,\hat\beta_1,\hat\sigma_\epsilon$, simulate $10$ "fake" datasets with the same $x$ values and number of points as the real data, and compare their plots to the real data &mdash; does the model look reasonable?</li>
 </ol>
 
-<u>Solution:</u> see the companion Colab notebook.
+<u>Solution:</u> (a) Each line implements one of the formulas above:
+
+```python
+N = len(x)
+beta1_hat = np.sum((x - np.mean(x)) * (y - np.mean(y))) / np.sum((x - np.mean(x))**2)
+beta0_hat = np.mean(y) - beta1_hat * np.mean(x)
+
+r = y - (beta0_hat + beta1_hat * x)        # residuals
+SSR = np.sum(r**2)
+SST = np.sum((y - np.mean(y))**2)
+sigma_hat = np.sqrt(SSR / (N - 2))
+R2 = 1 - SSR / SST
+```
+
+This gives $\hat\beta_0\approx7.03$, $\hat\beta_1\approx0.048$, $\text{SSR}\approx2103$, $\text{SST}\approx5417$, $\hat\sigma_\epsilon\approx3.26$ and $R^2\approx0.61$. So each extra $\$1000$ of TV advertising is associated with about $48$ more units sold, and the TV budget explains about $61\%$ of the variation in sales between markets (recall $\rho^2$ from [Unit 2.4](../unit2/#sec-2-4); with one predictor, $R^2$ also equals the squared sample correlation, `np.corrcoef(x, y)[0, 1]**2`).
+
+(b) and (c):
+
+```python
+xx = np.linspace(0, np.max(x), 100)
+plt.scatter(x, y, alpha=0.8, label="real data")
+plt.plot(xx, beta0_hat + beta1_hat * xx, color="red", label="fitted line")
+for k in range(10):
+    y_fake = beta0_hat + beta1_hat * x + np.random.normal(0, sigma_hat, N)
+    plt.scatter(x, y_fake, alpha=0.15, color="gray", label="fake data" if k == 0 else None)
+plt.xlabel("TV budget ($1000s)")
+plt.ylabel("sales (1000s of units)")
+plt.legend()
+plt.show()
+```
+
+The fake datasets have roughly constant spread around the line, while the real data fan out: sales are much more variable in markets with large TV budgets. So the constant-variance assumption of the model is questionable here: the residual standard deviation grows from about $1.8$ for budgets under $100$ to about $4.4$ for budgets over $200$.
 </div>
 
 <details class="practice-section" markdown="1">
@@ -463,7 +535,7 @@ Estimate the regression slope and intercept of the following dataset by hand:
 <tr><td>5</td><td>8</td></tr>
 </table>
 
-Then compute the residuals and RSS for your fitted line.
+Then compute the residuals and SSR for your fitted line.
 </div>
 
 <div class="exercise" markdown="1">
@@ -476,31 +548,45 @@ Now add a new data point $(X_6,Y_6)=(100,3)$ to the dataset above. Explain, with
 
 ### Sample distribution of the estimator
 
-$\hat\beta_1$ and $\hat\beta_0$ are computed from random data, so they are themselves random variables. If we collected a new dataset (same $x$ values, new draws of $Y$), we'd get slightly different estimates. This is the same idea as the sample distribution of $\overline Y$ from [Section 3.2](#sec-3-2), now applied to the regression slope.
+$\hat\beta_0$ and $\hat\beta_1$ are computed from random data, so they are themselves random variables: they change from replicate to replicate. This is the same idea as the sample distribution of $\overline Y$ from [Section 3.2](#sec-3-2), now applied to the regression coefficients. For regression, though, there are two ways to make a replicate:
 
-To study this, we condition on the observed predictor values $x_1,\dots,x_n$, treating them as fixed constants &mdash; only the $Y_i$ are random. Writing $S_{xx}=\sum_{i=1}^n(x_i-\bar x)^2$, we can rewrite $\hat\beta_1$ as a weighted sum of the $Y_i$:
+- **Conditional on $X$:** keep the same $X_1,\dots,X_N$ and draw new $Y_i\mid X_i$. For example, an experiment where we choose the doses $X_i$ ourselves.
+- **Not conditional on $X$:** draw new pairs $(X_i,Y_i)$, so the $X$'s change too. For example, a survey, where a new sample brings new people with new $X$'s.
 
-$$ \hat\beta_1 = \sum_{i=1}^n (x_i-\bar x)(Y_i-\bar Y)\big/S_{xx} = \sum_{i=1}^n w_iY_i, \qquad w_i = \frac{x_i-\bar x}{S_{xx}}, $$
+<figure style="margin: 1.2em 0;">
+<img src="{{ '/unit3/fig/two_replicates.svg' | relative_url }}" alt="Three replicates of regression data in each of two rows. Top row: the x values are the same in every replicate and only the y values change. Bottom row: both x and y change. Each panel highlights one replicate's data and fitted line; the other replicates in the row are in gray." style="width: 100%;">
+<figcaption>Each panel highlights one replicate's data and least squares line; the other replicates in that row are in gray. Top: conditional on $X$ (same $x$'s, new $y$'s). Bottom: not conditional on $X$ (new $x$'s and new $y$'s).</figcaption>
+</figure>
 
-using $\sum_i w_i(Y_i-\bar Y) = \sum_i w_iY_i - \bar Y\sum_i w_i = \sum_i w_iY_i$, since $\sum_i w_i=\sum_i(x_i-\bar x)/S_{xx}=0$.
+Which one makes sense depends on the context. We will focus on the sample distribution **conditional on $X$**, treating $X_1,\dots,X_N$ as fixed numbers; the spread of the $X$'s then enters through
+
+$$ S_{xx}=\sum_{i=1}^N(X_i-\overline X)^2\approx N\sigma_X^2 . $$
 
 <div class="example" markdown="1">
 #### Example (unbiasedness of the slope estimator)
 
-<u>Question:</u> show that $\hat\beta_1$ is unbiased, i.e. $E[\hat\beta_1]=\beta_1$.
+<u>Question:</u> show that $\hat\beta_1$ is unbiased, i.e. $E[\hat\beta_1\mid X_1,\dots,X_N]=\beta_1$.
 
-<u>Solution:</u> since $x_i$ is fixed, $E[Y_i]=\beta_0+\beta_1x_i$. By linearity,
+<u>Solution:</u> conditional on the $X$'s, only the $Y_i$ are random, so by linearity
 
-$$ E[\hat\beta_1] = \sum_{i=1}^n w_iE[Y_i] = \sum_{i=1}^n w_i(\beta_0+\beta_1x_i) = \beta_0\underbrace{\sum_i w_i}_{=0} + \beta_1\underbrace{\sum_i w_ix_i}_{=1}, $$
+$$ E[\hat\beta_1\mid X_1,\dots,X_N] = \frac{\sum_{i=1}^N(X_i - \overline{X})\, E[Y_i-\overline{Y}\mid X_1,\dots,X_N] }{\sum_{i=1}^N(X_i - \overline{X})^2}. $$
 
-where $\sum_i w_ix_i=1$ because $\sum_i(x_i-\bar x)x_i = \sum_i(x_i-\bar x)^2+\bar x\sum_i(x_i-\bar x) = S_{xx}$, so $\sum_i w_ix_i = S_{xx}/S_{xx}=1$. Therefore
+From the model, $E[Y_i\mid X_i]=\beta_0+\beta_1X_i$, and averaging over $i$ gives $E[\overline Y\mid X_1,\dots,X_N]=\beta_0+\beta_1\overline X$, so
 
-$$ E[\hat\beta_1] = \beta_1. $$
+$$ E[Y_i-\overline{Y}\mid X_1,\dots,X_N] = \beta_0 + \beta_1 X_i - \beta_0 - \beta_1 \overline{X} = \beta_1(X_i - \overline{X}). $$
 
-Across hypothetical repeated datasets with the same $x$'s, $\hat\beta_1$ is correct *on average*. (The same argument shows $E[\hat\beta_0]=\beta_0$.) One can similarly show $\operatorname{var}(\hat\beta_1) = \sigma^2/S_{xx}$ (we won't derive this): the more spread out the $x$'s, or the more data we have, the tighter the sample distribution of $\hat\beta_1$ is around $\beta_1$.
+Therefore
+
+$$ E[\hat\beta_1\mid X_1,\dots,X_N] = \beta_1\frac{\sum_{i=1}^N(X_i - \overline{X})^2}{\sum_{i=1}^N(X_i - \overline{X})^2} = \beta_1. $$
+
+Across replicates with the same $X$'s, $\hat\beta_1$ is correct *on average*. (A similar argument shows $E[\hat\beta_0\mid X_1,\dots,X_N]=\beta_0$.)
 </div>
 
+One can also show (we won't derive this) that $\operatorname{var}(\hat\beta_1\mid X_1,\dots,X_N)=\sigma_\epsilon^2/S_{xx}$. Since $\hat\beta_1$ is a weighted sum of the Normal $Y_i$'s, it is Normal, and using $S_{xx}\approx N\sigma_X^2$:
 
+$$ \boxed{\hat\beta_1 \approx \text{Normal}\Big(\beta_1,\ \frac{\sigma_\epsilon^2}{N\sigma_X^2}\Big)}, \qquad \text{se}(\hat\beta_1)\approx\frac{\sigma_\epsilon}{\sigma_X\sqrt N}. $$
+
+The more spread out the $X$'s (large $\sigma_X$), the less noise (small $\sigma_\epsilon$), or the more data, the tighter the sample distribution of $\hat\beta_1$ is around $\beta_1$.
 
 {% include_relative demos/beta-sampling.html %}
 
@@ -508,7 +594,7 @@ Across hypothetical repeated datasets with the same $x$'s, $\hat\beta_1$ is corr
 
 A special type of regression model where the predictor is the same quantity as the response variable but observed at a previous time is called an <span class="term">[autoregressive model](https://en.wikipedia.org/wiki/Autoregressive_model)</span>. We consider a simple AR model where
 
-$$Y_t|Y_{t-1} \sim {\rm Normal}(\beta_1 Y_{t-1} +\beta_0,\sigma^2)$$
+$$Y_t\mid Y_{t-1} \sim {\rm Normal}(\beta_1 Y_{t-1} +\beta_0,\sigma_\epsilon^2)$$
 
 We further assume that $Y_t\mid Y_{t-1}$ is independent of $Y_{t-2},Y_{t-3},...$. This is a natural starting point for modeling many noisy processes, such as stocks or height along a lineage (mother, daughter, granddaughter). The example below shows how the natural least squares estimator is biased.
 
@@ -550,7 +636,7 @@ which prints
 At every $T$ the average estimate falls short of the true $\beta_1=0.6$, and the gap shrinks as $T$ grows: $\hat\beta_1$ is biased downward in any finite sample, but consistent.
 </div>
 
-The bias bound in the example above can be understood as follows. For the no-intercept AR(1) model, it can be shown (Hurwicz, 1950) that for large $T$,
+The bias in the example above can be understood as follows. For the no-intercept AR(1) model, it can be shown (Hurwicz, 1950) that for large $T$,
 
 $$ E[\hat\beta_1] - \beta_1 \approx -\frac{2\beta_1}{T}. $$
 
@@ -562,13 +648,13 @@ This matches the simulation: with $\beta_1=0.6$, the formula predicts a bias of 
 <div class="exercise" markdown="1">
 #### The stationary distribution of an AR(1) model
 
-Consider the AR(1) model $Y_t\mid Y_{t-1}\sim\text{Normal}(\beta_1Y_{t-1}+\beta_0,\sigma^2)$ with $\lvert\beta_1\rvert<1$. As $t\to\infty$, the distribution of $Y_t$ settles down to a fixed <span class="term">[stationary distribution](https://en.wikipedia.org/wiki/Stationary_process)</span> that no longer depends on $t$ &mdash; that is, $Y_t$ and $Y_{t-1}$ have the same mean $\mu$ and the same variance $v$.
+Consider the AR(1) model $Y_t\mid Y_{t-1}\sim\text{Normal}(\beta_1Y_{t-1}+\beta_0,\sigma_\epsilon^2)$ with $\lvert\beta_1\rvert<1$. As $t\to\infty$, the distribution of $Y_t$ settles down to a fixed <span class="term">[stationary distribution](https://en.wikipedia.org/wiki/Stationary_process)</span> that no longer depends on $t$ &mdash; that is, $Y_t$ and $Y_{t-1}$ have the same mean $\mu$ and the same variance $v$.
 
 <ol type="a">
   <li>Using $E[Y_t]=E[Y_{t-1}]=\mu$ and taking the expectation of both sides of the model equation, write an equation for $\mu$ and solve for it in terms of $\beta_0,\beta_1$.</li>
-  <li>Using $\operatorname{var}(Y_t)=\operatorname{var}(Y_{t-1})=v$, and that $Y_{t-1}$ and the noise term are independent, write an equation for $v$ and solve for it in terms of $\beta_1,\sigma^2$.</li>
+  <li>Using $\operatorname{var}(Y_t)=\operatorname{var}(Y_{t-1})=v$, and that $Y_{t-1}$ and the noise term are independent, write an equation for $v$ and solve for it in terms of $\beta_1,\sigma_\epsilon^2$.</li>
   <li>Why do we need $\lvert\beta_1\rvert<1$ for a stationary distribution to exist? What happens to $v$ as $\beta_1\to1$?</li>
-  <li>Simulate one long AR(1) series with $\beta_0=1,\beta_1=0.7,\sigma^2=4$, discard the first $500$ steps as "burn-in," and compare a histogram of the remaining values to the stationary Normal distribution you derived in (a) and (b).</li>
+  <li>Simulate one long AR(1) series with $\beta_0=1,\beta_1=0.7,\sigma_\epsilon^2=4$, discard the first $500$ steps as "burn-in," and compare a histogram of the remaining values to the stationary Normal distribution you derived in (a) and (b).</li>
 </ol>
 </div>
 
@@ -590,29 +676,29 @@ In statistics we often infer parameters not because we care about their exact va
 
 Consider a clinical trial again: an effect $Y$ (e.g. blood pressure) is measured in a control group ($X=0$) and a treatment group ($X=1$), with $N/2$ people in each group. Model
 
-$$ Y\mid X \sim \text{Normal}\big(\mu_C(1-X)+\mu_TX,\ \sigma^2\big), $$
+$$ Y\mid X \sim \text{Normal}\big(\mu_C(1-X)+\mu_TX,\ \sigma_\epsilon^2\big), $$
 
-**assuming $\sigma^2$ is known** (this simplifies things a lot). This is a linear regression model, since
+**assuming $\sigma_\epsilon^2$ is known** (this simplifies things a lot). This is a linear regression model, since
 
 $$ \mu_C(1-X)+\mu_TX = \mu_C+(\mu_T-\mu_C)X = \beta_0+\beta_1X, \qquad \beta_0=\mu_C,\ \ \beta_1=\mu_T-\mu_C. $$
 
-We could estimate $\beta_0,\beta_1$ as usual, or equivalently estimate $\mu_C,\mu_T$ directly within each group. Since $\sigma$ is known, the sample distributions are
+We could estimate $\beta_0,\beta_1$ as usual, or equivalently estimate $\mu_C,\mu_T$ directly within each group. Since $\sigma_\epsilon$ is known, the sample distributions are
 
-$$ \hat\mu_C \sim \text{Normal}\Big(\mu_C,\ \frac{\sigma^2}{N/2}\Big), \qquad \hat\mu_T \sim \text{Normal}\Big(\mu_T,\ \frac{\sigma^2}{N/2}\Big), $$
+$$ \hat\mu_C \sim \text{Normal}\Big(\mu_C,\ \frac{\sigma_\epsilon^2}{N/2}\Big), \qquad \hat\mu_T \sim \text{Normal}\Big(\mu_T,\ \frac{\sigma_\epsilon^2}{N/2}\Big), $$
 
 so
 
-$$ \hat\beta_1 \sim \text{Normal}\Big(\beta_1,\ \frac{4\sigma^2}{N}\Big). $$
+$$ \hat\beta_1 \sim \text{Normal}\Big(\beta_1,\ \frac{4\sigma_\epsilon^2}{N}\Big). $$
 
 Our null hypothesis is $\beta_1=0$ (no drug effect). As test statistic, we measure how far $\hat\beta_1$ is from zero in standard errors:
 
 $$ \hat T = \frac{\hat\beta_1}{\text{se}(\hat\beta_1)}. $$
 
-Since $\sigma$ is known, $\text{se}(\hat\beta_1)$ is known too, so from the sample distribution's perspective this is just division by a constant.
+Since $\sigma_\epsilon$ is known, $\text{se}(\hat\beta_1)$ is known too, so from the sample distribution's perspective this is just division by a constant.
 
 Let $\hat\beta_1^{\ast}$ denote the measured effect <em>under the null hypothesis</em> &mdash; a replicate generated assuming $\beta_1=0$. Then $\hat\beta_1^{\ast}$ has the sample distribution shifted to be centered at zero:
 
-$$ \hat\beta_1^{\ast} \sim \text{Normal}\Big(0,\ \frac{4\sigma^2}{N}\Big). $$
+$$ \hat\beta_1^{\ast} \sim \text{Normal}\Big(0,\ \frac{4\sigma_\epsilon^2}{N}\Big). $$
 
 We can now answer the question posed in step 3: if the null hypothesis were true, how likely would we be to see a $\lvert\hat T\rvert$ at least as large as what we observed? This is the $p$-value,
 
@@ -625,7 +711,7 @@ The demo below shows both sides of this at once. On the left is the null distrib
 
 {% include_relative demos/pvalueCI.html %}
 
-The example above is unusually simple ($\sigma$ known, binary predictor); in general computing $p$-values is more involved, but the principle and interpretation carry over. **Interpreting the $p$-value:** if $p_v$ is very small, it's highly unlikely we'd have seen our data if the null hypothesis were true, so we can *reject* the null hypothesis. Some threshold is usually chosen for this &mdash; conventionally, a result is <span class="term">[statistically significant](https://en.wikipedia.org/wiki/Statistical_significance)</span> if $p_v<0.05$. **If $p_v$ is not small, that does not mean the null hypothesis is true** &mdash; only that we failed to reject it. Visually, $\hat\beta_1$ is statistically significant exactly when $0$ is *not* in its confidence interval.
+The example above is unusually simple ($\sigma_\epsilon$ known, binary predictor); in general computing $p$-values is more involved, but the principle and interpretation carry over. **Interpreting the $p$-value:** if $p_v$ is very small, it's highly unlikely we'd have seen our data if the null hypothesis were true, so we can *reject* the null hypothesis. Some threshold is usually chosen for this &mdash; conventionally, a result is <span class="term">[statistically significant](https://en.wikipedia.org/wiki/Statistical_significance)</span> if $p_v<0.05$. **If $p_v$ is not small, that does not mean the null hypothesis is true** &mdash; only that we failed to reject it. Visually, $\hat\beta_1$ is statistically significant exactly when $0$ is *not* in its confidence interval.
 
 ### $p$-values and confidence intervals
 
@@ -646,11 +732,11 @@ The single parameter $\lambda>0$ is a <em>rate</em>: large $\lambda$ means event
 
 $$ E[T] = \frac1\lambda, \qquad \operatorname{var}(T) = \frac{1}{\lambda^2}, $$
 
-and that `rng.exponential(scale=1/lam, size=n)` draws samples from it in `numpy` (note that `numpy` is parameterized by the mean $1/\lambda$, not by $\lambda$).
+and that `rng.exponential(scale=1/lam, size=N)` draws samples from it in `numpy` (note that `numpy` is parameterized by the mean $1/\lambda$, not by $\lambda$).
 
-<u>The estimator.</u> Since $E[T]=1/\lambda$, we can estimate $E[T]$ by the sample average of measurements $T_1,\dots,T_n$,
+<u>The estimator.</u> Since $E[T]=1/\lambda$, we can estimate $E[T]$ by the sample average of measurements $T_1,\dots,T_N$,
 
-$$ E[T] \approx \overline T = \frac1n\sum_{i=1}^n T_i, $$
+$$ E[T] \approx \overline T = \frac1N\sum_{i=1}^N T_i, $$
 
 and $\overline T$ is unbiased for $1/\lambda$ by linearity of expectation. Inverting suggests a natural estimator of the rate itself,
 
@@ -658,15 +744,15 @@ $$ \hat\lambda = \frac{1}{\overline T}. $$
 
 <ol type="a">
 <li>Before simulating anything: $\overline T$ is an unbiased estimator of $1/\lambda$. Does it follow that $1/\overline T$ is an unbiased estimator of $\lambda$? Say what you expect and why, in one or two sentences.</li>
-<li>Show, using simulations, that $\hat\lambda$ is in fact a <em>biased</em> estimator of $\lambda$, although the bias decreases with $n$. To do this:
+<li>Show, using simulations, that $\hat\lambda$ is in fact a <em>biased</em> estimator of $\lambda$, although the bias decreases with $N$. To do this:
 <ul>
 <li>Make a list of $100$ values of $\lambda$ (any reasonable range works &mdash; e.g. between $0.2$ and $2$).</li>
-<li>For each value of $\lambda$: simulate $10{,}000$ replicates of an experiment where each replicate has $n=5$ values of $T$; for each replicate compute $\hat\lambda$; then estimate $E[\hat\lambda]$ by averaging over replicates, and save it.</li>
+<li>For each value of $\lambda$: simulate $10{,}000$ replicates of an experiment where each replicate has $N=5$ values of $T$; for each replicate compute $\hat\lambda$; then estimate $E[\hat\lambda]$ by averaging over replicates, and save it.</li>
 <li>Plot $\lambda$ vs. $\lvert E[\hat\lambda]-\lambda\rvert$.</li>
 </ul>
 </li>
-<li>Repeat part (b) with $n=50$ instead of $n=5$, on the same axes. Which direction does the bias go in, and roughly how does its size change?</li>
-<li>(<strong>optional, ungraded</strong>) Consider the case $n=2$. Prove that
+<li>Repeat part (b) with $N=50$ instead of $N=5$, on the same axes. Which direction does the bias go in, and roughly how does its size change?</li>
+<li>(<strong>optional, ungraded</strong>) Consider the case $N=2$. Prove that
 $$ E[\hat\lambda] = E\Big[\frac{1}{\overline T}\Big] \ge \lambda. $$
 This is a special case of Jensen's inequality, and it is the general reason your answer to (a) is what it is: for a convex function $g$, $E[g(X)] \ge g(E[X])$.</li>
 </ol>
@@ -697,7 +783,7 @@ You'll study the association between earnings and gender, and how it depends on 
 
 <ol type="a">
 <li>What do you expect the association between gender and earnings to be? Where do your expectations come from (news, intuition, other courses you've taken)?</li>
-<li>Write a function <code>fit(x, y)</code> that takes two numpy arrays and returns the least squares estimates $\hat\beta_0,\hat\beta_1$, the estimate $\hat\sigma^2=\text{SSR}/(n-2)$ of the noise variance, the standard error $\text{se}(\hat\beta_1)=\hat\sigma/\sqrt{S_{xx}}$ (with $S_{xx}=\sum_i(x_i-\bar x)^2$), the test statistic $\hat T=\hat\beta_1/\text{se}(\hat\beta_1)$, and the two-sided $p$-value $2\big(1-\Phi(|\hat T|)\big)$ (use <code>scipy.stats.norm.cdf</code> for $\Phi$).</li>
+<li>Write a function <code>fit(x, y)</code> that takes two numpy arrays and returns the least squares estimates $\hat\beta_0,\hat\beta_1$, the estimate $\hat\sigma_\epsilon^2=\text{SSR}/(N-2)$ of the noise variance, the standard error $\text{se}(\hat\beta_1)=\hat\sigma_\epsilon/\sqrt{S_{xx}}$ (with $S_{xx}=\sum_i(X_i-\overline X)^2$), the test statistic $\hat T=\hat\beta_1/\text{se}(\hat\beta_1)$, and the two-sided $p$-value $2\big(1-\Phi(\lvert\hat T\rvert)\big)$ (use <code>scipy.stats.norm.cdf</code> for $\Phi$).</li>
 <li>Use your function to fit a linear regression with gender (the array <code>male</code>) as the predictor and earnings as the response. You can use either <code>earnk</code> or <code>earn</code>, just keep track of units. Check that $\hat\beta_1$ equals the difference between the average earnings of men and women. Is there a statistically significant effect? Is the direction and size of the effect what you expected?</li>
 <li>Now fit a linear regression with height as the predictor and earnings as the response. Answer the same questions as in part (c).</li>
 <li>You should have found an association between both (gender, earnings) and (height, earnings). A natural question: is the height/earnings association simply a byproduct of men being taller on average? To check, separate the data into males and females and fit the height &rarr; earnings regression separately within each group.</li>

@@ -1,0 +1,190 @@
+<div class="demo" id="demo-sampledist">
+  <div class="demo-label">Interactive demo</div>
+  <h4>Sample distribution: single predictor vs. two correlated predictors</h4>
+  <div class="demo-controls">
+    <label>$\sigma$ = <input id="sd-sigma1" type="range" min="0.2" max="2.5" step="0.1" value="1"><span id="sd-sigma1-val">1.0</span></label>
+    <label>$N$ = <input id="sd-n1" type="range" min="5" max="60" step="5" value="15"><span id="sd-n1-val">15</span></label>
+    <button id="sd-redraw1">New reference dataset</button>
+  </div>
+  <svg id="sd-chart-top"></svg>
+
+  <div class="demo-controls">
+    <label>$b={\rm cov}(X_1,X_2)$ = <input id="sd-b" type="range" min="-0.95" max="0.95" step="0.05" value="0.7"><span id="sd-b-val">0.70</span></label>
+    <label>$\sigma$ = <input id="sd-sigma2" type="range" min="0.2" max="2" step="0.1" value="0.6"><span id="sd-sigma2-val">0.6</span></label>
+    <button id="sd-run">Run 150 replicates</button>
+    <button id="sd-reset">Reset</button>
+  </div>
+  <svg id="sd-chart-bottom"></svg>
+</div>
+
+<script>
+(function () {
+  const mk = NotesUtils.svg;
+
+  // ---- top panel: single predictor spaghetti ----
+  const sigma1Slider = document.getElementById('sd-sigma1');
+  const n1Slider = document.getElementById('sd-n1');
+  const sigma1Val = document.getElementById('sd-sigma1-val');
+  const n1Val = document.getElementById('sd-n1-val');
+  const chartTop = document.getElementById('sd-chart-top');
+  const TRUE_B1 = 1;
+  let X = [], Yref = [];
+
+  function sigma1() { return parseFloat(sigma1Slider.value); }
+  function n1() { return parseInt(n1Slider.value, 10); }
+
+  function ols(xs, ys) {
+    const xBar = NotesUtils.mean(xs), yBar = NotesUtils.mean(ys);
+    let num = 0, den = 0;
+    for (let i = 0; i < xs.length; i++) { num += (xs[i] - xBar) * (ys[i] - yBar); den += (xs[i] - xBar) ** 2; }
+    const slope = den ? num / den : 0;
+    return { slope, intercept: yBar - slope * xBar };
+  }
+
+  function genTop() {
+    const n = n1();
+    X = Array.from({ length: n }, (_, i) => -3 + (6 * i) / (n - 1));
+    Yref = X.map((x) => TRUE_B1 * x + NotesUtils.gaussianRandom(0, sigma1()));
+  }
+
+  function renderTop() {
+    const width = 480, height = 220, margin = { top: 12, right: 12, bottom: 26, left: 34 };
+    const innerW = width - margin.left - margin.right, innerH = height - margin.top - margin.bottom;
+    const xDomain = [-3.5, 3.5], yDomain = [-3.5 * sigma1() - 3.5, 3.5 * sigma1() + 3.5];
+    NotesUtils.clear(chartTop);
+    chartTop.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    chartTop.setAttribute('width', '100%');
+    const g = mk('g', { transform: `translate(${margin.left},${margin.top})` });
+    chartTop.appendChild(g);
+    const xToPx = (x) => ((x - xDomain[0]) / (xDomain[1] - xDomain[0])) * innerW;
+    const yToPx = (y) => innerH - ((y - yDomain[0]) / (yDomain[1] - yDomain[0])) * innerH;
+    g.appendChild(mk('line', { x1: 0, y1: innerH, x2: innerW, y2: innerH, stroke: '#9b9e91' }));
+    g.appendChild(mk('line', { x1: 0, y1: 0, x2: 0, y2: innerH, stroke: '#9b9e91' }));
+
+    for (let k = 0; k < 40; k++) {
+      const Yp = X.map((x) => TRUE_B1 * x + NotesUtils.gaussianRandom(0, sigma1()));
+      const fit = ols(X, Yp);
+      g.appendChild(mk('line', {
+        x1: xToPx(xDomain[0]), y1: yToPx(fit.slope * xDomain[0] + fit.intercept),
+        x2: xToPx(xDomain[1]), y2: yToPx(fit.slope * xDomain[1] + fit.intercept),
+        stroke: '#1f5a6b', 'stroke-width': 1, opacity: 0.18,
+      }));
+    }
+    X.forEach((x, i) => g.appendChild(mk('circle', { cx: xToPx(x), cy: yToPx(Yref[i]), r: 3, fill: '#2b2e27' })));
+  }
+
+  document.getElementById('sd-redraw1').addEventListener('click', () => { genTop(); renderTop(); });
+  [sigma1Slider, n1Slider].forEach((s) => s.addEventListener('input', () => {
+    sigma1Val.textContent = sigma1().toFixed(1);
+    n1Val.textContent = n1();
+    genTop(); renderTop();
+  }));
+
+  // ---- bottom panel: joint (beta1_hat, beta2_hat) ----
+  const bSlider = document.getElementById('sd-b');
+  const sigma2Slider = document.getElementById('sd-sigma2');
+  const bVal = document.getElementById('sd-b-val');
+  const sigma2Val = document.getElementById('sd-sigma2-val');
+  const chartBottom = document.getElementById('sd-chart-bottom');
+  const TRUE_B1_2 = 1, TRUE_B2_2 = -1;
+  const N2 = 40;
+  let estimates = [];
+
+  function b() { return parseFloat(bSlider.value); }
+  function sigma2() { return parseFloat(sigma2Slider.value); }
+
+  function ols2(X1, X2, Y) {
+    const x1Bar = NotesUtils.mean(X1), x2Bar = NotesUtils.mean(X2), yBar = NotesUtils.mean(Y);
+    let s11 = 0, s22 = 0, s12 = 0, c1 = 0, c2 = 0;
+    for (let i = 0; i < X1.length; i++) {
+      const d1 = X1[i] - x1Bar, d2 = X2[i] - x2Bar, dy = Y[i] - yBar;
+      s11 += d1 * d1; s22 += d2 * d2; s12 += d1 * d2; c1 += d1 * dy; c2 += d2 * dy;
+    }
+    s11 /= X1.length; s22 /= X1.length; s12 /= X1.length; c1 /= X1.length; c2 /= X1.length;
+    const det = s11 * s22 - s12 * s12;
+    if (Math.abs(det) < 1e-9) return null;
+    const beta1 = (c1 * s22 - c2 * s12) / det;
+    const beta2 = (c2 * s11 - c1 * s12) / det;
+    return { beta1, beta2 };
+  }
+
+  function runOne() {
+    const bb = b(), s = sigma2();
+    const X1 = [], X2 = [], Y = [];
+    for (let i = 0; i < N2; i++) {
+      const x1 = NotesUtils.gaussianRandom(0, 1);
+      const x2 = NotesUtils.gaussianRandom(bb * x1, Math.sqrt(Math.max(1e-4, 1 - bb * bb)));
+      X1.push(x1); X2.push(x2);
+      Y.push(TRUE_B1_2 * x1 + TRUE_B2_2 * x2 + NotesUtils.gaussianRandom(0, s));
+    }
+    const fit = ols2(X1, X2, Y);
+    if (fit) estimates.push(fit);
+  }
+
+  function renderBottom() {
+    const width = 480, height = 300, margin = { top: 12, right: 12, bottom: 30, left: 36 };
+    const innerW = width - margin.left - margin.right, innerH = height - margin.top - margin.bottom;
+    let xDomain = [TRUE_B1_2 - 2.5, TRUE_B1_2 + 2.5], yDomain = [TRUE_B2_2 - 2.5, TRUE_B2_2 + 2.5];
+    if (estimates.length) {
+      const b1s = estimates.map((e) => e.beta1), b2s = estimates.map((e) => e.beta2);
+      const pad1 = (Math.max(...b1s) - Math.min(...b1s)) * 0.15 || 1;
+      const pad2 = (Math.max(...b2s) - Math.min(...b2s)) * 0.15 || 1;
+      xDomain = [Math.min(...b1s) - pad1, Math.max(...b1s) + pad1];
+      yDomain = [Math.min(...b2s) - pad2, Math.max(...b2s) + pad2];
+    }
+    NotesUtils.clear(chartBottom);
+    chartBottom.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    chartBottom.setAttribute('width', '100%');
+    const g = mk('g', { transform: `translate(${margin.left},${margin.top})` });
+    chartBottom.appendChild(g);
+    const xToPx = (x) => ((x - xDomain[0]) / (xDomain[1] - xDomain[0])) * innerW;
+    const yToPx = (y) => innerH - ((y - yDomain[0]) / (yDomain[1] - yDomain[0])) * innerH;
+    g.appendChild(mk('line', { x1: 0, y1: innerH, x2: innerW, y2: innerH, stroke: '#9b9e91' }));
+    g.appendChild(mk('line', { x1: 0, y1: 0, x2: 0, y2: innerH, stroke: '#9b9e91' }));
+    for (let i = 0; i <= 4; i++) {
+      const vx = xDomain[0] + ((xDomain[1] - xDomain[0]) * i) / 4;
+      const label = mk('text', { x: xToPx(vx), y: innerH + 16, 'text-anchor': 'middle', 'font-size': 10, fill: '#7c7f72' });
+      label.textContent = vx.toFixed(2);
+      g.appendChild(label);
+    }
+    // guide line beta1+beta2 = const (through true values), slope -1
+    const cst = TRUE_B1_2 + TRUE_B2_2;
+    g.appendChild(mk('line', {
+      x1: xToPx(xDomain[0]), y1: yToPx(cst - xDomain[0]),
+      x2: xToPx(xDomain[1]), y2: yToPx(cst - xDomain[1]),
+      stroke: '#b08a2a', 'stroke-width': 1.3, 'stroke-dasharray': '4,3',
+    }));
+    g.appendChild(mk('line', { x1: xToPx(TRUE_B1_2), y1: 0, x2: xToPx(TRUE_B1_2), y2: innerH, stroke: '#efebe2' }));
+    g.appendChild(mk('line', { x1: 0, y1: yToPx(TRUE_B2_2), x2: innerW, y2: yToPx(TRUE_B2_2), stroke: '#efebe2' }));
+    estimates.forEach((e) => {
+      g.appendChild(mk('circle', { cx: xToPx(e.beta1), cy: yToPx(e.beta2), r: 2.8, fill: '#1f5a6b', opacity: 0.55 }));
+    });
+    g.appendChild(mk('circle', { cx: xToPx(TRUE_B1_2), cy: yToPx(TRUE_B2_2), r: 4, fill: '#a2542c' }));
+    const xLbl = mk('text', { x: innerW / 2, y: innerH + 28, 'text-anchor': 'middle', 'font-size': 11, fill: '#565a4e' });
+    xLbl.textContent = 'β̂₁';
+    g.appendChild(xLbl);
+
+    const seB1 = estimates.length > 1 ? Math.sqrt(NotesUtils.variance(estimates.map((e) => e.beta1))) : NaN;
+    const seSum = estimates.length > 1 ? Math.sqrt(NotesUtils.variance(estimates.map((e) => e.beta1 + e.beta2))) : NaN;
+    const seLbl1 = mk('text', { x: innerW - 4, y: 14, 'text-anchor': 'end', 'font-size': 11, fill: '#2b2e27' });
+    seLbl1.textContent = `se(β̂₁) ≈ ${estimates.length > 1 ? seB1.toFixed(3) : '—'}`;
+    g.appendChild(seLbl1);
+    const seLbl2 = mk('text', { x: innerW - 4, y: 28, 'text-anchor': 'end', 'font-size': 11, fill: '#565a4e' });
+    seLbl2.textContent = `se(β̂₁+β̂₂) ≈ ${estimates.length > 1 ? seSum.toFixed(3) : '—'}  (${estimates.length} replicates)`;
+    g.appendChild(seLbl2);
+  }
+
+  document.getElementById('sd-run').addEventListener('click', () => { for (let i = 0; i < 150; i++) runOne(); renderBottom(); });
+  document.getElementById('sd-reset').addEventListener('click', () => { estimates = []; renderBottom(); });
+  [bSlider, sigma2Slider].forEach((s) => s.addEventListener('input', () => {
+    bVal.textContent = b().toFixed(2);
+    sigma2Val.textContent = sigma2().toFixed(1);
+    estimates = [];
+    renderBottom();
+  }));
+
+  genTop(); renderTop();
+  for (let i = 0; i < 60; i++) runOne();
+  renderBottom();
+})();
+</script>

@@ -1,0 +1,210 @@
+<div class="demo" id="demo-plane">
+  <div class="demo-label">Interactive demo</div>
+  <h4>The regression surface $E[Y\mid X]=\beta_0+\beta_1X_1+\beta_2X_2$</h4>
+  <div class="demo-controls">
+    <label>$\beta_0$ = <input id="pl-b0" type="range" min="-2" max="2" step="0.25" value="0"><span id="pl-b0-val">0.00</span></label>
+    <label>$\beta_1$ = <input id="pl-b1" type="range" min="-2" max="2" step="0.25" value="1"><span id="pl-b1-val">1.00</span></label>
+    <label>$\beta_2$ = <input id="pl-b2" type="range" min="-2" max="2" step="0.25" value="-1"><span id="pl-b2-val">-1.00</span></label>
+  </div>
+  <div class="demo-controls">
+    <label>highlighted $X_2$ (orange slice) = <input id="pl-x2" type="range" min="-2" max="2" step="0.5" value="0"><span id="pl-x2-val">0.0</span></label>
+    <label>highlighted $X_1$ (blue slice) = <input id="pl-x1" type="range" min="-2" max="2" step="0.5" value="0"><span id="pl-x1-val">0.0</span></label>
+  </div>
+  <svg id="pl-svg" viewBox="0 0 480 320"></svg>
+</div>
+
+<script>
+(function () {
+  const b0Slider = document.getElementById('pl-b0');
+  const b1Slider = document.getElementById('pl-b1');
+  const b2Slider = document.getElementById('pl-b2');
+  const x2Slider = document.getElementById('pl-x2');
+  const x1Slider = document.getElementById('pl-x1');
+  const b0Val = document.getElementById('pl-b0-val');
+  const b1Val = document.getElementById('pl-b1-val');
+  const b2Val = document.getElementById('pl-b2-val');
+  const x2Val = document.getElementById('pl-x2-val');
+  const x1Val = document.getElementById('pl-x1-val');
+  const svgEl = document.getElementById('pl-svg');
+  const mk = NotesUtils.svg;
+
+  const RANGE = 2, STEP = 0.5;
+  const COS = Math.cos(Math.PI / 6), SIN = Math.sin(Math.PI / 6);
+  const originX = 230, originY = 150, unit = 44;
+  // Fixed reference frame (covers the typical exploration range; at extreme
+  // slider settings the surface can extend past the ruled axis, same as a
+  // real 3D plot's bounding box) so only the surface moves, never the axes.
+  const Y_AXIS_MIN = -6, Y_AXIS_MAX = 6;
+  const CENTER_Y = 0, HEIGHT_SCALE = 110 / (Y_AXIS_MAX - Y_AXIS_MIN);
+
+  function b0() { return parseFloat(b0Slider.value); }
+  function b1() { return parseFloat(b1Slider.value); }
+  function b2() { return parseFloat(b2Slider.value); }
+  function sliceX2() { return parseFloat(x2Slider.value); }
+  function sliceX1() { return parseFloat(x1Slider.value); }
+
+  function yAt(x1, x2) { return b0() + b1() * x1 + b2() * x2; }
+
+  function niceTicks(lo, hi, count) {
+    const span = hi - lo || 1;
+    const raw = span / count;
+    const mag = Math.pow(10, Math.floor(Math.log10(raw)));
+    const norm = raw / mag;
+    const step = (norm < 1.5 ? 1 : norm < 3 ? 2 : norm < 7 ? 5 : 10) * mag;
+    const start = Math.ceil(lo / step) * step;
+    const ticks = [];
+    for (let v = start; v <= hi + 1e-9; v += step) ticks.push(Math.round(v * 1000) / 1000);
+    return ticks;
+  }
+
+  function render() {
+    NotesUtils.clear(svgEl);
+
+    function proj(x1, x2, yVal) {
+      const sx = originX + (x1 - x2) * COS * unit;
+      const sy = originY - (x1 + x2) * SIN * unit - (yVal - CENTER_Y) * HEIGHT_SCALE;
+      return [sx, sy];
+    }
+    function projSurface(x1, x2) { return proj(x1, x2, yAt(x1, x2)); }
+
+    // floor grid at y=0 (fixed reference plane)
+    for (let x2 = -RANGE; x2 <= RANGE + 1e-9; x2 += STEP) {
+      let d = '';
+      for (let x1 = -RANGE; x1 <= RANGE + 1e-9; x1 += STEP) {
+        const [sx, sy] = proj(x1, x2, 0);
+        d += (x1 === -RANGE ? 'M' : 'L') + sx.toFixed(1) + ',' + sy.toFixed(1) + ' ';
+      }
+      svgEl.appendChild(mk('path', { d, fill: 'none', stroke: '#e8e3d9', 'stroke-width': 1, 'stroke-dasharray': '3,3' }));
+    }
+    for (let x1 = -RANGE; x1 <= RANGE + 1e-9; x1 += STEP) {
+      let d = '';
+      for (let x2 = -RANGE; x2 <= RANGE + 1e-9; x2 += STEP) {
+        const [sx, sy] = proj(x1, x2, 0);
+        d += (x2 === -RANGE ? 'M' : 'L') + sx.toFixed(1) + ',' + sy.toFixed(1) + ' ';
+      }
+      svgEl.appendChild(mk('path', { d, fill: 'none', stroke: '#e8e3d9', 'stroke-width': 1, 'stroke-dasharray': '3,3' }));
+    }
+
+    // drop lines from the 4 surface corners down to the floor
+    [[-RANGE, -RANGE], [-RANGE, RANGE], [RANGE, -RANGE], [RANGE, RANGE]].forEach(([x1, x2]) => {
+      const [sx1, sy1] = projSurface(x1, x2);
+      const [sx0, sy0] = proj(x1, x2, 0);
+      svgEl.appendChild(mk('line', { x1: sx1, y1: sy1, x2: sx0, y2: sy0, stroke: '#d8d2c5', 'stroke-width': 1, 'stroke-dasharray': '2,2' }));
+    });
+
+    // surface mesh
+    for (let x2 = -RANGE; x2 <= RANGE + 1e-9; x2 += STEP) {
+      let d = '';
+      for (let x1 = -RANGE; x1 <= RANGE + 1e-9; x1 += STEP) {
+        const [sx, sy] = projSurface(x1, x2);
+        d += (x1 === -RANGE ? 'M' : 'L') + sx.toFixed(1) + ',' + sy.toFixed(1) + ' ';
+      }
+      svgEl.appendChild(mk('path', { d, fill: 'none', stroke: '#a9ac9f', 'stroke-width': 1 }));
+    }
+    for (let x1 = -RANGE; x1 <= RANGE + 1e-9; x1 += STEP) {
+      let d = '';
+      for (let x2 = -RANGE; x2 <= RANGE + 1e-9; x2 += STEP) {
+        const [sx, sy] = projSurface(x1, x2);
+        d += (x2 === -RANGE ? 'M' : 'L') + sx.toFixed(1) + ',' + sy.toFixed(1) + ' ';
+      }
+      svgEl.appendChild(mk('path', { d, fill: 'none', stroke: '#a9ac9f', 'stroke-width': 1 }));
+    }
+
+    // highlighted X1-slice (fixed x2, orange)
+    const fx2 = sliceX2();
+    let dOrange = '';
+    for (let x1 = -RANGE; x1 <= RANGE + 1e-9; x1 += STEP) {
+      const [sx, sy] = projSurface(x1, fx2);
+      dOrange += (x1 === -RANGE ? 'M' : 'L') + sx.toFixed(1) + ',' + sy.toFixed(1) + ' ';
+    }
+    svgEl.appendChild(mk('path', { d: dOrange, fill: 'none', stroke: '#b08a2a', 'stroke-width': 3 }));
+
+    // highlighted X2-slice (fixed x1, blue)
+    const fx1 = sliceX1();
+    let dBlue = '';
+    for (let x2 = -RANGE; x2 <= RANGE + 1e-9; x2 += STEP) {
+      const [sx, sy] = projSurface(fx1, x2);
+      dBlue += (x2 === -RANGE ? 'M' : 'L') + sx.toFixed(1) + ',' + sy.toFixed(1) + ' ';
+    }
+    svgEl.appendChild(mk('path', { d: dBlue, fill: 'none', stroke: '#1f5a6b', 'stroke-width': 3 }));
+
+    // X1 axis (front-right floor edge) with tick marks + labels
+    {
+      const [ax0, ay0] = proj(-RANGE, -RANGE, 0), [ax1, ay1] = proj(RANGE + 0.4, -RANGE, 0);
+      svgEl.appendChild(mk('line', { x1: ax0, y1: ay0, x2: ax1, y2: ay1, stroke: '#565a4e', 'stroke-width': 1.3 }));
+      for (let x1 = -RANGE; x1 <= RANGE + 1e-9; x1 += 1) {
+        const [tx, ty] = proj(x1, -RANGE, 0);
+        svgEl.appendChild(mk('line', { x1: tx, y1: ty, x2: tx, y2: ty + 5, stroke: '#565a4e', 'stroke-width': 1 }));
+        const t = mk('text', { x: tx, y: ty + 16, 'text-anchor': 'middle', 'font-size': 10, fill: '#6b6e62' });
+        t.textContent = x1.toFixed(0);
+        svgEl.appendChild(t);
+      }
+      const l1 = mk('text', { x: ax1 + 6, y: ay1 + 3, 'font-size': 12, fill: '#3a3d35', 'font-weight': '700' });
+      l1.textContent = 'X₁';
+      svgEl.appendChild(l1);
+    }
+
+    // X2 axis (front-left floor edge) with tick marks + labels
+    {
+      const [ax0, ay0] = proj(-RANGE, -RANGE, 0), [ax1, ay1] = proj(-RANGE, RANGE + 0.4, 0);
+      svgEl.appendChild(mk('line', { x1: ax0, y1: ay0, x2: ax1, y2: ay1, stroke: '#565a4e', 'stroke-width': 1.3 }));
+      for (let x2 = -RANGE; x2 <= RANGE + 1e-9; x2 += 1) {
+        const [tx, ty] = proj(-RANGE, x2, 0);
+        svgEl.appendChild(mk('line', { x1: tx, y1: ty, x2: tx, y2: ty + 5, stroke: '#565a4e', 'stroke-width': 1 }));
+        const t = mk('text', { x: tx, y: ty + 16, 'text-anchor': 'middle', 'font-size': 10, fill: '#6b6e62' });
+        t.textContent = x2.toFixed(0);
+        svgEl.appendChild(t);
+      }
+      const l2 = mk('text', { x: ax1 - 6, y: ay1 - 6, 'font-size': 12, fill: '#3a3d35', 'font-weight': '700', 'text-anchor': 'end' });
+      l2.textContent = 'X₂';
+      svgEl.appendChild(l2);
+    }
+
+    // Y axis (vertical, back corner) with tick marks + labels
+    {
+      const cx1 = -RANGE, cx2 = -RANGE;
+      const [ax0, ay0] = proj(cx1, cx2, Y_AXIS_MIN);
+      const [ax1, ay1] = proj(cx1, cx2, Y_AXIS_MAX);
+      svgEl.appendChild(mk('line', { x1: ax0, y1: ay0, x2: ax1, y2: ay1, stroke: '#565a4e', 'stroke-width': 1.3 }));
+      niceTicks(Y_AXIS_MIN, Y_AXIS_MAX, 4).forEach((yv) => {
+        const [tx, ty] = proj(cx1, cx2, yv);
+        svgEl.appendChild(mk('line', { x1: tx - 5, y1: ty, x2: tx, y2: ty, stroke: '#565a4e', 'stroke-width': 1 }));
+        const t = mk('text', { x: tx - 8, y: ty + 3, 'text-anchor': 'end', 'font-size': 10, fill: '#6b6e62' });
+        t.textContent = yv.toFixed(yv % 1 === 0 ? 0 : 1);
+        svgEl.appendChild(t);
+      });
+      const l3 = mk('text', { x: ax1 - 4, y: ay1 - 6, 'font-size': 12, fill: '#3a3d35', 'font-weight': '700', 'text-anchor': 'end' });
+      l3.textContent = 'Y';
+      svgEl.appendChild(l3);
+    }
+
+    // slope labels, anchored to each slice line's right end
+    const [oEndX, oEndY] = projSurface(RANGE, fx2);
+    const orangeLbl = mk('text', { x: oEndX + 6, y: oEndY, 'font-size': 11, fill: '#8a6a1c', 'font-weight': '700' });
+    orangeLbl.textContent = `β₁ = ${b1().toFixed(2)}`;
+    svgEl.appendChild(orangeLbl);
+    const [bEndX, bEndY] = projSurface(fx1, RANGE);
+    const blueLbl = mk('text', { x: bEndX + 6, y: bEndY, 'font-size': 11, fill: '#1f5a6b', 'font-weight': '700' });
+    blueLbl.textContent = `β₂ = ${b2().toFixed(2)}`;
+    svgEl.appendChild(blueLbl);
+  }
+
+  [b0Slider, b1Slider, b2Slider].forEach((s, i) =>
+    s.addEventListener('input', () => {
+      b0Val.textContent = b0().toFixed(2);
+      b1Val.textContent = b1().toFixed(2);
+      b2Val.textContent = b2().toFixed(2);
+      render();
+    })
+  );
+  [x2Slider, x1Slider].forEach((s) =>
+    s.addEventListener('input', () => {
+      x2Val.textContent = sliceX2().toFixed(1);
+      x1Val.textContent = sliceX1().toFixed(1);
+      render();
+    })
+  );
+
+  render();
+})();
+</script>

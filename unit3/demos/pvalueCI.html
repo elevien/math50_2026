@@ -5,8 +5,8 @@
     <label>observed $\hat\beta_1$ = <input id="pv-b1" type="range" min="-3" max="3" step="0.05" value="1.2"><span id="pv-b1-val">1.20</span></label>
     <label>se$(\hat\beta_1)$ = <input id="pv-se" type="range" min="0.2" max="2" step="0.05" value="0.6"><span id="pv-se-val">0.60</span></label>
   </div>
-  <svg id="pv-chart1"></svg>
-  <svg id="pv-chart2"></svg>
+  <svg id="pv-chart"></svg>
+  <p style="font-size:13px;color:#565a4e;margin-top:6px;">Rust: the null distribution $\text{Normal}(0,\text{se}^2)$ of $\hat\beta_1^\ast$; the shaded tails beyond $\pm|\hat\beta_1|$ have total area $p_v$. Blue: the estimated sample distribution $\text{Normal}(\hat\beta_1,\text{se}^2)$; the shaded middle $95\%$ is the confidence interval. $0$ falls outside the blue band exactly when the rust tails have area below $0.05$.</p>
 </div>
 
 <script>
@@ -15,50 +15,76 @@
   const seSlider = document.getElementById('pv-se');
   const b1Val = document.getElementById('pv-b1-val');
   const seVal = document.getElementById('pv-se-val');
-  const chart1 = document.getElementById('pv-chart1');
-  const chart2 = document.getElementById('pv-chart2');
+  const chart = document.getElementById('pv-chart');
 
-  function b1() { return parseFloat(b1Slider.value); }
-  function se() { return parseFloat(seSlider.value); }
+  const RUST = '#a2542c', BLUE = '#1f5a6b', AXIS = '#9b9e91', LABEL = '#7c7f72';
+  const width = 520, height = 250;
+  const margin = { top: 34, right: 14, bottom: 34, left: 14 };
+  const innerW = width - margin.left - margin.right;
+  const innerH = height - margin.top - margin.bottom;
+  const xDomain = [-7, 7];
+  const xToPx = (x) => ((x - xDomain[0]) / (xDomain[1] - xDomain[0])) * innerW;
 
-  function render() {
-    const b = b1(), s = se();
-    const domain = [Math.min(0, b) - 4 * s, Math.max(0, b) + 4 * s];
-
-    NotesUtils.densityArea(chart1, {
-      curve: (x) => NotesUtils.normalPdf(x, 0, s),
-      xDomain: domain,
-      shadeRegions: [[-1e9, -Math.abs(b)], [Math.abs(b), 1e9]],
-      shadeColor: '#a2542c',
-      xTicks: [
-        { x: 0, label: '0 (null)' },
-        { x: b, label: 'T̂' },
-        { x: -b, label: '−T̂' },
-      ],
-    });
-
-    NotesUtils.densityArea(chart2, {
-      curve: (x) => NotesUtils.normalPdf(x, b, s),
-      xDomain: domain,
-      shadeX0: b - 1.96 * s,
-      shadeX1: b + 1.96 * s,
-      shadeColor: '#1f5a6b',
-      xTicks: [
-        { x: 0, label: '0' },
-        { x: b, label: 'β̂₁' },
-      ],
-    });
-
+  function text(g, x, y, str, attrs) {
+    const t = NotesUtils.svg('text', Object.assign({ x, y, 'font-size': 11, fill: LABEL, 'text-anchor': 'middle' }, attrs || {}));
+    t.textContent = str;
+    g.appendChild(t);
   }
 
-  [b1Slider, seSlider].forEach((s) =>
-    s.addEventListener('input', () => {
-      b1Val.textContent = b1().toFixed(2);
-      seVal.textContent = se().toFixed(2);
-      render();
-    })
-  );
+  function render() {
+    const b = parseFloat(b1Slider.value), s = parseFloat(seSlider.value);
+    b1Val.textContent = b.toFixed(2);
+    seVal.textContent = s.toFixed(2);
 
+    const peak = NotesUtils.normalPdf(0, 0, s);
+    const yToPx = (d) => innerH - (d / (peak * 1.08)) * innerH;
+    const xs = []; for (let k = 0; k <= 400; k++) xs.push(xDomain[0] + (k / 400) * (xDomain[1] - xDomain[0]));
+    const area = (f, lo, hi) => {
+      const pts = xs.filter((x) => x >= lo && x <= hi);
+      if (pts.length < 2) return '';
+      return [`${xToPx(pts[0])},${innerH}`].concat(pts.map((x) => `${xToPx(x)},${yToPx(f(x))}`), [`${xToPx(pts[pts.length - 1])},${innerH}`]).join(' ');
+    };
+    const curve = (f) => xs.map((x) => `${xToPx(x)},${yToPx(f(x))}`).join(' ');
+    const fNull = (x) => NotesUtils.normalPdf(x, 0, s);
+    const fEst = (x) => NotesUtils.normalPdf(x, b, s);
+    const a = Math.abs(b);
+    const pv = 2 * (1 - NotesUtils.normalCdf(a, 0, s));
+    const lo = b - 1.96 * s, hi = b + 1.96 * s;
+
+    NotesUtils.clear(chart);
+    chart.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    chart.setAttribute('width', '100%');
+    const g = NotesUtils.svg('g', { transform: `translate(${margin.left},${margin.top})` });
+    chart.appendChild(g);
+
+    // estimated sample distribution: middle 95% (the CI)
+    g.appendChild(NotesUtils.svg('polygon', { points: area(fEst, lo, hi), fill: BLUE, opacity: 0.18 }));
+    // null distribution: tails beyond +-|beta1-hat| (the p-value)
+    g.appendChild(NotesUtils.svg('polygon', { points: area(fNull, a, xDomain[1]), fill: RUST, opacity: 0.45 }));
+    g.appendChild(NotesUtils.svg('polygon', { points: area(fNull, xDomain[0], -a), fill: RUST, opacity: 0.45 }));
+    g.appendChild(NotesUtils.svg('polyline', { points: curve(fEst), fill: 'none', stroke: BLUE, 'stroke-width': 2 }));
+    g.appendChild(NotesUtils.svg('polyline', { points: curve(fNull), fill: 'none', stroke: RUST, 'stroke-width': 2, 'stroke-dasharray': '6,4' }));
+
+    // CI bar under the axis
+    const barY = innerH + 2;
+    g.appendChild(NotesUtils.svg('line', { x1: xToPx(Math.max(lo, xDomain[0])), y1: barY, x2: xToPx(Math.min(hi, xDomain[1])), y2: barY, stroke: BLUE, 'stroke-width': 4 }));
+    g.appendChild(NotesUtils.svg('line', { x1: 0, y1: innerH, x2: innerW, y2: innerH, stroke: AXIS }));
+
+    // marks: 0, beta1-hat, -beta1-hat
+    g.appendChild(NotesUtils.svg('line', { x1: xToPx(0), y1: 0, x2: xToPx(0), y2: innerH + 6, stroke: '#222', 'stroke-width': 1 }));
+    text(g, xToPx(0), innerH + 20, '0', { fill: '#222' });
+    if (a > 0.15) {
+      text(g, xToPx(b), innerH + 20, 'β̂₁', { fill: BLUE });
+      text(g, xToPx(-b), innerH + 20, '−β̂₁', { fill: RUST });
+    }
+
+    // legend / values
+    const in95 = lo <= 0 && 0 <= hi;
+    text(g, 0, -16, `p-value = ${pv < 0.001 ? '< 0.001' : pv.toFixed(3)}`, { 'text-anchor': 'start', fill: RUST, 'font-size': 12 });
+    text(g, innerW, -16, `95% CI = [${lo.toFixed(2)}, ${hi.toFixed(2)}] ${in95 ? 'contains 0' : 'excludes 0'}`, { 'text-anchor': 'end', fill: BLUE, 'font-size': 12 });
+  }
+
+  [b1Slider, seSlider].forEach((el) => el.addEventListener('input', render));
   render();
 })();
 </script>

@@ -1,0 +1,213 @@
+<div class="demo" id="demo-corrpred">
+  <div class="demo-label">Interactive demo</div>
+  <h4>Marginal slope vs. the regression coefficient</h4>
+  <div class="demo-controls">
+    <label>$\beta_1$ (binary predictor) = <input id="cp-b1" type="range" min="-2" max="2" step="0.25" value="1"><span id="cp-b1-val">1.00</span></label>
+    <label>$\beta_2$ (continuous predictor) = <input id="cp-b2" type="range" min="-2" max="2" step="0.25" value="-1.5"><span id="cp-b2-val">-1.50</span></label>
+    <label>$b$ (confounding strength) = <input id="cp-b" type="range" min="0" max="2.5" step="0.1" value="1.5"><span id="cp-b-val">1.50</span></label>
+  </div>
+  <div class="demo-controls">
+    <button id="cp-newdata">New random dataset</button>
+  </div>
+  <div style="display:flex; gap:1em; flex-wrap:wrap;">
+    <svg id="cp-chart-x2" viewBox="0 0 260 260" style="flex:1 1 260px; min-width:220px;"></svg>
+    <svg id="cp-chart-x1" viewBox="0 0 260 260" style="flex:1 1 260px; min-width:220px;"></svg>
+  </div>
+  <p class="demo-caption">$X_1\sim\text{Bernoulli}(0.5)$, $X_2\mid X_1\sim\text{Normal}(bX_1,1)$, $Y\mid(X_1,X_2)\sim\text{Normal}(\beta_1X_1+\beta_2X_2,\ 0.4^2)$. Left: $Y$ vs. the continuous predictor $X_2$, split by $X_1$. Right: $Y$ vs. the binary predictor $X_1$ (jittered), split by tercile of $X_2$. Increase $b$ to strengthen the confounding between the two predictors and pull the solid (within-group) and dashed (marginal) lines apart.</p>
+</div>
+
+<script>
+(function () {
+  const b1Slider = document.getElementById('cp-b1');
+  const b2Slider = document.getElementById('cp-b2');
+  const bSlider = document.getElementById('cp-b');
+  const b1Val = document.getElementById('cp-b1-val');
+  const b2Val = document.getElementById('cp-b2-val');
+  const bVal = document.getElementById('cp-b-val');
+  const chartX2 = document.getElementById('cp-chart-x2');
+  const chartX1 = document.getElementById('cp-chart-x1');
+  const mk = NotesUtils.svg;
+
+  const N = 150;
+  const SIGMA = 0.4;
+  const X1_COLORS = ['#1f5a6b', '#a2542c']; // X1 = 0, X1 = 1
+  const X2_GROUP_COLORS = ['#1f5a6b', '#8b8e81', '#b08a2a']; // tercile of X2: low, mid, high
+
+  let X1 = [], X2 = [], EPS = [], JITTER = [];
+
+  function b1() { return parseFloat(b1Slider.value); }
+  function b2() { return parseFloat(b2Slider.value); }
+  function b() { return parseFloat(bSlider.value); }
+
+  function genData() {
+    X1 = []; X2 = []; EPS = []; JITTER = [];
+    for (let i = 0; i < N; i++) {
+      const x1 = NotesUtils.bernoulli(0.5);
+      X1.push(x1);
+      X2.push(NotesUtils.gaussianRandom(b() * x1, 1));
+      EPS.push(NotesUtils.gaussianRandom(0, SIGMA));
+      JITTER.push((Math.random() - 0.5) * 0.5);
+    }
+  }
+
+  function ols(xs, ys) {
+    const xBar = NotesUtils.mean(xs), yBar = NotesUtils.mean(ys);
+    let num = 0, den = 0;
+    for (let i = 0; i < xs.length; i++) { num += (xs[i] - xBar) * (ys[i] - yBar); den += (xs[i] - xBar) ** 2; }
+    const slope = den ? num / den : 0;
+    return { slope, intercept: yBar - slope * xBar };
+  }
+
+  function axes(g, innerW, innerH) {
+    g.appendChild(mk('line', { x1: 0, y1: innerH, x2: innerW, y2: innerH, stroke: '#9b9e91' }));
+    g.appendChild(mk('line', { x1: 0, y1: 0, x2: 0, y2: innerH, stroke: '#9b9e91' }));
+  }
+
+  // Left panel: Y vs. the continuous predictor X2, split into the two X1 groups.
+  function renderX2Panel(Y) {
+    const width = 260, height = 260, margin = { top: 12, right: 10, bottom: 44, left: 34 };
+    const innerW = width - margin.left - margin.right, innerH = height - margin.top - margin.bottom;
+    const xDomain = [Math.min(...X2) - 0.3, Math.max(...X2) + 0.3];
+    const yDomain = [Math.min(...Y) - 0.3, Math.max(...Y) + 0.3];
+    NotesUtils.clear(chartX2);
+    chartX2.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    chartX2.setAttribute('width', '100%');
+    const g = mk('g', { transform: `translate(${margin.left},${margin.top})` });
+    chartX2.appendChild(g);
+    const xToPx = (x) => ((x - xDomain[0]) / (xDomain[1] - xDomain[0])) * innerW;
+    const yToPx = (y) => innerH - ((y - yDomain[0]) / (yDomain[1] - yDomain[0])) * innerH;
+    axes(g, innerW, innerH);
+
+    const groups = [[], []]; // indices with X1 = 0, X1 = 1
+    X1.forEach((x1, i) => groups[x1].push(i));
+
+    groups.forEach((idx, gi) => {
+      idx.forEach((i) => {
+        g.appendChild(mk('circle', { cx: xToPx(X2[i]), cy: yToPx(Y[i]), r: 2.6, fill: X1_COLORS[gi], opacity: 0.55 }));
+      });
+    });
+
+    const groupFits = groups.map((idx) => ols(idx.map((i) => X2[i]), idx.map((i) => Y[i])));
+    groups.forEach((idx, gi) => {
+      const xs = idx.map((i) => X2[i]);
+      const x0 = Math.min(...xs), x1v = Math.max(...xs);
+      const fit = groupFits[gi];
+      g.appendChild(mk('line', {
+        x1: xToPx(x0), y1: yToPx(fit.slope * x0 + fit.intercept),
+        x2: xToPx(x1v), y2: yToPx(fit.slope * x1v + fit.intercept),
+        stroke: X1_COLORS[gi], 'stroke-width': 3,
+      }));
+    });
+
+    const marginal = ols(X2, Y);
+    g.appendChild(mk('line', {
+      x1: xToPx(xDomain[0]), y1: yToPx(marginal.slope * xDomain[0] + marginal.intercept),
+      x2: xToPx(xDomain[1]), y2: yToPx(marginal.slope * xDomain[1] + marginal.intercept),
+      stroke: '#2b2e27', 'stroke-width': 2, 'stroke-dasharray': '6,4',
+    }));
+
+    const avgGroupSlope = NotesUtils.mean(groupFits.map((f) => f.slope));
+    const t1 = mk('text', { x: innerW / 2, y: innerH + 18, 'text-anchor': 'middle', 'font-size': 10.5, fill: '#2b2e27' });
+    t1.textContent = `within-X₁-group slope ≈ ${avgGroupSlope.toFixed(2)} (β₂ = ${b2().toFixed(2)})`;
+    g.appendChild(t1);
+    const t2 = mk('text', { x: innerW / 2, y: innerH + 31, 'text-anchor': 'middle', 'font-size': 10.5, fill: '#565a4e' });
+    t2.textContent = `marginal slope (dashed) ≈ ${marginal.slope.toFixed(2)}`;
+    g.appendChild(t2);
+    const cap = mk('text', { x: innerW / 2, y: -1, 'text-anchor': 'middle', 'font-size': 10.5, fill: '#565a4e' });
+    cap.textContent = 'Y vs. continuous predictor X₂';
+    g.appendChild(cap);
+  }
+
+  // Right panel: Y vs. the binary predictor X1 (jittered), split into terciles of X2.
+  function renderX1Panel(Y) {
+    const width = 260, height = 260, margin = { top: 12, right: 10, bottom: 44, left: 34 };
+    const innerW = width - margin.left - margin.right, innerH = height - margin.top - margin.bottom;
+    const xDomain = [-0.6, 1.6];
+    const yDomain = [Math.min(...Y) - 0.3, Math.max(...Y) + 0.3];
+    NotesUtils.clear(chartX1);
+    chartX1.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    chartX1.setAttribute('width', '100%');
+    const g = mk('g', { transform: `translate(${margin.left},${margin.top})` });
+    chartX1.appendChild(g);
+    const xToPx = (x) => ((x - xDomain[0]) / (xDomain[1] - xDomain[0])) * innerW;
+    const yToPx = (y) => innerH - ((y - yDomain[0]) / (yDomain[1] - yDomain[0])) * innerH;
+    axes(g, innerW, innerH);
+    [0, 1].forEach((x1) => {
+      const px = xToPx(x1);
+      g.appendChild(mk('line', { x1: px, y1: innerH, x2: px, y2: innerH + 4, stroke: '#9b9e91' }));
+      const lbl = mk('text', { x: px, y: innerH + 15, 'text-anchor': 'middle', 'font-size': 10, fill: '#6b6e62' });
+      lbl.textContent = 'X₁ = ' + x1;
+      g.appendChild(lbl);
+    });
+
+    // Tercile-of-X2 groups, used here only to control for the continuous predictor.
+    const order = X1.map((_, i) => i).sort((a, c) => X2[a] - X2[c]);
+    const groupSize = Math.floor(N / 3);
+    const terciles = [order.slice(0, groupSize), order.slice(groupSize, 2 * groupSize), order.slice(2 * groupSize)];
+
+    terciles.forEach((idx, gi) => {
+      idx.forEach((i) => {
+        g.appendChild(mk('circle', {
+          cx: xToPx(X1[i] + JITTER[i]), cy: yToPx(Y[i]), r: 2.6, fill: X2_GROUP_COLORS[gi], opacity: 0.55,
+        }));
+      });
+      const at0 = idx.filter((i) => X1[i] === 0), at1 = idx.filter((i) => X1[i] === 1);
+      if (at0.length && at1.length) {
+        const m0 = NotesUtils.mean(at0.map((i) => Y[i])), m1 = NotesUtils.mean(at1.map((i) => Y[i]));
+        g.appendChild(mk('line', {
+          x1: xToPx(0), y1: yToPx(m0), x2: xToPx(1), y2: yToPx(m1),
+          stroke: X2_GROUP_COLORS[gi], 'stroke-width': 3,
+        }));
+      }
+    });
+
+    const at0 = X1.map((x1, i) => i).filter((i) => X1[i] === 0);
+    const at1 = X1.map((x1, i) => i).filter((i) => X1[i] === 1);
+    const m0 = NotesUtils.mean(at0.map((i) => Y[i])), m1 = NotesUtils.mean(at1.map((i) => Y[i]));
+    g.appendChild(mk('line', {
+      x1: xToPx(0), y1: yToPx(m0), x2: xToPx(1), y2: yToPx(m1),
+      stroke: '#2b2e27', 'stroke-width': 2, 'stroke-dasharray': '6,4',
+    }));
+
+    const withinDiffs = terciles.map((idx) => {
+      const g0 = idx.filter((i) => X1[i] === 0), g1 = idx.filter((i) => X1[i] === 1);
+      if (!g0.length || !g1.length) return null;
+      return NotesUtils.mean(g1.map((i) => Y[i])) - NotesUtils.mean(g0.map((i) => Y[i]));
+    }).filter((d) => d != null);
+    const avgWithinDiff = NotesUtils.mean(withinDiffs);
+
+    const t1 = mk('text', { x: innerW / 2, y: innerH + 18, 'text-anchor': 'middle', 'font-size': 10.5, fill: '#2b2e27' });
+    t1.textContent = `within-X₂-tercile diff ≈ ${avgWithinDiff.toFixed(2)} (β₁ = ${b1().toFixed(2)})`;
+    g.appendChild(t1);
+    const t2 = mk('text', { x: innerW / 2, y: innerH + 31, 'text-anchor': 'middle', 'font-size': 10.5, fill: '#565a4e' });
+    t2.textContent = `marginal difference (dashed) ≈ ${(m1 - m0).toFixed(2)}`;
+    g.appendChild(t2);
+    const cap = mk('text', { x: innerW / 2, y: -1, 'text-anchor': 'middle', 'font-size': 10.5, fill: '#565a4e' });
+    cap.textContent = 'Y vs. binary predictor X₁';
+    g.appendChild(cap);
+  }
+
+  function render() {
+    const Y = X1.map((x1, i) => b1() * x1 + b2() * X2[i] + EPS[i]);
+    renderX2Panel(Y);
+    renderX1Panel(Y);
+  }
+
+  [b1Slider, b2Slider].forEach((s) =>
+    s.addEventListener('input', () => {
+      b1Val.textContent = b1().toFixed(2);
+      b2Val.textContent = b2().toFixed(2);
+      render();
+    })
+  );
+  bSlider.addEventListener('input', () => {
+    bVal.textContent = b().toFixed(2);
+    genData();
+    render();
+  });
+  document.getElementById('cp-newdata').addEventListener('click', () => { genData(); render(); });
+
+  genData();
+  render();
+})();
+</script>
