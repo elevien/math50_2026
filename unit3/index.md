@@ -268,7 +268,7 @@ $$ \hat\sigma_0^2 = \frac12\big[(Y_1-\overline Y)^2+(Y_2-\overline Y)^2\big], \q
 
 <ol type="a">
 <li>Show that $\hat\sigma_0^2 = \frac14(Y_1-Y_2)^2$.</li>
-<li>Using $\text{var}(Y_1-Y_2)=2\sigma^2$, compute $E[\hat\sigma_0^2]$ in terms of $\sigma^2$.</li>
+<li>Compute $E[\hat\sigma_0^2]$ in terms of $\sigma^2$.</li>
 <li>Confirm this matches $\frac{N-1}{N}\sigma^2$ for $N=2$.</li>
 </ol>
 </div>
@@ -322,7 +322,7 @@ $$ \hat\mu_a=\frac{\overline Y}{1+a}. $$
 Let $Y_1,\dots,Y_N\sim\text{Normal}(\mu,\sigma^2)$. To estimate $\mu^2$ we use $\overline Y^{\,2}$.
 
 <ol type="a">
-<li>Using $\text{var}(\overline Y)=E[\overline Y^{\,2}]-E[\overline Y]^2$, show that $E[\overline Y^{\,2}]=\mu^2+\sigma^2/N$.</li>
+<li>Compute $E[\overline Y^{\,2}]$.</li>
 <li>Is $\overline Y^{\,2}$ an unbiased estimator of $\mu^2$? Is it consistent?</li>
 <li>Even though $\overline Y$ is unbiased for $\mu$, $\overline Y^{\,2}$ is not unbiased for $\mu^2$. In one sentence, why not?</li>
 </ol>
@@ -334,10 +334,10 @@ Let $Y_1,\dots,Y_N\sim\text{Normal}(\mu,\sigma^2)$. To estimate $\mu^2$ we use $
 Let $Y_1,\dots,Y_N\sim\text{Bernoulli}(q)$ and suppose we know $q<1/2$. Besides $\hat q=\overline Y$, we could estimate the variance with $\hat\sigma_0^2=\frac1N\sum_i(Y_i-\overline Y)^2$ and then solve $\hat\sigma_0^2=q(1-q)$ for $q$.
 
 <ol type="a">
-<li>Expanding the square gives $\hat\sigma_0^2=\frac1N\sum_iY_i^2-\overline Y^{\,2}$. Since each $Y_i$ is $0$ or $1$, $Y_i^2=Y_i$. Use this to show that $\hat\sigma_0^2=\overline Y(1-\overline Y)$.</li>
+<li>Show that $\hat\sigma_0^2=\overline Y(1-\overline Y)$. (Hint: each $Y_i$ is $0$ or $1$.)</li>
 <li>Solve $v=q(1-q)$ for $q$. There are two solutions; which one should we use, and why do we need to know $q<1/2$?</li>
 <li>Plug in $v=\hat\sigma_0^2$ and show that the new estimator is $\min(\overline Y,\,1-\overline Y)$.</li>
-<li>Is this estimator biased? (Hint: compare it with $\overline Y$.)</li>
+<li>Is this estimator biased?</li>
 </ol>
 </div>
 
@@ -351,7 +351,7 @@ $$ \Big[\hat\theta - 1.96\,\text{se}(\hat\theta),\ \ \hat\theta + 1.96\,\text{se
 
 For an approximately Normal sample distribution, $95\%$ of values lie within $1.96$ standard errors of its center; this is why the resulting intervals have about $95\%$ coverage.
 
-**When the Normal approximation is not quite right: the $t$ distribution.** In practice we plug an estimate $\hat\sigma$ into the standard error. For Normal data, $(\hat\mu-\mu)/\text{se}(\hat\mu)$ with $\text{se}(\hat\mu)=\hat\sigma/\sqrt N$ is then not exactly $\text{Normal}(0,1)$: it has a <span class="term">[$t$ distribution](https://en.wikipedia.org/wiki/Student%27s_t-distribution)</span> with $N-1$ degrees of freedom ($N-2$ for the slope of a regression line), which has heavier tails because $\hat\sigma$ is itself random. The $95\%$ multiplier is then a bit larger than $1.96$: about $2.78$ for $N=5$, $2.26$ for $N=10$, $2.05$ for $N=30$. For $N\gtrsim30$ the difference is negligible, which is why we use $1.96$ throughout; for small $N$, use the $t$ multiplier (e.g. `scipy.stats.t.ppf(0.975, N-1)`). Software such as `statsmodels` reports $t$-based $p$-values and intervals, so its numbers may differ slightly from the Normal ones.
+**When the Normal approximation is not quite right: the $t$ distribution.** In practice we plug an estimate $\hat\sigma$ into the standard error. For Normal data, $(\hat\mu-\mu)/\text{se}(\hat\mu)$ with $\text{se}(\hat\mu)=\hat\sigma/\sqrt N$ is then not exactly $\text{Normal}(0,1)$: it has a <span class="term">[$t$ distribution](https://en.wikipedia.org/wiki/Student%27s_t-distribution)</span>, which looks like a Normal but has heavier tails because $\hat\sigma$ is itself random; how much heavier depends on $N$. The $95\%$ multiplier is then a bit larger than $1.96$: about $2.78$ for $N=5$, $2.26$ for $N=10$, $2.05$ for $N=30$. For $N\gtrsim30$ the difference is negligible, which is why we use $1.96$ throughout; for small $N$, use the larger $t$ multiplier. Software such as `statsmodels` reports $t$-based $p$-values and intervals, so its numbers may differ slightly from the Normal ones.
 
 Note that samples from *this* interval do not have the same distribution as $\hat\theta$ over replicates of our data. Put another way: if we draw many samples from our estimated sample distribution, their spread is not the same as the spread of $\hat\theta$ we'd get by actually running the experiment many times. The correct interpretation of the 95%-CI is: **if we generate many replicates of the data, the true value $\theta$ will fall inside the CI for $95\%$ of them.**
 
@@ -601,7 +601,7 @@ We further assume that $Y_t\mid Y_{t-1}$ is independent of $Y_{t-2},Y_{t-3},...$
 <div class="example" markdown="1">
 #### Example
 
-<u>Question:</u> Simulate many AR(1) series with true $\beta_1=0.6$ (and $\beta_0=0$), and estimate $\beta_1$ by least squares (regressing $Y_t$ on $Y_{t-1}$, no intercept) in each. Does the average of these estimates match $0.6$? What happens as the series gets longer?
+<u>Question:</u> Simulate many AR(1) series with true $\beta_1=0.6$ (and $\beta_0=0$), and estimate $\beta_1$ by least squares (regressing $Y_t$ on $Y_{t-1}$, no intercept) in each. Does the average of these estimates match $0.6$? What happens as the series gets longer (larger $N$, the number of time points)?
 
 <u>Solution:</u>
 
@@ -611,36 +611,36 @@ import numpy as np
 rng = np.random.default_rng(42)
 beta1 = 0.6
 
-def fit_beta1_hat(T):
-    eps = rng.normal(size=T)
-    Y = np.empty(T)
+def fit_beta1_hat(N):
+    eps = rng.normal(size=N)
+    Y = np.empty(N)
     Y[0] = eps[0]
-    for t in range(1, T):
+    for t in range(1, N):
         Y[t] = beta1 * Y[t - 1] + eps[t]
     y_lag, y = Y[:-1], Y[1:]
     return np.sum(y_lag * y) / np.sum(y_lag**2)
 
-for T in [10, 50, 200]:
-    beta1_hats = [fit_beta1_hat(T) for _ in range(20_000)]
-    print(f"T={T}: average beta1_hat = {np.mean(beta1_hats):.3f}")
+for N in [10, 50, 200]:
+    beta1_hats = [fit_beta1_hat(N) for _ in range(20_000)]
+    print(f"N={N}: average beta1_hat = {np.mean(beta1_hats):.3f}")
 ```
 
 which prints
 
-| $T$ | average $\hat\beta_1$ |
+| $N$ | average $\hat\beta_1$ |
 |---|---|
 | 10 | 0.506 |
 | 50 | 0.577 |
 | 200 | 0.595 |
 
-At every $T$ the average estimate falls short of the true $\beta_1=0.6$, and the gap shrinks as $T$ grows: $\hat\beta_1$ is biased downward in any finite sample, but consistent.
+At every $N$ the average estimate falls short of the true $\beta_1=0.6$, and the gap shrinks as $N$ grows: $\hat\beta_1$ is biased downward in any finite sample, but consistent.
 </div>
 
-The bias in the example above can be understood as follows. For the no-intercept AR(1) model, it can be shown (Hurwicz, 1950) that for large $T$,
+The bias in the example above can be understood as follows. For the no-intercept AR(1) model, it can be shown (Hurwicz, 1950) that for large $N$,
 
-$$ E[\hat\beta_1] - \beta_1 \approx -\frac{2\beta_1}{T}. $$
+$$ E[\hat\beta_1] - \beta_1 \approx -\frac{2\beta_1}{N}. $$
 
-This matches the simulation: with $\beta_1=0.6$, the formula predicts a bias of about $-0.024$ at $T=50$ and $-0.006$ at $T=200$, both close to what we observed above (the match is worse at $T=10$, since the formula is only a leading-order approximation for large $T$). The bias vanishes as $T\to\infty$, consistent with $\hat\beta_1$ being a consistent estimator, but at any finite $T$ it pulls the estimate toward $0$ &mdash; least squares systematically underestimates how persistent the process really is. This finite-sample downward bias of the AR(1) least-squares estimator is known as the <span class="term">[Hurwicz bias](https://en.wikipedia.org/wiki/Autoregressive_model#Hurwicz_bias)</span>.
+This matches the simulation: with $\beta_1=0.6$, the formula predicts a bias of about $-0.024$ at $N=50$ and $-0.006$ at $N=200$, both close to what we observed above (the match is worse at $N=10$, since the formula is only a leading-order approximation for large $N$). The bias vanishes as $N\to\infty$, consistent with $\hat\beta_1$ being a consistent estimator, but at any finite $N$ it pulls the estimate toward $0$ &mdash; least squares systematically underestimates how persistent the process really is. This finite-sample downward bias of the AR(1) least-squares estimator is known as the <span class="term">[Hurwicz bias](https://en.wikipedia.org/wiki/Autoregressive_model#Hurwicz_bias)</span>.
 
 <details class="practice-section" markdown="1">
 <summary><h3>Drill</h3></summary>
@@ -651,8 +651,8 @@ This matches the simulation: with $\beta_1=0.6$, the formula predicts a bias of 
 Consider the AR(1) model $Y_t\mid Y_{t-1}\sim\text{Normal}(\beta_1Y_{t-1}+\beta_0,\sigma_\epsilon^2)$ with $\lvert\beta_1\rvert<1$. As $t\to\infty$, the distribution of $Y_t$ settles down to a fixed <span class="term">[stationary distribution](https://en.wikipedia.org/wiki/Stationary_process)</span> that no longer depends on $t$ &mdash; that is, $Y_t$ and $Y_{t-1}$ have the same mean $\mu$ and the same variance $v$.
 
 <ol type="a">
-  <li>Using $E[Y_t]=E[Y_{t-1}]=\mu$ and taking the expectation of both sides of the model equation, write an equation for $\mu$ and solve for it in terms of $\beta_0,\beta_1$.</li>
-  <li>Using $\operatorname{var}(Y_t)=\operatorname{var}(Y_{t-1})=v$, and that $Y_{t-1}$ and the noise term are independent, write an equation for $v$ and solve for it in terms of $\beta_1,\sigma_\epsilon^2$.</li>
+  <li>Find $\mu$ in terms of $\beta_0,\beta_1$.</li>
+  <li>Find $v$ in terms of $\beta_1,\sigma_\epsilon^2$.</li>
   <li>Why do we need $\lvert\beta_1\rvert<1$ for a stationary distribution to exist? What happens to $v$ as $\beta_1\to1$?</li>
   <li>Simulate one long AR(1) series with $\beta_0=1,\beta_1=0.7,\sigma_\epsilon^2=4$, discard the first $500$ steps as "burn-in," and compare a histogram of the remaining values to the stationary Normal distribution you derived in (a) and (b).</li>
 </ol>
@@ -716,6 +716,24 @@ The example above is unusually simple ($\sigma_\epsilon$ known, binary predictor
 ### $p$-values and confidence intervals
 
 The $p$-value is about the "tail" of the sample distribution &mdash; its far ends. There's a natural connection to confidence intervals, which also measure the width of the sample distribution. In the simple Normal case above, testing $H_0:\beta_1=0$ at the $5\%$ level is equivalent to checking whether $0$ is outside the $95\%$ confidence interval for $\beta_1$. More generally, the two-sided $p$-value is the smallest significance level at which the null value would be excluded by the corresponding two-sided confidence interval.
+
+<details class="practice-section" markdown="1">
+<summary><h3>Drill</h3></summary>
+
+<div class="exercise" markdown="1">
+#### The test statistic and $R^2$
+
+For a single-predictor regression fitted by least squares, let $\hat T=\hat\beta_1/\text{se}(\hat\beta_1)$ be the test statistic for $H_0:\beta_1=0$. (Recall from [Section 3.4](#sec-3-4) that $R^2$ equals the squared sample correlation between $X$ and $Y$.)
+
+<ol type="a">
+<li>Show that
+$$ \hat T^2=(N-2)\,\frac{R^2}{1-R^2}. $$
+</li>
+<li>With $N=30$ data points, what $R^2$ gives $\lvert\hat T\rvert=1.96$, so that $p_v=0.05$? Is it possible to have $R^2=0.99$ and $p_v=0.5$?</li>
+</ol>
+</div>
+
+</details>
 
 ## Problems {#problems}
 
@@ -859,7 +877,7 @@ Let $Y_1,\dots,Y_N\sim\text{Uniform}(0,L)$ where $L$ is unknown. Two ideas for e
 $$ \hat L_1=\max_i Y_i, \qquad \hat L_2=2\overline Y. $$
 
 <ol type="a">
-<li>Without computing anything, say whether you think each estimator is biased, and if so in which direction. (Hint: can $\hat L_1$ ever be larger than $L$? What is $E[Y_i]$?)</li>
+<li>Without computing anything, say whether you think each estimator is biased, and if so in which direction. </li>
 <li>Check your answers with a simulation: for $L=1$ and $N=5$, generate many replicates of the data, compute $\hat L_1$ and $\hat L_2$ for each, and estimate the bias and the variance of both estimators.</li>
 <li>Repeat for a few larger $N$. Are both estimators consistent? Which has the smaller MSE?</li>
 </ol>
