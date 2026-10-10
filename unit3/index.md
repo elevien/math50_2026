@@ -26,6 +26,7 @@ The law of large numbers, the Central Limit Theorem, estimators, sample distribu
 - Use the CLT to approximate the distribution of a sum or sample average, and to justify treating an estimator's sample distribution as approximately Normal.
 - Identify whether a simple estimator is biased or not, by hand if possible, or using simulations in Python.
 - Know the properties of the least squares estimator and what its sample distribution looks like.
+- Work with AR(1) models: find the stationary mean and variance, compute autocorrelations, and explain why the least squares estimator is biased.
 - Perform a hypothesis test by simulating the model. 
 
 
@@ -459,7 +460,7 @@ SSR and SST also give us estimators of the remaining quantities in the model:
 
 $$ \boxed{\hat\sigma_\epsilon^2=\frac{\text{SSR}}{N-2}}, \qquad \boxed{\hat\rho^2=R^2=1-\frac{\text{SSR}}{\text{SST}}}. $$
 
-We divide by $N-2$ rather than $N$ because two parameters ($\beta_0,\beta_1$) were estimated from the same data; like Bessel's correction in [Section 3.2](#sec-3-2), this makes $\hat\sigma_\epsilon^2$ unbiased. $R^2$ estimates $\rho^2$, the fraction of the variation in $Y$ explained by $X$; for a single predictor it equals the squared sample correlation between $X$ and $Y$.
+We divide by $N-2$ rather than $N$ because two parameters ($\beta_0,\beta_1$) were estimated from the same data and this is needed to make the estimator unbiased. For large $N$ this is not so important and you case just remembder that $\hat{\sigma}_{\epsilon}^2  \approx \text{SSR}/N$.  
 
 <div class="example" markdown="1">
 #### Example (marketing data)
@@ -590,13 +591,96 @@ The more spread out the $X$'s (large $\sigma_X$), the less noise (small $\sigma_
 
 {% include_relative demos/beta-sampling.html %}
 
+<details class="practice-section" markdown="1">
+<summary><h3>Drill</h3></summary>
+
+<div class="exercise" markdown="1">
+#### The sample distribution of $\hat\beta_0$
+
+In this drill you will find the sample distribution of the intercept estimator $\hat\beta_0=\overline Y-\hat\beta_1\overline X$, conditional on $X_1,\dots,X_N$, starting from what we know about $\hat\beta_1$: it is Normal with $E[\hat\beta_1\mid X_1,\dots,X_N]=\beta_1$ and $\operatorname{var}(\hat\beta_1\mid X_1,\dots,X_N)=\sigma_\epsilon^2/S_{xx}$.
+
+<ol type="a">
+  <li>Find $E[\overline Y\mid X_1,\dots,X_N]$ and $\operatorname{var}(\overline Y\mid X_1,\dots,X_N)$.</li>
+  <li>Use (a) and the unbiasedness of $\hat\beta_1$ to show that $\hat\beta_0$ is unbiased.</li>
+  <li>Conditional on the $X$'s, $\overline Y$ and $\hat\beta_1$ are uncorrelated (you may use this without proof). Use it to show that
+  $$ \operatorname{var}(\hat\beta_0\mid X_1,\dots,X_N)=\sigma_\epsilon^2\Big(\frac1N+\frac{\overline X^2}{S_{xx}}\Big). $$
+  </li>
+  <li>Using $S_{xx}\approx N\sigma_X^2$, write down the approximate sample distribution of $\hat\beta_0$ and its standard error.</li>
+  <li>For which value of $\overline X$ is $\text{se}(\hat\beta_0)$ smallest, and what does $\hat\beta_0$ reduce to in that case? Explain with a sketch why the intercept is more uncertain when the $X$'s are far from $0$.</li>
+  <li>Optional: show that $\overline Y$ and $\hat\beta_1$ are uncorrelated conditional on the $X$'s, using $\sum_i(X_i-\overline X)=0$.</li>
+</ol>
+</div>
+
+</details>
+
 ## 3.5 Autoregressive models and the Hurwicz bias {#sec-3-5}
 
-A special type of regression model where the predictor is the same quantity as the response variable but observed at a previous time is called an <span class="term">[autoregressive model](https://en.wikipedia.org/wiki/Autoregressive_model)</span>. We consider a simple AR model where
+ A <span class="term">[time series](https://en.wikipedia.org/wiki/Time_series)</span> $Y_1,Y_2,\dots,Y_N$ is a sequence of measurements of the same quantity at successive times. Such series are often modeled with regression models where the previous value plays the role of the predictor, and the next the response variable. The main difference between the previous examples is that now the data points $(Y_1,Y_2),(Y_2,Y_3)...$ are not independent. This is called an <span class="term">[autoregressive model](https://en.wikipedia.org/wiki/Autoregressive_model)</span>. We will use the example of the log price of bitcoin each day since December 2014 $Y_t=\log_{10}(\text{price on day }t)$.
 
-$$Y_t\mid Y_{t-1} \sim {\rm Normal}(\beta_1 Y_{t-1} +\beta_0,\sigma_\epsilon^2)$$
+<figure style="margin: 1.2em 0;">
+<img src="{{ '/unit3/fig/btc_series.svg' | relative_url }}" alt="Two panels showing the log base 10 of the daily bitcoin price vs. time. Left: all days since December 2014, rising from about 2.5 to about 5 with large swings. Right: the last 45 days, where each day's value is close to the previous day's." style="width: 100%;">
+<figcaption>Log price of bitcoin vs. time. Left: all days. Right: the last 45 days.</figcaption>
+</figure>
 
-We further assume that $Y_t\mid Y_{t-1}$ is independent of $Y_{t-2},Y_{t-3},...$. This is a natural starting point for modeling many noisy processes, such as stocks or height along a lineage (mother, daughter, granddaughter). The example below shows how the natural least squares estimator is biased.
+
+### The AR(1) model
+
+The simplest autoregressive model, called AR(1), is
+
+$$Y_t\mid Y_{t-1} \sim {\rm Normal}(\beta_0+\beta_1 Y_{t-1},\ \sigma_\epsilon^2), \qquad\text{i.e.}\qquad Y_t=\beta_0+\beta_1Y_{t-1}+\epsilon_t,$$
+
+where the noise $\epsilon_t\sim\text{Normal}(0,\sigma_\epsilon^2)$ is independent of everything that happened before time $t$ (but not he future). In particular, once we know $Y_{t-1}$, the earlier values $Y_{t-2},Y_{t-3},\dots$ tell us nothing more about $Y_t$. This is a natural starting point for modeling many noisy processes, such as prices or height along a lineage (mother, daughter, granddaughter).
+
+
+<figure style="margin: 1.2em 0;">
+<img src="{{ '/unit3/fig/btc_lag.svg' | relative_url }}" alt="Two scatter plots of today's log bitcoin price vs. yesterday's, with the dashed line where today equals yesterday. Left: all days, with the points lying almost exactly on the line. Right: the last 60 days, where the scatter around the line is visible." style="width: 85%;">
+<figcaption>Today's log price vs. yesterday's. The dashed line is $Y_t=Y_{t-1}$.</figcaption>
+</figure>
+
+For bitcoin, least squares gives $\hat\beta_1\approx0.9996$ and $\hat\sigma_\epsilon\approx0.016$: the best prediction of tomorrow's log price is essentially today's, give or take $0.016$ (since $10^{0.016}\approx1.04$, a typical daily move is about $4\%$).
+
+### Stationary AR(1) processes
+
+A series is <span class="term">[stationary](https://en.wikipedia.org/wiki/Stationary_process)</span> if its distribution does not change over time; in particular $Y_t$ and $Y_{t-1}$ have the same mean $\mu$ and the same standard deviation $\sigma_Y$. Three useful facts follow.
+
+**The slope is a correlation.** Recall that the slope of any regression model is $\beta_1=\operatorname{cov}(X,Y)/\sigma_X^2$. Here $X=Y_{t-1}$ and $Y=Y_t$ have the same standard deviation, so
+
+$$ \beta_1=\frac{\operatorname{cov}(Y_{t-1},Y_t)}{\sigma_Y^2}=\frac{\operatorname{cov}(Y_{t-1},Y_t)}{\sigma_Y\,\sigma_Y}=\rho, $$
+
+the correlation between consecutive values. For this reason we write $\rho$ in place of $\beta_1$ from now on.
+
+**The mean.** Taking the expectation of both sides of $Y_t=\beta_0+\rho Y_{t-1}+\epsilon_t$ gives $\mu=\beta_0+\rho\mu$, so $\beta_0=(1-\rho)\mu$ and we can write the model as
+
+$$ \boxed{Y_t-\mu=\rho\,(Y_{t-1}-\mu)+\epsilon_t .} $$
+
+When $\lvert\rho\rvert<1$, each step shrinks the deviation from the mean by a factor of $\rho$ on average, and then adds new noise. This is <span class="term">[regression to the mean](https://en.wikipedia.org/wiki/Regression_toward_the_mean)</span>: the daughters of unusually tall mothers are tall, but on average less tall than their mothers.
+
+**The variance.** Taking the variance of both sides in the same way (and using that $\epsilon_t$ is independent of $Y_{t-1}$) gives $\sigma_Y^2=\rho^2\sigma_Y^2+\sigma_\epsilon^2$, so
+
+$$ \boxed{\sigma_Y^2=\frac{\sigma_\epsilon^2}{1-\rho^2}.} $$
+
+The closer $\rho$ is to $1$, the more slowly the series returns to its mean and the farther it deviates.
+
+<figure style="margin: 1.2em 0;">
+<img src="{{ '/unit3/fig/ar_panels.svg' | relative_url }}" alt="Simulated AR(1) series for rho equal to 0.01, 0.8 and 0.999. Top row: scatter plots of the next value vs. the current value with the line y equals rho x. Bottom row: four series of 100 steps each. For small rho the series looks like independent noise around zero; for rho near 1 the series wander far from zero." style="width: 100%;">
+<figcaption>Simulated series $Y_{t+1}=\rho Y_t+\epsilon_{t+1}$ with $\epsilon\sim\text{Normal}(0,1)$. Top: $Y_{t+1}$ vs. $Y_t$ for one series. Bottom: four series of $100$ steps.</figcaption>
+</figure>
+
+### The random walk
+
+What happens when $\rho=1$? The formula above gives $\sigma_Y^2=\infty$, so there is no stationary distribution. To see why, take $\beta_0=0$ and $Y_0=0$ and unroll the model:
+
+$$ Y_t = Y_{t-1}+\epsilon_t = Y_{t-2}+\epsilon_{t-1}+\epsilon_t=\cdots=\sum_{s=1}^{t}\epsilon_s, \qquad\text{so}\qquad Y_t\sim\text{Normal}(0,\ \sigma_\epsilon^2\,t). $$
+
+This is a <span class="term">[random walk](https://en.wikipedia.org/wiki/Random_walk)</span> (compare Problem 3.4): the noise is never forgotten, and the variance grows forever instead of settling down. With $\hat\beta_1\approx0.9996$, the log price of bitcoin is very close to a random walk.
+
+### Why least squares is biased: the Hurwicz bias
+
+In [Section 3.4](#sec-3-4) we saw that $\hat\beta_1$ is an unbiased estimator of $\beta_1$. For the AR(1) model this is no longer true. Take $\mu=0$ for simplicity and fit $Y_t=\rho Y_{t-1}+\epsilon_t$ by least squares with no intercept. Substituting the model into the estimator,
+
+$$ \hat\rho=\frac{\sum_t Y_{t-1}Y_t}{\sum_t Y_{t-1}^2}=\frac{\sum_t Y_{t-1}(\rho Y_{t-1}+\epsilon_t)}{\sum_t Y_{t-1}^2}=\rho+\frac{\sum_t Y_{t-1}\,\epsilon_t}{\sum_t Y_{t-1}^2}. $$
+
+In ordinary regression the noise $\epsilon_i$ is independent of *all* of the predictors $X_1,\dots,X_N$, so conditional on the $X$'s the second term has mean $0$ and the estimator is unbiased. **In a time series the samples are not independent**, and this argument breaks down: the predictors are $Y_1,\dots,Y_{N-1}$ themselves, and although $\epsilon_t$ is independent of the past value $Y_{t-1}$, it is part of $Y_t$, $Y_{t+1}$, and every later value. The noise is therefore correlated with the predictors that come after it, and the second term no longer averages to $0$. The example below shows the result.
 
 <div class="example" markdown="1">
 #### Example
@@ -636,11 +720,36 @@ which prints
 At every $N$ the average estimate falls short of the true $\beta_1=0.6$, and the gap shrinks as $N$ grows: $\hat\beta_1$ is biased downward in any finite sample, but consistent.
 </div>
 
-The bias in the example above can be understood as follows. For the no-intercept AR(1) model, it can be shown (Hurwicz, 1950) that for large $N$,
+The size of the bias is harder to work out. For the no-intercept AR(1) model, it can be shown (Hurwicz, 1950) that for large $N$,
 
 $$ E[\hat\beta_1] - \beta_1 \approx -\frac{2\beta_1}{N}. $$
 
-This matches the simulation: with $\beta_1=0.6$, the formula predicts a bias of about $-0.024$ at $N=50$ and $-0.006$ at $N=200$, both close to what we observed above (the match is worse at $N=10$, since the formula is only a leading-order approximation for large $N$). The bias vanishes as $N\to\infty$, consistent with $\hat\beta_1$ being a consistent estimator, but at any finite $N$ it pulls the estimate toward $0$ &mdash; least squares systematically underestimates how persistent the process really is. This finite-sample downward bias of the AR(1) least-squares estimator is known as the <span class="term">[Hurwicz bias](https://en.wikipedia.org/wiki/Autoregressive_model#Hurwicz_bias)</span>.
+This matches the simulation: with $\beta_1=0.6$, the formula predicts a bias of about $-0.024$ at $N=50$ and $-0.006$ at $N=200$, both close to what we observed above (the match is worse at $N=10$, since the formula is only a leading-order approximation for large $N$). The bias vanishes as $N\to\infty$, consistent with $\hat\beta_1$ being a consistent estimator, but at any finite $N$ it pulls the estimate toward $0$ &mdash; least squares systematically underestimates how persistent the process really is. This finite-sample downward bias of the AR(1) least-squares estimator is known as the <span class="term">[Hurwicz bias](https://en.wikipedia.org/wiki/Autoregressive_model#Hurwicz_bias)</span>. You do not need to memorize the formula; what matters is the reason the bias exists.
+
+### Autocorrelation
+
+How long does a time series remember its past? The <span class="term">[autocorrelation](https://en.wikipedia.org/wiki/Autocorrelation)</span> at lag $k$ is the correlation between values $k$ steps apart,
+
+$$ \rho_k=\operatorname{corr}(Y_t,Y_{t+k})=\frac{\operatorname{cov}(Y_t,Y_{t+k})}{\sigma_Y^2}, $$
+
+where we used that $Y_t$ and $Y_{t+k}$ have the same standard deviation in a stationary series. We already know $\rho_1=\rho$. For larger lags, applying the model $k$ times writes $Y_{t+k}$ as $\rho^kY_t$ plus noise from times $t+1,\dots,t+k$, which is independent of $Y_t$ (the drill below works through $k=2$). Therefore
+
+$$ \boxed{\rho_k=\rho^k .} $$
+
+The correlation decays *exponentially* in the lag. After $k=10$ steps it is $0.5^{10}\approx0.001$ when $\rho=0.5$, but $0.9^{10}\approx0.35$ when $\rho=0.9$ and $0.99^{10}\approx0.90$ when $\rho=0.99$.
+
+From data we estimate $\rho_k$ with the sample version
+
+$$ \hat\rho_k=\frac{\sum_t (Y_t-\overline Y)(Y_{t+k}-\overline Y)}{\sum_t (Y_t-\overline Y)^2}, $$
+
+and a plot of $\hat\rho_k$ vs. $k$ is called the autocorrelation function.
+
+<figure style="margin: 1.2em 0;">
+<img src="{{ '/unit3/fig/acf.svg' | relative_url }}" alt="Four plots of the sample autocorrelation vs. lag from 0 to 30. For simulated AR(1) series with rho 0.5 and rho 0.99 the points follow the curve rho to the k. For the bitcoin log price the autocorrelation stays near 1 at every lag. For the daily changes in the bitcoin log price it is near 0 at every lag after 0." style="width: 100%;">
+<figcaption>Sample autocorrelation $\hat\rho_k$ vs. lag $k$ for two simulated AR(1) series (dashed: $\rho^k$), the bitcoin log price, and its daily changes $Y_t-Y_{t-1}$.</figcaption>
+</figure>
+
+For the simulated series, $\hat\rho_k$ follows $\rho^k$. The bitcoin log price stays correlated with itself for a very long time, as we expect from a series with $\rho\approx1$, while its daily changes $Y_t-Y_{t-1}$ are almost uncorrelated: knowing how the price moved today tells us very little about how it will move tomorrow.
 
 <details class="practice-section" markdown="1">
 <summary><h3>Drill</h3></summary>
@@ -648,13 +757,53 @@ This matches the simulation: with $\beta_1=0.6$, the formula predicts a bias of 
 <div class="exercise" markdown="1">
 #### The stationary distribution of an AR(1) model
 
-Consider the AR(1) model $Y_t\mid Y_{t-1}\sim\text{Normal}(\beta_1Y_{t-1}+\beta_0,\sigma_\epsilon^2)$ with $\lvert\beta_1\rvert<1$. As $t\to\infty$, the distribution of $Y_t$ settles down to a fixed <span class="term">[stationary distribution](https://en.wikipedia.org/wiki/Stationary_process)</span> that no longer depends on $t$ &mdash; that is, $Y_t$ and $Y_{t-1}$ have the same mean $\mu$ and the same variance $v$.
+Consider the AR(1) model $Y_t=\beta_0+\rho Y_{t-1}+\epsilon_t$ with $\beta_0=1$, $\rho=0.7$ and $\sigma_\epsilon^2=4$.
 
 <ol type="a">
-  <li>Find $\mu$ in terms of $\beta_0,\beta_1$.</li>
-  <li>Find $v$ in terms of $\beta_1,\sigma_\epsilon^2$.</li>
-  <li>Why do we need $\lvert\beta_1\rvert<1$ for a stationary distribution to exist? What happens to $v$ as $\beta_1\to1$?</li>
-  <li>Simulate one long AR(1) series with $\beta_0=1,\beta_1=0.7,\sigma_\epsilon^2=4$, discard the first $500$ steps as "burn-in," and compare a histogram of the remaining values to the stationary Normal distribution you derived in (a) and (b).</li>
+  <li>Simulate one series of $2000$ steps starting far from the mean, at $Y_0=50$, and plot $Y_t$ vs. $t$. About how many steps does it take for the series to forget where it started?</li>
+  <li>Discard the first $500$ steps as "burn-in," and compare a histogram of the remaining values to the Normal distribution with the stationary mean and variance from this section.</li>
+  <li>Repeat (a) and (b) starting from $Y_0=-50$. Does the stationary distribution depend on $Y_0$?</li>
+  <li>Why do we need $\lvert\rho\rvert<1$ for a stationary distribution to exist? Repeat (a) with $\rho=1$ and with $\rho=1.02$ and describe what you see.</li>
+  <li>Repeat (a) with $\rho=-0.7$. Is this series stationary? How does it look different from the series with $\rho=0.7$?</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### The autocorrelation at lag 2
+
+Let $Y_{t+1}=\rho Y_t+\epsilon_{t+1}$ be a stationary AR(1) series with mean $0$. Compute $\operatorname{cov}(Y_t,Y_{t+2})$ in terms of $\rho$ and $\sigma_Y^2$. (The slides from Lecture 11 will help.)
+</div>
+
+<div class="exercise" markdown="1">
+#### Mothers and daughters
+
+Suppose the heights of women along a lineage (mother, daughter, granddaughter, ...) follow a stationary AR(1) model, where $Y_t$ is the height in inches of the woman in generation $t$. In the population the mean height is $\mu=64$, the standard deviation is $\sigma_Y=2.5$, and the correlation between the heights of a mother and her daughter is $\rho=0.5$.
+
+<ol type="a">
+  <li>Find $\beta_0$ and $\beta_1$ in $Y_t=\beta_0+\beta_1Y_{t-1}+\epsilon_t$.</li>
+  <li>Find $\sigma_\epsilon$.</li>
+  <li>A mother is $70$ inches tall. What is the expected height of her daughter? Of her granddaughter?</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Forecasting with a fitted AR(1) model
+
+A meteorologist fits an AR(1) model to a long series of daily temperature anomalies $Y_t$ (the day's temperature minus the usual temperature for that date, in &deg;F) and finds $\hat\beta_0=0$, $\hat\beta_1=0.7$ and $\hat\sigma_\epsilon=3$. Treat these estimates as the true values.
+
+Today's anomaly is $+10$. What is the predicted anomaly tomorrow? Give an interval that contains tomorrow's anomaly with probability $95\%$.
+</div>
+
+<div class="exercise" markdown="1">
+#### Why least squares is biased for AR(1)
+
+Consider the AR(1) model $Y_t=\rho Y_{t-1}+\epsilon_t$ with $0<\rho<1$.
+
+<ol type="a">
+  <li>For each pair, say whether the two random variables are independent: $\epsilon_t$ and $Y_{t-1}$; $\epsilon_t$ and $Y_t$; $\epsilon_t$ and $Y_{t+3}$.</li>
+  <li>In <a href="#sec-3-4">Section 3.4</a> we showed that $\hat\beta_1$ is unbiased conditional on $X_1,\dots,X_N$. Explain in a sentence or two why that argument does not work when the predictors are $Y_1,\dots,Y_{N-1}$.</li>
+  <li>Using the approximation $E[\hat\rho]-\rho\approx-2\rho/N$ with $\rho=0.9$, how long a series do we need for the bias to be smaller than $0.01$ in absolute value? Is $\hat\rho$ consistent?</li>
+  <li>Modify the code in the example above to check your answer to (c) by simulation.</li>
 </ol>
 </div>
 

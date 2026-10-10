@@ -4,10 +4,11 @@
     <label>$N$ = <input id="beta-n" type="range" min="5" max="200" step="1" value="20"><span id="beta-n-val">20</span></label>
     <label>$\sigma_\epsilon$ = <input id="beta-sig" type="range" min="0.25" max="3" step="0.25" value="1"><span id="beta-sig-val">1</span></label>
     <label>$\sigma_X$ = <input id="beta-sx" type="range" min="0.25" max="2" step="0.25" value="1"><span id="beta-sx-val">1</span></label>
+    <label>$\mu_X$ = <input id="beta-mx" type="range" min="0" max="2" step="0.5" value="0"><span id="beta-mx-val">0</span></label>
     <button id="beta-new">New dataset</button>
   </div>
   <svg id="beta-chart"></svg>
-  <p style="font-size:13px;color:#565a4e;margin-top:6px;">Top: one dataset from $Y\mid X\sim\text{Normal}(\beta_0+\beta_1X,\sigma_\epsilon^2)$ with $\beta_0=1$, $\beta_1=2$, its fitted line (red), the $95\%$ interval for the line (shaded) and the true line (dashed). Bottom: $\hat\beta_1$ over $2000$ replicates with the same $x$'s, and the Normal approximation $\text{Normal}(\beta_1,\sigma_\epsilon^2/S_{xx})$ (dashed).</p>
+  <p style="font-size:13px;color:#565a4e;margin-top:6px;">Top: one dataset from $Y\mid X\sim\text{Normal}(\beta_0+\beta_1X,\sigma_\epsilon^2)$ with $\beta_0=1$, $\beta_1=2$, its fitted line (red), the $95\%$ interval for the line (shaded) and the true line (dashed). Bottom: $\hat\beta_1$ (left) and $\hat\beta_0$ (right) over $2000$ replicates with the same $x$'s, with the Normal distributions $\text{Normal}(\beta_1,\sigma_\epsilon^2/S_{xx})$ and $\text{Normal}\big(\beta_0,\sigma_\epsilon^2(1/N+\overline X^2/S_{xx})\big)$ (dashed). Move $\mu_X$, the mean of the $x$'s, away from $0$ and watch what happens to $\hat\beta_0$.</p>
 </div>
 
 <script>
@@ -17,6 +18,7 @@
     n: document.getElementById('beta-n'),
     sig: document.getElementById('beta-sig'),
     sx: document.getElementById('beta-sx'),
+    mx: document.getElementById('beta-mx'),
   };
 
   const B0 = 1, B1 = 2, R = 2000;
@@ -25,11 +27,12 @@
   const width = 480, margin = { left: 34, right: 12 };
   const innerW = width - margin.left - margin.right;
   const top = { y0: 12, h: 220, xDom: [-4.5, 4.5], yDom: [-9, 11] };
-  const bot = { y0: 272, h: 110, xDom: [0, 4] };
+  const bot = { y0: 272, h: 110, gap: 22 };
+  const botW = (innerW - bot.gap) / 2;
   const height = bot.y0 + bot.h + 34;
 
   let z = [], e = [];   // standardized x's and noise for the displayed dataset
-  let N, sigma, sigmaX;
+  let N, sigma, sigmaX, muX;
 
   function newDraws() {
     z = Array.from({ length: N }, () => NotesUtils.gaussianRandom(0, 1));
@@ -56,11 +59,13 @@
     sigmaX = parseFloat(ctl.sx.value);
     document.getElementById('beta-n-val').textContent = N;
     document.getElementById('beta-sig-val').textContent = sigma;
+    muX = parseFloat(ctl.mx.value);
     document.getElementById('beta-sx-val').textContent = sigmaX;
+    document.getElementById('beta-mx-val').textContent = muX;
     if (z.length !== N) newDraws();
 
-    // the displayed dataset: moving sigma_X stretches the same points
-    const xs = z.map((v) => sigmaX * v);
+    // the displayed dataset: moving sigma_X stretches the same points, mu_X shifts them
+    const xs = z.map((v) => muX + sigmaX * v);
     const ys = xs.map((x, i) => B0 + B1 * x + sigma * e[i]);
     const f = fit(xs, ys);
     let ssr = 0;
@@ -68,15 +73,19 @@
     const sigHat = Math.sqrt(ssr / (N - 2));
 
     // replicates conditional on X: same xs, new noise
-    const b1s = new Array(R);
+    const b1s = new Array(R), b0s = new Array(R);
     for (let r = 0; r < R; r++) {
-      let num = 0;
+      let num = 0, ySum = 0;
       for (let i = 0; i < N; i++) {
-        num += (xs[i] - f.xBar) * (B0 + B1 * xs[i] + NotesUtils.gaussianRandom(0, sigma));
+        const y = B0 + B1 * xs[i] + NotesUtils.gaussianRandom(0, sigma);
+        num += (xs[i] - f.xBar) * y;
+        ySum += y;
       }
       b1s[r] = num / f.sxx; // sum_i (x_i - xbar) y_i / Sxx equals the least squares slope
+      b0s[r] = ySum / N - b1s[r] * f.xBar;
     }
-    const se = sigma / Math.sqrt(f.sxx);
+    const se1 = sigma / Math.sqrt(f.sxx);
+    const se0 = sigma * Math.sqrt(1 / N + f.xBar ** 2 / f.sxx);
 
     NotesUtils.clear(chart);
     chart.setAttribute('viewBox', `0 0 ${width} ${height}`);
@@ -112,30 +121,36 @@
     plot.appendChild(NotesUtils.svg('line', { x1: tx(ends[0]), y1: ty(B0 + B1 * ends[0]), x2: tx(ends[1]), y2: ty(B0 + B1 * ends[1]), stroke: '#222', 'stroke-width': 1.2, 'stroke-dasharray': '5,4' }));
     xs.forEach((x, i) => plot.appendChild(NotesUtils.svg('circle', { cx: tx(x), cy: ty(ys[i]), r: N > 80 ? 2 : 3, fill: DATA, opacity: 0.8 })));
 
-    // ---------- bottom panel: histogram of beta1-hat ----------
-    const bx = (b) => ((b - bot.xDom[0]) / (bot.xDom[1] - bot.xDom[0])) * innerW;
-    const nb = 60, bw = (bot.xDom[1] - bot.xDom[0]) / nb;
-    const counts = new Array(nb).fill(0);
-    b1s.forEach((b) => { const k = Math.floor((b - bot.xDom[0]) / bw); if (k >= 0 && k < nb) counts[k] += 1; });
-    const dens = counts.map((c) => c / (R * bw));
-    const pdf = (b) => Math.exp(-0.5 * ((b - B1) / se) ** 2) / (se * Math.sqrt(2 * Math.PI));
-    const yMax = Math.max(Math.max(...dens), pdf(B1)) * 1.05;
-    const by = (d) => bot.h - (d / yMax) * bot.h;
-    const g2 = NotesUtils.svg('g', { transform: `translate(${margin.left},${bot.y0})` });
-    chart.appendChild(g2);
-    dens.forEach((d, k) => {
-      if (d > 0) g2.appendChild(NotesUtils.svg('rect', { x: bx(bot.xDom[0] + k * bw) + 0.5, y: by(d), width: Math.max(bx(bw) - bx(0) - 1, 0.5), height: bot.h - by(d), fill: DATA, opacity: 0.75 }));
-    });
-    const pts = []; for (let k = 0; k <= 200; k++) { const b = bot.xDom[0] + (k / 200) * (bot.xDom[1] - bot.xDom[0]); pts.push(`${bx(b)},${by(pdf(b))}`); }
-    g2.appendChild(NotesUtils.svg('polyline', { points: pts.join(' '), fill: 'none', stroke: RED, 'stroke-width': 1.6, 'stroke-dasharray': '5,3' }));
-    g2.appendChild(NotesUtils.svg('line', { x1: bx(B1), y1: 0, x2: bx(B1), y2: bot.h, stroke: '#222', 'stroke-width': 0.8 }));
-    g2.appendChild(NotesUtils.svg('line', { x1: 0, y1: bot.h, x2: innerW, y2: bot.h, stroke: AXIS }));
-    [0, 1, 2, 3, 4].forEach((v) => text(g2, bx(v), bot.h + 14, v === B1 ? 'β₁ = 2' : String(v), { 'text-anchor': 'middle' }));
-    text(g2, innerW / 2, bot.h + 27, 'β̂₁', { 'text-anchor': 'middle', 'font-size': 11 });
-    text(g2, innerW, 10, `se(β̂₁) = σε/√Sₓₓ = ${se.toFixed(2)}`, { 'text-anchor': 'end', 'font-size': 11, fill: '#3a3a34' });
+    // ---------- bottom panels: histograms of beta1-hat and beta0-hat ----------
+    function hist(x0, vals, center, se, name, sub) {
+      const dom = [center - 2, center + 2];
+      const bx = (b) => ((b - dom[0]) / (dom[1] - dom[0])) * botW;
+      const nb = 40, bw = (dom[1] - dom[0]) / nb;
+      const counts = new Array(nb).fill(0);
+      vals.forEach((b) => { const k = Math.floor((b - dom[0]) / bw); if (k >= 0 && k < nb) counts[k] += 1; });
+      const dens = counts.map((c) => c / (R * bw));
+      const pdf = (b) => Math.exp(-0.5 * ((b - center) / se) ** 2) / (se * Math.sqrt(2 * Math.PI));
+      const yMax = Math.max(Math.max(...dens), pdf(center)) * 1.05;
+      const by = (d) => bot.h - (d / yMax) * bot.h;
+      const g = NotesUtils.svg('g', { transform: `translate(${margin.left + x0},${bot.y0})` });
+      chart.appendChild(g);
+      dens.forEach((d, k) => {
+        if (d > 0) g.appendChild(NotesUtils.svg('rect', { x: bx(dom[0] + k * bw) + 0.5, y: by(d), width: Math.max(bx(dom[0] + bw) - 1, 0.5), height: bot.h - by(d), fill: DATA, opacity: 0.75 }));
+      });
+      const pts = []; for (let k = 0; k <= 200; k++) { const b = dom[0] + (k / 200) * (dom[1] - dom[0]); pts.push(`${bx(b)},${by(pdf(b))}`); }
+      g.appendChild(NotesUtils.svg('polyline', { points: pts.join(' '), fill: 'none', stroke: RED, 'stroke-width': 1.6, 'stroke-dasharray': '5,3' }));
+      g.appendChild(NotesUtils.svg('line', { x1: bx(center), y1: 0, x2: bx(center), y2: bot.h, stroke: '#222', 'stroke-width': 0.8 }));
+      g.appendChild(NotesUtils.svg('line', { x1: 0, y1: bot.h, x2: botW, y2: bot.h, stroke: AXIS }));
+      for (let v = dom[0]; v <= dom[1]; v += 1) text(g, bx(v), bot.h + 14, v === center ? `${name}${sub} = ${center}` : String(v), { 'text-anchor': 'middle' });
+      text(g, botW / 2, bot.h + 27, `${name}\u0302${sub}`, { 'text-anchor': 'middle', 'font-size': 11 });
+      text(g, botW, 10, `se = ${se.toFixed(2)}`, { 'text-anchor': 'end', 'font-size': 11, fill: '#3a3a34' });
+    }
+    // both histograms span 4 units, so their widths can be compared directly
+    hist(0, b1s, B1, se1, 'β', '₁');
+    hist(botW + bot.gap, b0s, B0, se0, 'β', '₀');
   }
 
-  ['n', 'sig', 'sx'].forEach((k) => ctl[k].addEventListener('input', render));
+  ['n', 'sig', 'sx', 'mx'].forEach((k) => ctl[k].addEventListener('input', render));
   document.getElementById('beta-new').addEventListener('click', () => { newDraws(); render(); });
   render();
 })();
