@@ -637,7 +637,7 @@ where the noise $\epsilon_t\sim\text{Normal}(0,\sigma_\epsilon^2)$ is independen
 <figcaption>Today's log price vs. yesterday's. The dashed line is $Y_t=Y_{t-1}$.</figcaption>
 </figure>
 
-For bitcoin, least squares gives $\hat\beta_1\approx0.9996$ and $\hat\sigma_\epsilon\approx0.016$: the best prediction of tomorrow's log price is essentially today's, give or take $0.016$ (since $10^{0.016}\approx1.04$, a typical daily move is about $4\%$).
+For bitcoin, least squares gives $\hat\beta_1\approx0.9996$ and $\hat\sigma_\epsilon\approx0.016$. 
 
 ### Stationary AR(1) processes
 
