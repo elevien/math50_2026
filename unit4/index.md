@@ -161,11 +161,13 @@ results = model.fit()
 The output of a multiple-predictor regression looks basically the same as the single-predictor case, except now there's a row for each coefficient. The interpretation of the $p$-value and confidence interval for each coefficient is nearly the same as before &mdash; though we should remember that the $p$-value is testing whether *that particular* predictor's coefficient is zero. The $F$-statistic tests the hypothesis that *all* the predictors are zero; we won't go into more detail since hypothesis testing isn't a big focus of this course.
 -->
 
+Recall from [Section 3.4](../unit3/#sec-3-4) that $R^2 = 1-\text{SSR}/\text{SST}$, where $\text{SSR}=\sum_i r_i^2$ is the sum of the squared residuals $r_i$ (the differences between each $Y_i$ and its fitted value) and $\text{SST}=\sum_i (Y_i-\overline Y)^2$ is the total sum of squares. $R^2$ is the fraction of the variation in $Y$ explained by the model. If $R^2=1$ the fitted values match the data exactly, and if $R^2=0$ the model does no better than predicting $\overline Y$ for every data point.
+
 The interpretation of $R^2$ is the same as before, except now we're comparing the variance conditioned on *all* predictors to the overall variance in $Y$:
 
 $$ R^2 = 1 - \frac{\sum_i r_i^2}{\sum_i (Y_i-\overline Y)^2} \approx 1 - \frac{\text{var}(Y\mid X_1,X_2)}{\text{var}(Y)}, $$
 
-where, in the multi-predictor case,
+where, in the multi-predictor case, the residuals are
 
 $$ r_i = Y_i - \Big(\hat\beta_0 + \sum_{k=1}^K \hat\beta_kX_{i,k}\Big). $$
 
@@ -177,7 +179,7 @@ $$ E[Y\mid X] = \beta_0 + \beta_1X_1 + \beta_2X_2, $$
 
 where I'm using the shorthand $E[Y\mid X] = E[Y\mid(X_1,X_2)]$ to mean the expectation conditioned on **both** predictors. This is the equation for a flat surface (a plane) over the $(x_1,x_2)$-plane. If we slice the surface in the $x_1$ direction and look at it from the side, we see a line with slope $\beta_1$ (and similarly for $x_2$). This gives the key interpretation:
 
-<div style="text-align:center; margin:1em 0;">$\beta_1$ is the slope of $E[Y\mid X]$ vs. $X_1$ for fixed $X_2$.</div>
+<div style="text-align:center; margin:1em 0;">$\beta_1$ is the slope of $E[Y\mid X]$ as $X_1$ varies and $X_2$ is held fixed.</div>
 
 The demo below slices the surface both ways: the orange line holds $X_2$ fixed and varies $X_1$, the blue line holds $X_1$ fixed and varies $X_2$. Drag either slider and watch its own line's *slope* stay put while only its height moves &mdash; that invariance is exactly what the statement above says.
 
@@ -221,11 +223,13 @@ mom_iq         0.5639      0.061      9.309      0.000       0.445       0.683
 <li>$\hat\beta_0 \approx 26$: mathematically, the average score of students whose mother didn't attend high school and has zero IQ &mdash; not a meaningful quantity, since nobody has zero IQ, so we can ignore it when interpreting the output.</li>
 </ul>
 </li>
-<li>$\beta_{\text{hs}}$ is smaller, but the two coefficients have different units: $X_{\text{iq}}$ ranges roughly from $70$ to $130$, while $X_{\text{hs}}$ is $0$ or $1$. A unit-free way to compare them is to scale each coefficient by its standard error, $\hat T=\hat\beta/\text{se}(\hat\beta)$: $\hat T_{\text{hs}}\approx5.95/2.21\approx2.7$ vs. $\hat T_{\text{iq}}\approx0.56/0.061\approx9.3$, so the IQ coefficient is far more clearly different from $0$ relative to its uncertainty. Another option is the effect of a one-standard-deviation change in each predictor: $\hat\beta_{\text{hs}}\hat\sigma_{\text{hs}} \approx 2.44$ vs. $\hat\beta_{\text{iq}}\hat\sigma_{\text{iq}} \approx 8.44$. Either way, the association with IQ is stronger (though the comparison isn't perfect, since $X_{\text{hs}}$ is binary).
+<li>$\beta_{\text{hs}}$ is about ten times larger, but the two coefficients have different units: $X_{\text{iq}}$ ranges roughly from $70$ to $130$, while $X_{\text{hs}}$ is $0$ or $1$. To compare them, multiply each coefficient by the standard deviation of its predictor, $\hat\beta\hat\sigma_X$. This is the standard deviation of the term $\beta X$ across the population: the typical amount by which that predictor moves a randomly chosen student's expected score away from the average, with the other predictor held fixed. Here $\hat\sigma_{\text{hs}}\approx0.41$ and $\hat\sigma_{\text{iq}}\approx15$, so $\hat\beta_{\text{hs}}\hat\sigma_{\text{hs}} \approx 5.95\times0.41\approx2.44$ vs. $\hat\beta_{\text{iq}}\hat\sigma_{\text{iq}} \approx 0.56\times15\approx8.45$: the association with IQ is stronger.
 
 <figure style="margin: 0.8em 0;">
-<img src="{{ '/unit4/fig/kidiq_coefs.svg' | relative_url }}" alt="Left: the two coefficients with 95% intervals on their raw scale; the high-school coefficient (5.95) looks much larger than the IQ coefficient (0.56). Right: the same coefficients in units of their standard errors; the IQ coefficient (9.31) is much further from zero than the high-school coefficient (2.69)." style="width: 100%;">
-</figure></li>
+<img src="{{ '/unit4/fig/kidiq_coefs_scaled.svg' | relative_url }}" alt="Left: the two coefficients with 95% intervals; the high-school coefficient (5.95) looks much larger than the IQ coefficient (0.56). Right: each coefficient multiplied by the standard deviation of its predictor; now IQ (8.45) is larger than high school (2.44)." style="width: 100%;">
+</figure>
+
+For a binary predictor, $\hat\sigma_X$ depends on how common each value is: a rare binary predictor has a small $\hat\sigma_X$ even if its effect on the few people who have it is large. Other conventions exist; for example, <a href="https://doi.org/10.1002/sim.3107">Gelman (2008)</a> multiplies continuous predictors by $2\hat\sigma_X$, to match a $0/1$ predictor with $\hat\sigma_X\approx0.5$. Here that gives $5.95$ for high school vs. $0.56\times30\approx16.9$ for IQ, so IQ still matters more.</li>
 <li>The $R^2$ value is $0.214$, so about $21\%$ of the variation in test scores is explained by mother's high-school education and IQ together.</li>
 <li>In the Colab notebook, we calculate this probability to be about $25\%$.</li>
 </ol>
@@ -367,13 +371,13 @@ For a binary predictor $X_1$, the two-predictor fit gives $\beta_1=2$ and $\beta
 
 Here we derive formulas for the regression coefficients in terms of the covariances between predictors and between predictors and the response. This (1) clarifies the relationship between single- and multi-predictor coefficients, and (2) gives us an estimator for the multi-predictor case. We're generalizing the single-predictor relationship $\text{cov}(X,Y)=\beta_1\sigma_X^2$.
 
-Consider a two-predictor model, and set $\beta_0=E[X_1]=E[X_2]=0$ for simplicity (these cancel out in the end &mdash; check for yourself that everything still works when they're not zero!). Then $\text{cov}(X_1,Y)=E[X_1Y]$, and just as in the single-predictor case,
+Consider a two-predictor model, and set $\beta_0=E[X_1]=E[X_2]=0$ for simplicity (these cancel out in the end &mdash; check for yourself that everything still works when they're not zero!). Then $\text{cov}(X_1,Y)=E[X_1Y]$, and just as in the single-predictor case (but now conditioning on *both* predictors in the tower property),
 
 $$
 \begin{aligned}
 \text{cov}(X_1,Y)
 &= E[X_1Y] \\
-&= E[X_1E[Y\mid X_1]] \\
+&= E[X_1E[Y\mid X_1,X_2]] \\
 &= E[X_1(\beta_1X_1+\beta_2X_2)] \\
 &= \beta_1E[X_1^2]+\beta_2E[X_1X_2] \\
 &= \beta_1\sigma_{X_1}^2 + \beta_2\,\text{cov}(X_1,X_2).
@@ -505,7 +509,7 @@ beta = fit.params
 
 ## 4.4 Sample distribution and collinearity {#sec-4-4}
 
-Just as before, we want to understand the sample distribution of the coefficients &mdash; but now we need the *joint* distribution of $(\hat\beta_1,\hat\beta_2,\dots,\hat\beta_K)$. We'll focus on the two-predictor case. In the demo below, each faint line at the top is a least-squares fit to a fresh replicate of the same $X$ values, so the spread of those lines is a visual proxy for the width of the sample distribution of $\hat\beta_1$. The cloud underneath is the joint sample distribution of $(\hat\beta_1,\hat\beta_2)$: as the predictor correlation $b$ approaches $\pm1$ it stretches along the line $\hat\beta_1+\hat\beta_2=\text{const}$, so the individual coefficients become poorly determined even though their sum does not.
+Just as before, we want to understand the sample distribution of the coefficients &mdash; but now we need the *joint* distribution of $(\hat\beta_1,\hat\beta_2,\dots,\hat\beta_K)$. We'll focus on the two-predictor case. In the demo below, each faint line at the top is a least-squares fit to a fresh replicate of the same $X$ values, so the spread of those lines is a visual proxy for the width of the sample distribution of $\hat\beta_1$. The cloud underneath is the joint sample distribution of $(\hat\beta_1,\hat\beta_2)$: as the predictor correlation $b$ approaches $1$ it stretches along the line $\hat\beta_1+\hat\beta_2=\text{const}$, so the individual coefficients become poorly determined even though their sum does not. As $b$ approaches $-1$ the cloud instead stretches along the line $\hat\beta_1-\hat\beta_2=\text{const}$, so the difference of the coefficients is well determined and the sum is not.
 
 {% include_relative demos/sample_dist.html %}
 
@@ -513,9 +517,21 @@ To build intuition, imagine $X_1,X_2$ are very highly correlated (if perfectly c
 
 $$ Y = \beta_1X_1+\beta_2X_2+\epsilon \approx \beta_1X_1+\beta_2X_1+\epsilon = (\beta_1+\beta_2)X_1+\epsilon. $$
 
-There are many ways to choose $\beta_1,\beta_2$ so the surface $\beta_1x_1+\beta_2x_2$ stays close to the data, since a change in $\beta_1$ can be compensated by an opposite change in $\beta_2$. **This means that if we estimate $\hat\beta_1,\hat\beta_2$ and then regenerate new data, we could get very different values of $\hat\beta_1,\hat\beta_2$, so long as $\hat\beta_1+\hat\beta_2$ stays close to what we got before.** The demo below refits on a fresh dataset each time and shows the same fitted surfaces from two directions: along $u=(X_1+X_2)/\sqrt2$, the direction in which the predictors move together, and along $v=(X_1-X_2)/\sqrt2$, the direction in which they disagree. Raise the correlation and the first view stays a tight bundle while the second fans out.
+There are many ways to choose $\beta_1,\beta_2$ so the surface $\beta_1x_1+\beta_2x_2$ stays close to the data, since a change in $\beta_1$ can be compensated by an opposite change in $\beta_2$. **This means that if we estimate $\hat\beta_1,\hat\beta_2$ and then regenerate new data from the same model (in particular, with the same correlation between $X_1$ and $X_2$), we could get very different values of $\hat\beta_1,\hat\beta_2$, so long as $\hat\beta_1+\hat\beta_2$ stays close to what we got before.** The demo below refits on a fresh dataset each time and shows the same fitted surfaces from two directions: along $u=(X_1+X_2)/\sqrt2$, the direction in which the predictors move together, and along $v=(X_1-X_2)/\sqrt2$, the direction in which they disagree. Raise the correlation and the first view stays a tight bundle while the second fans out.
 
 {% include_relative demos/sample_dist2.html %}
+
+To see why the second view fans out, rewrite the model in terms of $u$ and $v$:
+
+$$ \beta_1X_1+\beta_2X_2 = \frac{\beta_1+\beta_2}{\sqrt2}\,u + \frac{\beta_1-\beta_2}{\sqrt2}\,v, $$
+
+so the slope of the surface in the $u$ view is $(\beta_1+\beta_2)/\sqrt2$ and in the $v$ view it is $(\beta_1-\beta_2)/\sqrt2$. If $X_1,X_2$ have unit variance and correlation $b$, then $u$ and $v$ are uncorrelated with
+
+$$ \text{var}(u) = 1+b, \qquad \text{var}(v) = 1-b. $$
+
+Recall that in a single-predictor regression the standard error of the slope is $\sigma_\epsilon/(\sigma_X\sqrt N)$, so a predictor with a small variance gives a slope with a large standard error. The same holds for $u$ and $v$ separately. When $b$ is close to $1$, the data points lie near the line $X_1=X_2$. They are spread out along $u$, so the slope in the $u$ view has a small standard error. They have very little spread along $v$, so many different slopes in the $v$ view fit the data about equally well, and the fitted lines fan out.
+
+When $b$ is negative, the points lie near the line $X_1=-X_2$. Now they are spread out along $v$ and have little spread along $u$, so the first view fans out and the second stays tight. In terms of the coefficients, for $b$ near $-1$ the difference $\hat\beta_1-\hat\beta_2$ is well determined and the sum $\hat\beta_1+\hat\beta_2$ is not.
 
 ### Sample distribution formula
 
@@ -542,6 +558,19 @@ Use $\hat\beta \sim \operatorname{Normal}\_2\big(\beta,\ (\sigma\_\epsilon^2/N)\
   <li>Write $\text{se}(\hat\beta_1)$ as a function of $\rho$.</li>
   <li>Evaluate it at $\rho=0$ and at $\rho=0.9$.</li>
   <li>What is the sign of the correlation between $\hat\beta_1$ and $\hat\beta_2$ when $\rho>0$, and what does that mean about how the two estimates move together across replicates?</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Which view fans out?
+
+Two standardized predictors have correlation $\rho$. As in the demo "Two views of the same fitted planes", let $u=(X_1+X_2)/\sqrt2$ and $v=(X_1-X_2)/\sqrt2$.
+
+<ol type="a">
+  <li>Compute $\text{var}(u)$ and $\text{var}(v)$ when $\rho=0.9$. Along which direction are the data more spread out?</li>
+  <li>For $\rho=0.9$, which is better determined by the data: $\hat\beta_1+\hat\beta_2$ or $\hat\beta_1-\hat\beta_2$? Which view fans out?</li>
+  <li>Repeat (a) and (b) for $\rho=-0.9$.</li>
+  <li>For which value of $\rho$ do the two views look the same?</li>
 </ol>
 </div>
 
