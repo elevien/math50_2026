@@ -67,7 +67,7 @@ Your grade will be based on the following. You should see Canvas for the detaile
 **Exams (75%):** There will be three [exams]({{ '/exams/' | relative_url }}). Each midterm takes half a class period; the rest of that class is used for new material.  
 - <u>Midterm 1</u> (20%): In class on September 30th, covering Units 1–2.  
 - <u>Midterm 2</u> (20%): In class on October 28th, covering Units 3–4.  
-- <u>Final</u> (35%): During finals week, November 25th at 3pm (room TBD), cumulative over Units 1–6. Your lower midterm score is replaced by the final if the final is higher. 
+- <u>Final</u> (35%): During finals week, Friday, November 20th at 3pm (room TBD), cumulative over Units 1–6. Your lower midterm score is replaced by the final if the final is higher. 
 
 
 **Weekly assignments (15%):**  In addition to the practice problems, there will be a few more open ended assignments you will turn in each week.  
