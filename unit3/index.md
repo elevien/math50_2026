@@ -179,6 +179,28 @@ $$ \hat\sigma^2 := \frac{1}{N-1}\sum_{i=1}^N (Y_i-\overline Y)^2 = \frac{N}{N-1}
 is unbiased. The correction factor $N/(N-1)$ is called <span class="term">[Bessel's correction](https://en.wikipedia.org/wiki/Bessel%27s_correction)</span>.
 
 <u>Question:</u> confirm with simulated data that $\hat\sigma_0^2$ is biased while $\hat\sigma^2$ is not.
+
+<u>Solution:</u> simulate many independent samples of size $N=5$ from a Normal distribution with $\mu=2$ and $\sigma=3$. Average each variance estimator across the simulated samples to approximate its expectation:
+
+```python
+import numpy as np
+
+rng = np.random.default_rng(50)
+mu, sigma = 2, 3
+N = 5
+n_sim = 100_000
+y = rng.normal(mu, sigma, size=(n_sim, N))  # one sample per row
+ybar = np.mean(y, axis=1, keepdims=True)
+sum_sq = np.sum((y - ybar)**2, axis=1)
+sigma0_sq_hat = sum_sq / N
+sigma_sq_hat = sum_sq / (N - 1)
+
+print(f"True variance: {sigma**2:.2f}")
+print(f"Average uncorrected estimate: {np.mean(sigma0_sq_hat):.2f}")
+print(f"Average corrected estimate: {np.mean(sigma_sq_hat):.2f}")
+```
+
+The averages should be close to $7.2$ and $9$, respectively: $E[\hat\sigma_0^2]=(N-1)\sigma^2/N=7.2$, while $E[\hat\sigma^2]=\sigma^2=9$. The small differences from these values are simulation error; increasing `n_sim` makes the averages more precise.
 </div>
 
 ### Bias-variance tradeoff
@@ -537,6 +559,14 @@ Estimate the regression slope and intercept of the following dataset by hand:
 </table>
 
 Then compute the residuals and SSR for your fitted line.
+</div>
+
+<div class="exercise" markdown="1">
+#### An alternative formula for the slope
+
+Derive the formula
+
+$$ \hat\beta_1=\frac{\sum_{i=1}^n X_iY_i-n\overline X\overline Y}{\sum_{i=1}^n X_i^2-n\overline X^2}. $$
 </div>
 
 <div class="exercise" markdown="1">
