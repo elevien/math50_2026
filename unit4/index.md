@@ -487,6 +487,30 @@ Suppose $\sigma_{X_1}^2=\sigma_{X_2}^2=1$, $\text{cov}(X_1,X_2)=0.5$, $\text{cov
 </div>
 
 <div class="exercise" markdown="1">
+#### Recovering the correlation between predictors
+
+Three regressions are fit to the same data: $Y$ on $X_1$ alone gives slope $\beta_1^{\prime}=3.2$, $Y$ on $X_2$ alone gives slope $\beta_2^{\prime}=4.8$, and $Y$ on both predictors gives $\beta_1=2$ and $\beta_2=3$.
+
+<ol type="a">
+  <li>Use $\beta_1^{\prime}=\beta_1+\beta_2\beta_{1,2}$ to find $\beta_{1,2}$, the slope from regressing $X_2$ on $X_1$.</li>
+  <li>Swap the roles of $X_1$ and $X_2$ to find $\beta_{2,1}$, the slope from regressing $X_1$ on $X_2$.</li>
+  <li>Show that $\beta_{1,2}\beta_{2,1}=\rho_{1,2}^2$, where $\rho_{1,2}$ is the correlation between $X_1$ and $X_2$. Use this to find $\rho_{1,2}$, including its sign.</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Omitted variable bias with nonzero means
+
+Above we set $\beta_0=E[X_1]=E[X_2]=0$. Now take $Y=\beta_0+\beta_1X_1+\beta_2X_2+\epsilon$ with $E[\epsilon]=0$ and $\text{cov}(X_1,\epsilon)=0$, but with $\beta_0$, $E[X_1]$ and $E[X_2]$ arbitrary.
+
+<ol type="a">
+  <li>Starting from $\text{cov}(X_1,Y)=E\big[(X_1-E[X_1])(Y-E[Y])\big]$, show that $\text{cov}(X_1,Y)=\beta_1\sigma_{X_1}^2+\beta_2\,\text{cov}(X_1,X_2)$. Why does $\beta_0$ drop out?</li>
+  <li>Conclude that $\beta_1^{\prime}=\beta_1+\beta_2\beta_{1,2}$ still holds.</li>
+  <li>Write the regression of $X_2$ on $X_1$ as $X_2=\gamma_0+\beta_{1,2}X_1+\delta$. Using $\beta_0^{\prime}=E[Y]-\beta_1^{\prime}E[X_1]$, show that the single-predictor intercept is $\beta_0^{\prime}=\beta_0+\beta_2\gamma_0$.</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
 #### Reading a statsmodels fit
 
 Consider the following <code>statsmodels</code> fit:
