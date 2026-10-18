@@ -46,7 +46,7 @@ Here, to give a taste of this topic, we will discuss only two types of study des
 
 <span class="term">[Cohort study](https://en.wikipedia.org/wiki/Cohort_study) (prospective [observational](https://en.wikipedia.org/wiki/Observational_study)).</span> Often randomization is not possible or ethical. A cohort study follows a group forward in time and observes who ends up with which value of $X$ and what $Y$ they go on to have. Because $X$ was observed rather than assigned, it may be related to other causes of $Y$.
 
-In a cohort study we cannot know whether there is another variable confounder $X_2$, correlated with $X$, which also has an effect on $Y$.  It can produce an association between $X$ and $Y$ even if $X$ has no causal effect on $Y$, or it can inflate, shrink, or reverse a real effect. In an RCT, randomization makes $X$ independent of *every* such $X_2$, measured or not. (We call it $X_2$ rather than a new letter because the fix will be to include it as a second predictor in the regression.)
+In a cohort study we cannot know whether there is another variable confounder $X_2$, correlated with $X$, which also has an effect on $Y$.  It can produce an association between $X$ and $Y$ even if $X$ has no causal effect on $Y$. More often, both variabls influence $X$ so that the confounder can increase or decrease the effect of $X$. In an RCT, randomization makes $X$ independent of *every* such $X_2$, measured or not. (We call it $X_2$ rather than a new letter because the fix will be to include it as a second predictor in the regression.)
 
 <div class="example" markdown="1">
 #### Example
@@ -63,11 +63,11 @@ Blue-eyed people smile more often: $P(Y=1\mid X=1)=7/12$ but $P(Y=1\mid X=0)=5/1
 <img src="{{ '/unit4/fig/people_by_ears.svg' | relative_url }}" alt="The same people sorted by ears and eye color. Among people with ears, 6 of 8 blue-eyed and 3 of 4 brown-eyed people smile. Among people without ears, 1 of 4 blue-eyed and 2 of 8 brown-eyed people smile." style="width: 100%; max-width: 640px;">
 </figure>
 
-Among people with the *same* ears, eye color makes no difference: $3/4$ smile with ears and $1/4$ without, whatever their eyes. Blue-eyed people are simply more likely to have ears ($8/12$ vs. $4/12$), and ears go with smiling. So $X_2$ is a confounder: it produces an association between eye color and smiling even though, among people with the same ears, there is none. In regression form (see the next section), the conditional averages are exactly
+Among people with the *same* ears, eye color makes no difference: $3/4$ smile with ears and $1/4$ without, whatever their eyes. Blue-eyed people are simply more likely to have ears ($8/12$ vs. $4/12$), and ears go with smiling. So $X_2$ is a confounder, meaning it produces an association between eye color and smiling even though, among people with the same ears, there is none. In regression form (see the next section), the conditional averages are
 
 $$ E[Y\mid X]=\frac5{12}+\frac16X, \qquad E[Y\mid X,X_2]=\frac14+0\cdot X+\frac12X_2, $$
 
-so once we control for ears, the coefficient of eye color drops from $1/6$ to $0$.
+so once we control for ears, the coefficient of eye color changes (from $1/6$ to $0$).
 </div>
 
 <details class="optional-section" open markdown="1">
@@ -295,6 +295,74 @@ $$ \beta_1' = \beta_1 + \beta_2\big(E[X_2\mid X_1{=}1]-E[X_2\mid X_1{=}0]\big), 
 
 where $\beta_1^{\prime}$ is the regression coefficient of $X_1$ *without* $X_2$ in the model.
 
+### Omitted variable bias in general
+
+The binary formula above is a special case of a result that holds for any predictors. Suppose
+
+$$ Y=\beta_0+\beta_1X_1+\beta_2X_2+\epsilon, $$
+
+where $\epsilon$ is uncorrelated with $X_1$ and $X_2$. If $X_2$ is left out, the slope of the regression of $Y$ on $X_1$ alone is
+
+$$ \boxed{\beta_1'=\beta_1+\beta_2\,\beta_{1,2}}, \qquad \beta_{1,2}=\frac{\text{cov}(X_1,X_2)}{\text{var}(X_1)}, $$
+
+where $\beta_{1,2}$ is the slope of the regression of $X_2$ on $X_1$. For binary $X_1$, $\beta_{1,2}=E[X_2\mid X_1{=}1]-E[X_2\mid X_1{=}0]$, which recovers the formula above. The left-out predictor biases $\beta_1^{\prime}$ unless $\beta_2=0$ (it has no effect on $Y$) or $\text{cov}(X_1,X_2)=0$ (it is uncorrelated with $X_1$).
+
+<u>Proof:</u> the single-predictor slope is $\beta_1^{\prime}=\text{cov}(X_1,Y)/\text{var}(X_1)$. By bilinearity of covariance, using $\text{cov}(X_1,\beta_0)=0$ and $\text{cov}(X_1,\epsilon)=0$,
+
+$$ \text{cov}(X_1,Y)=\beta_1\,\text{var}(X_1)+\beta_2\,\text{cov}(X_1,X_2). $$
+
+Dividing by $\text{var}(X_1)$ gives the formula.
+
+<div class="example" markdown="1">
+#### Example (poverty, single-parent households, and violent crime)
+
+For the 50 US states in 2009 (from `statsmodels`), let $Y$ be violent crimes per $100{,}000$ people, $X_{\rm pov}$ the percentage of people below the poverty line, and $X_{\rm single}$ the percentage of family households headed by a single parent. Regressing $Y$ on $X_{\rm pov}$ alone gives a slope of $\hat\beta_{\rm pov}^{\prime}\approx16$ ($p=0.03$). With both predictors, $\hat\beta_{\rm pov}\approx-1.3$ ($p=0.85$) and $\hat\beta_{\rm single}\approx30.5$, and the slope of $X_{\rm single}$ on $X_{\rm pov}$ is $\hat\beta_{\rm pov,single}\approx0.57$.
+
+<u>Question:</u> explain the difference between $\hat\beta_{\rm pov}^{\prime}$ and $\hat\beta_{\rm pov}$.
+
+<u>Solution:</u> by the formula,
+
+$$ \hat\beta_{\rm pov}'=\hat\beta_{\rm pov}+\hat\beta_{\rm single}\,\hat\beta_{\rm pov,single}\approx-1.3+30.5\times0.57\approx16 . $$
+
+States with more poverty also have more single-parent households, and single-parent households are strongly associated with violent crime. Leaving $X_{\rm single}$ out attributes that association to poverty. (The formula holds exactly for the least squares estimates, since they satisfy the same covariance equations with sample covariances.)
+</div>
+
+In the diagram below, each arrow into $Y$ is labeled with a coefficient in the two-predictor model, and the arrow between the predictors is labeled with $\beta_{\rm pov,single}$, which points from the predictor we keep to the one we leave out. Leaving out $X_{\rm single}$ (faded) adds the product along the path through $X_{\rm single}$ to the coefficient on $X_{\rm pov}$.
+
+<img src="{{ '/unit4/fig/ovb_diagram_1.svg' | relative_url }}" alt="Diagram with boxes for poverty, single-parent households, and violent crime. Arrows into violent crime from poverty (coefficient -1.3) and single-parent households (30.5), and an arrow from poverty to single-parent households (0.57). Single-parent households is faded, and the poverty arrow is labeled -1.3 + 0.57 times 30.5, approximately 16." style="width: 100%; max-width: 560px;">
+
+**Keeping one of $K$ predictors.** The same argument works with more predictors. If $Y=\beta_0+\beta_1X_1+\cdots+\beta_KX_K+\epsilon$ with $\epsilon$ uncorrelated with every $X_j$, and $X_2,\dots,X_K$ are all left out, then
+
+$$ \boxed{\beta_1'=\beta_1+\sum_{j=2}^K\beta_j\,\beta_{1,j}}, \qquad \beta_{1,j}=\frac{\text{cov}(X_1,X_j)}{\text{var}(X_1)} . $$
+
+Each left-out predictor contributes its coefficient times its slope on $X_1$:
+
+<img src="{{ '/unit4/fig/ovb_diagram_3.svg' | relative_url }}" alt="Diagram with four predictors X1 to X4 stacked vertically and an outcome Y. X2, X3, X4 are faded. Arrows from X1 to X2, X3, X4 are labeled beta 1,2, beta 1,3, beta 1,4. The arrow from X1 to Y is labeled beta 1 plus beta 2 beta 1,2 plus beta 3 beta 1,3 plus beta 4 beta 1,4." style="width: 100%; max-width: 560px;">
+
+**Leaving out one of $K$ predictors.** Now suppose we keep $X_1,\dots,X_{K-1}$ and leave out only $X_K$. Regress the left-out predictor on the ones we keep,
+
+$$ X_K=\gamma_0+\beta_{1,K}X_1+\cdots+\beta_{K-1,K}X_{K-1}+\delta . $$
+
+Then the coefficients of the regression of $Y$ on $X_1,\dots,X_{K-1}$ are
+
+$$ \boxed{\beta_j'=\beta_j+\beta_{j,K}\,\beta_K}, \qquad j=1,\dots,K-1 . $$
+
+Now $\beta_{j,K}$ is a coefficient in a *multiple* regression (of $X_K$ on all the kept predictors), not a single-predictor slope.
+
+<img src="{{ '/unit4/fig/ovb_diagram_2.svg' | relative_url }}" alt="Diagram with four predictors X1 to X4 stacked vertically and an outcome Y. X4 is faded. Arrows from X1, X2, X3 into X4 are labeled beta 1,4, beta 2,4, beta 3,4. The arrows from X1, X2, X3 to Y are labeled beta j plus beta j,4 times beta 4." style="width: 100%; max-width: 560px;">
+
+<u>Proof:</u> assume for simplicity that $\beta_0=0$ and $E[X_j]=0$ for every $j$, so $\text{cov}(X_i,X_j)=E[X_iX_j]$. As for any regression, $E[X_i\delta]=0$ for $i\le K-1$, and $E[X_i\epsilon]=0$ for all $i$. Multiplying $Y=\sum_{j=1}^K\beta_jX_j+\epsilon$ by $X_i$ ($i\le K-1$) and taking expectations,
+
+$$ E[X_iY]=\sum_{j=1}^{K-1}\beta_jE[X_iX_j]+\beta_K E[X_iX_K]=\sum_{j=1}^{K-1}\big(\beta_j+\beta_{j,K}\beta_K\big)E[X_iX_j], $$
+
+where we used $E[X_iX_K]=\sum_{j=1}^{K-1}\beta_{j,K}E[X_iX_j]$ (multiply the regression of $X_K$ by $X_i$). The coefficients $\beta_j^{\prime}$ of the regression of $Y$ on $X_1,\dots,X_{K-1}$ satisfy the same equations, $E[X_iY]=\sum_{j=1}^{K-1}\beta_j^{\prime}E[X_iX_j]$ for $i=1,\dots,K-1$. These are the covariance equations of [Section 4.3](#sec-4-3), which have a unique solution, so $\beta_j^{\prime}=\beta_j+\beta_{j,K}\beta_K$.
+
+**The general rule.** Both results are special cases of one statement. Split the predictors into ones we keep and ones we leave out. For each left-out $X_k$, regress $X_k$ on all the kept predictors, and let $\beta_{j,k}$ be the coefficient on the kept predictor $X_j$. Then for each kept $j$,
+
+$$ \beta_j'=\beta_j+\sum_{k\ \text{left out}}\beta_{j,k}\,\beta_k . $$
+
+In $\beta_{j,k}$ the first index is always a kept predictor and the second a left-out one. When only one predictor is kept, each $\beta_{1,k}$ is a single-predictor slope; when only one predictor is left out, there is a single regression of $X_K$ on everything else.
+
 ### Simpson's paradox
 
 In the example above, $\beta_1^{\prime}$ and $\beta_1$ can even have different signs, depending on the relationship between the predictors. This effect is called <span class="term">[Simpson's "paradox"](https://en.wikipedia.org/wiki/Simpson%27s_paradox)</span> &mdash; not really a paradox, just a consequence of correlation between predictors shifting the single-predictor coefficient, as illustrated above.
@@ -349,7 +417,7 @@ A regression of monthly rent $Y$ (in dollars) on floor area $X_1$ (in square fee
 <ol type="a">
   <li>State the interpretation of $\hat\beta_1$ in one sentence, being explicit about what is held fixed.</li>
   <li>Predict the rent of a $700$ sq ft apartment $1.5$ miles from campus.</li>
-  <li>What does $R^2=0.62$ say, and what does it <em>not</em> say?</li>
+  <li>What are some other variables you would add to get a higher $R^2$?</li>
 </ol>
 </div>
 
@@ -360,8 +428,56 @@ For a binary predictor $X_1$, the two-predictor fit gives $\beta_1=2$ and $\beta
 
 <ol type="a">
   <li>Compute the single-predictor coefficient $\beta_1^{\prime}$ of $X_1$ alone.</li>
-  <li>Someone who only fits $X_1$ concludes that $X_1$ is unrelated to $Y$. In one sentence, say what they have missed.</li>
   <li>What would $\beta_1^{\prime}$ be if $X_1$ and $X_2$ were independent?</li>
+  <li>Can you compute the correlation coefficint betwen $X_1$ and $X_2$ from this information alone?</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Leaving out one of three predictors
+
+The model $Y=1+2X_1+X_2+4X_3+\epsilon$ is used to generate data and regressing $X_3$ on $X_1$ and $X_2$ gives $X_3=4+0.5X_1-0.5X_2+\delta$.
+
+<ol type="a">
+  <li>Draw the diagram for leaving out $X_3$, labeling every arrow with its coefficient (like we did above).</li>
+  <li>Compute the coefficients $\beta_1^{\prime}$ and $\beta_2^{\prime}$ in the regression of $Y$ on $X_1$ and $X_2$.</li>
+  <li>Which of the two coefficients changes sign, and why?</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Keeping one of three predictors
+
+The model $Y=X_1+3X_2-2X_3+\epsilon$ is used to generat the data. The slope of $X_2$ on $X_1$ is $\beta_{1,2}=0.4$, and the slope of $X_3$ on $X_1$ is $\beta_{1,3}=0.6$.
+
+<ol type="a">
+  <li>Compute the slope $\beta_1^{\prime}$ of the regression of $Y$ on $X_1$ alone.</li>
+  <li>$X_1$ is correlated with both left-out predictors, yet $\beta_1^{\prime}=\beta_1$. Explain why.</li>
+  <li>Would $\beta_1^{\prime}$ still equal $\beta_1$ if only $X_2$ were left out (keeping $X_1$ and $X_3$)? What else would you need to know to answer this?</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Adding a predictor
+
+A regression of $Y$ on $X_1$ alone gives slope $3$. After adding $X_2$, the coefficient on $X_1$ drops to $1$. The slope of $X_2$ on $X_1$ is $0.5$.
+
+<ol type="a">
+  <li>What is the coefficient on $X_2$ in the two-predictor model?</li>
+  <li>For what values of $\beta_2$ would adding $X_2$ have reversed the sign of the coefficient on $X_1$?</li>
+  <li>In the crime example above, $\hat\beta_{\rm pov}\approx-1.3$ and the slope of $X_{\rm pov}$ on $X_{\rm single}$ is $\hat\beta_{\rm single,pov}\approx0.43$. Starting from the two-predictor model, compute the coefficient on $X_{\rm single}$ when $X_{\rm pov}$ is left out, and explain why leaving out poverty barely matters while leaving out single-parent households matters a lot.</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### A predictor that doesn't affect the others
+
+In the model $Y=\beta_0+\beta_1X_1+\beta_2X_2+\beta_3X_3+\epsilon$, the predictor $X_3$ is uncorrelated with both $X_1$ and $X_2$, and $\beta_3$ is large.
+
+<ol type="a">
+  <li>What are $\beta_{1,3}$ and $\beta_{2,3}$ in the regression of $X_3$ on $X_1$ and $X_2$?</li>
+  <li>How do the coefficients on $X_1$ and $X_2$ change when $X_3$ is left out?</li>
+  <li>Leaving out $X_3$ does not bias the other coefficients. What does it change? (Think about $R^2$ and the residual variance.)</li>
 </ol>
 </div>
 
