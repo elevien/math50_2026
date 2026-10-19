@@ -35,8 +35,8 @@ Before going through Unit 1, please review [Unit 0]({{ '/unit0/' | relative_url 
 | Wed Oct 14 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.2 cont.: omitted variable bias; Simpson's paradox | [Slides]({{ '/unit4/slides-10-14.pdf' | relative_url }}) | |
 | Fri Oct 16 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.3 Covariance matrices: a linear algebra view | [Slides]({{ '/unit4/slides-10-16.pdf' | relative_url }}) | |
 | **Week 6** | | | | |
-| Mon Oct 19 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.4 Sample distribution and collinearity | [Slides]({{ '/unit4/slides-10-19.pdf' | relative_url }}) | |
-| Wed Oct 21 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.5 Categorical predictors and ANOVA | [Slides]({{ '/unit4/slides-10-21.pdf' | relative_url }}) | Last day of Midterm 2 material |
+| Mon Oct 19 | [Unit 4]({{ '/unit4/' | relative_url }}) | Omitted variables in AR processes; 4.5 Categorical predictors | [Slides]({{ '/unit4/slides-10-19.pdf' | relative_url }}) | |
+| Wed Oct 21 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.2 cont.: leaving out predictors; 4.4 Sample distribution and collinearity | [Slides]({{ '/unit4/slides-10-21.pdf' | relative_url }}) | Last day of Midterm 2 material |
 | Fri Oct 23 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.1 Interactions and residual plots | [Slides]({{ '/unit5/slides-10-23.pdf' | relative_url }}) | |
 | **Week 7** | | | | |
 | Mon Oct 26 | | Review for Midterm 2 | | Come with questions! |
