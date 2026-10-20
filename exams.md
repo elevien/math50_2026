@@ -266,13 +266,13 @@ The first term is the average spread of $Y$ within each value of $X$, and the se
 <div class="exercise" markdown="1">
 #### Problem 18
 
-Let $Z_X=(X-\mu_X)/\sigma_X$ and $Z_Y=(Y-\mu_Y)/\sigma_Y$ be the standardized versions of $X$ and $Y$. The **correlation** $\rho$ of $X$ and $Y$ is defined as the regression coefficient of $Z_X$ when regressing $Z_Y$ on $Z_X$, that is, $E[Z_Y\mid Z_X]=\rho Z_X$.
+Let $Z_X=(X-\mu_X)/\sigma_X$ and $Z_Y=(Y-\mu_Y)/\sigma_Y$ be the standardized versions of $X$ and $Y$. The **correlation** $\rho$ of $X$ and $Y$ is defined as the regression coefficient of $Z_X$ in the regression with response $Z_Y$ and predictor $Z_X$, that is, $E[Z_Y\mid Z_X]=\rho Z_X$.
 
 Suppose $Y \mid X \sim \text{Normal}(\beta_0+\beta_1X,\ \sigma_\epsilon^2)$.
 
 1. Derive $\rho=\beta_1\sigma_X/\sigma_Y$.
 1. Using $\operatorname{cov}(X,Y)=\beta_1\sigma_X^2$, show that $\rho=\operatorname{cov}(X,Y)/(\sigma_X\sigma_Y)$.
-1. Show that the noise variance in the regression of $Z_Y$ on $Z_X$ is $1-\rho^2$, and conclude that $-1\le\rho\le1$.
+1. Show that the noise variance in the regression with response $Z_Y$ and predictor $Z_X$ is $1-\rho^2$, and conclude that $-1\le\rho\le1$.
 </div>
 
 <div class="exercise" markdown="1">
@@ -323,26 +323,23 @@ Midterm 2 is not cumulative in the sense of having questions focusing on Unit 1 
 
 **Unit 3**
 
-- What the **law of large numbers** and the **Central Limit Theorem** say, and why they matter for inference. Use the CLT to approximate the distribution of a sum or a sample average.
-- **Estimators**: what makes something an estimator, and the difference between an estimator and the parameter it targets.
-- **Sample distribution**, and the distinction between a *sample* within a dataset and a *replicate* of the whole dataset.
-- **Bias** and **consistency**. Given a simple estimator, decide whether it is unbiased and whether it is consistent, and be able to construct an estimator that is one but not the other.
-- **Standard error** $\text{se}(\hat\mu)=\sigma/\sqrt N$, and why we usually substitute $\hat\sigma$.
-- **Confidence intervals**: compute a 95% CI, solve for the $n$ needed to hit a target width, and state the correct interpretation &mdash; and why it is *not* "there is a 95% chance $\theta$ lies in this interval."
-- Least squares: what RSS is, that $\hat\beta_1,\hat\beta_0$ (from Unit 2's covariance formula) minimize it, and estimating the slope and intercept from data by hand for a small dataset.
-- **Sample distribution of $\hat\beta_1,\hat\beta_0$**: treating the $x_i$ as fixed, write $\hat\beta_1$ as a weighted sum $\sum_i w_iY_i$ of the (random) $Y_i$, and show it is **unbiased** ($E[\hat\beta_1]=\beta_1$).
+- Understand the concept of an **estimators** and where the **sample distribution** comes from. Know the difference between an estimator and the true values of the paramater. 
+- Understand how we quantify bias in estimators with MSE and how this breaks down into **bias** and **variance**. Know the definiton of **consistency**. Given a simple estimator, you should be able to determine whether it is unbiased and whether it is consistent. You should also be able to construct an estimator that is one but not the other.
+- Know the definitions of **standard error** $\text{se}(\hat\mu)=\sigma/\sqrt N$ and  **confidence intervals**. Understand how these are computed both in theory and in practice (from data).
+- **Least squares**: You should understand how to obtaiin the formula for the least squares estimatoes of slope and intercept in a linear regression model. The formula for the sample distribution is given on the formula sheet, but you should understand how this derived. 
+- You should be familiar with quantities $R^2$, $\rho^2$, $\rho$ and their meaning, as well as how they are related to each other and the other paramaters.
+- Understand how regression models are used to model time series data as AR processes, and be able to apply the formula for regression models to this setting. Understand what it means for a process to be **stationary**
 
 **Unit 4**
 
-- **Study design**: randomized controlled trials versus cohort and other observational designs, what a **confounder** is, and when a regression coefficient may and may not be read causally.
-- Interpreting $\beta_i$ as an average difference *with the other predictors held fixed*, and what "controlling for" means.
-- The relationship $\beta_1' = \beta_1 + \beta_2\beta_{1,2}$ between the single- and multiple-predictor coefficients, and predicting how adding a predictor moves an existing coefficient.
-- **Simpson's paradox**: what it is, and the condition under which the sign flips.
-- The covariance matrix $\Sigma$, the system $\Sigma\beta = (\operatorname{cov}(X_1,Y),\operatorname{cov}(X_2,Y))^\top$, and solving it for two predictors.
-- Why adding a predictor never decreases $R^2$.
-- **Collinearity**: its effect on the joint sample distribution of $(\hat\beta_1,\hat\beta_2)$ and on the standard errors.
-- **Categorical predictors**: how many dummy variables, why one category is dropped, and how to interpret coefficients relative to the baseline.
-- Reading `statsmodels` output: coefficients, standard errors, $p$-values, confidence intervals and $R^2$.
+- Know the difference between **randomized controlled trials** (RCT) and **cohort study**. 
+- Be familiar with the multiple predictor regression model and know the interpretation of regression coefficients as well as how $R^2$ and $\rho^2$ are defined. 
+- Know and be able to derive the OVB formula, both for one single omitted variable (given on formula sheet) and many omitted variables (NOT given on formula sheet)
+- Know how **simpson's paradox** is explained by OVB formula. 
+- Understand adding a predictor never decreases $R^2$ (or $\rho^2$).
+- Be able to interpret regression model output from `statsmodels` (you don't need to reproduce the code that does the fit) as we did in class. In particular, know what the various numbers mean and be able to related output from different fitted models using OVB formulas. 
+- Understand how to include **categorical predictors** using dummy variables, why one category is dropped. 
+- Understand how correlations between predictors influences the joint sample distributions of $(\hat\beta_1,\hat\beta_2)$. 
 
 
 ### Practice problems
@@ -354,7 +351,6 @@ Let $X_1,\dots,X_{100}$ be iid with $E[X_i]=3$ and $\operatorname{var}(X_i)=4$, 
 
 1. Compute $E[S]$ and $\operatorname{var}(S)$.
 1. Write the approximate distribution of $S$, and say what justifies the approximation.
-1. Estimate $P(S>340)$ using the bell curve shape.
 1. Give the approximate distribution of $\overline X$, and its standard deviation.
 </div>
 
@@ -368,6 +364,8 @@ Let $X_1,\dots,X_N$ be iid $\text{Bernoulli}(q)$ and write $Y=\sum_i X_i$. For e
 1. $\hat q_c = X_1$
 
 Then: which of these is unbiased but *not* consistent, and which is consistent but *not* unbiased? Explain in one sentence each why that combination is possible.
+
+Finally, for $N=10$ and $q=0.3$, compute the MSE of $\hat q_a$ and of $\hat q_b$, splitting each into variance and squared bias. Which has the smaller MSE?
 </div>
 
 <div class="exercise" markdown="1">
@@ -377,7 +375,7 @@ A quantity is Normally distributed with known $\sigma=6$. You collect $n=36$ sam
 
 1. Compute $\text{se}(\hat\mu)$ and the approximate 95% confidence interval.
 1. How many samples would you need for the 95% confidence interval to be no wider than $\overline X \pm 0.5$?
-1. A classmate says "there is a 95% chance the true mean is between 19.5 and 23.5." Say what is wrong with this and give the correct statement.
+1. In practice $\sigma$ is unknown. If the sample standard deviation of the $36$ samples is $\hat\sigma=5.1$, recompute the 95% confidence interval.
 </div>
 
 <div class="exercise" markdown="1">
@@ -386,7 +384,7 @@ A quantity is Normally distributed with known $\sigma=6$. You collect $n=36$ sam
 Fit a single-predictor regression to the four points $(1,1)$, $(2,3)$, $(3,4)$, $(4,6)$.
 
 1. Compute $\hat\beta_1$ and $\hat\beta_0$.
-1. Compute the four residuals and the RSS.
+1. Compute the four residuals and the sum of squared residuals (SSR).
 1. Compute $R^2$.
 1. Now add the point $(20,2)$. Without redoing the calculation, say which direction $\hat\beta_1$ moves and why.
 </div>
@@ -427,9 +425,9 @@ For each study, name the design and say whether a difference in average $Y$ betw
 <div class="exercise" markdown="1">
 #### Problem 8
 
-The true model is $Y = 1 + 2X_1 + 4X_2 + \epsilon_1$, and the predictors satisfy $X_2 = 0.5 + cX_1 + \epsilon_2$, with $E[\epsilon_1]=E[\epsilon_2]=0$.
+The data is generated from $Y = 1 + 2X_1 + 4X_2 + \epsilon_1$, where the predictors satisfy $X_2 = 0.5 + cX_1 + \epsilon_2$, with $E[\epsilon_1]=E[\epsilon_2]=0$.
 
-1. A researcher only has $X_1$ and regresses $Y$ on it alone. Give $\beta_1'$ in terms of $c$.
+1. A researcher only has $X_1$ and fits a regression with response $Y$ and $X_1$ as the only predictor. Give $\beta_1'$ in terms of $c$.
 1. Evaluate $\beta_1'$ for $c=0.5$ and for $c=-0.5$.
 1. For which values of $c$ does this model exhibit Simpson's paradox?
 1. In one sentence, say what the researcher would wrongly conclude when $c=-0.6$.
@@ -438,7 +436,7 @@ The true model is $Y = 1 + 2X_1 + 4X_2 + \epsilon_1$, and the predictors satisfy
 <div class="exercise" markdown="1">
 #### Problem 9
 
-Monthly rent $Y$ (dollars) is regressed on floor area $X_1$ (square feet) and distance from campus $X_2$ (miles), giving
+A regression with monthly rent $Y$ (dollars) as the response and floor area $X_1$ (square feet) and distance from campus $X_2$ (miles) as the predictors gives
 
 ```text
                  coef    std err          t      P>|t|      [0.025      0.975]
@@ -455,6 +453,168 @@ with $R^2=0.62$.
 1. Which coefficient is more precisely determined, relative to its size? Justify from the output.
 1. A third predictor, "number of rooms," is added and the standard error on $X_1$ triples while $R^2$ barely moves. What is going on, and what does it say about the joint sample distribution of the coefficients?
 1. The landlord adds a categorical predictor for neighbourhood, with five neighbourhoods. How many new columns appear in the model, and how would you compute the expected rent difference between two non-baseline neighbourhoods?
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 10
+
+Consider the AR(1) process $Y_t=\rho Y_{t-1}+\epsilon_t$ with $\epsilon_t\sim\text{Normal}(0,\sigma_\epsilon^2)$.
+
+1. What does it mean for the process to reach a stationary distribution as $t\to\infty$, and for which values of $\rho$ does this happen?
+1. Assuming stationarity, show that $\operatorname{var}(Y_t)=\sigma_\epsilon^2/(1-\rho^2)$.
+1. In the regression with response $Y_t$ and predictor $Y_{t-1}$, show that the slope is $\rho$ and that $R^2=\rho^2$.
+1. Use the omitted variable bias formula to find the slope when the response is $Y_t$ and the only predictor is $Y_{t-2}$. What is the slope when the only predictor is $Y_{t-k}$?
+1. With $\rho=0.9$, $\sigma_\epsilon=2$ and $N=200$ observations, compute the approximate standard error of the slope in part 3.
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 11
+
+The data is generated from $Y=2+X_1+3X_2-2X_3+\epsilon$, where $\epsilon$ is uncorrelated with the predictors. In a single-predictor regression with predictor $X_1$, the slope is $0.5$ when the response is $X_2$ and $1.2$ when the response is $X_3$.
+
+1. Derive the formula for the slope $\beta_1'$ of the regression with response $Y$ and $X_1$ as the only predictor, when both $X_2$ and $X_3$ are left out.
+1. Compute $\beta_1'$. Does $X_1$ look more or less important than it is?
+1. For what value of the slope with response $X_3$ and predictor $X_1$ would the regression with response $Y$ and only predictor $X_1$ show no association at all?
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 12
+
+Treat $x_1,\dots,x_N$ as fixed and let $Y_i=\beta_0+\beta_1x_i+\epsilon_i$ with independent $\epsilon_i\sim\text{Normal}(0,\sigma_\epsilon^2)$.
+
+1. Show that $E[\hat\beta_1]=\beta_1$.
+1. Show that $\operatorname{var}(\hat\beta_1)=\sigma_\epsilon^2/\sum_i(x_i-\bar x)^2$, and explain why this is approximately $\sigma_\epsilon^2/(N\sigma_X^2)$, as on the formula sheet.
+1. You can choose $N$ values of $x$ anywhere in $[0,1]$. Which choice gives the smallest standard error for $\hat\beta_1$?
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 13
+
+A single-predictor regression with response $Y$ and predictor $X$ has slope $\beta_1=-1.4$, where $\sigma_X=5$ and $\sigma_Y=10$.
+
+1. What is the correlation $\rho$ between $X$ and $Y$?
+1. What is $\rho^2$, and what does it tell you?
+1. If we swap the roles, with $X$ as the response and $Y$ as the predictor, what are the slope and $\rho^2$?
+1. What is the standard deviation of the noise, $\sigma_\epsilon$?
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 14
+
+1. Explain why adding a predictor to a regression can never increase the sum of squared residuals (SSR), and so can never decrease $R^2$. (Hint: what happens if the new coefficient is set to zero?)
+1. A student adds a column of pure random noise, unrelated to $Y$, as a predictor. What happens to $R^2$ in the data, and to the population quantity $\rho^2$?
+1. With response $Y$, the regression with only predictor $X_1$ has $R^2=0.30$, and the regression with only predictor $X_2$ has $R^2=0.25$. What can you say about $R^2$ for the regression with both predictors? What is it if $X_1$ and $X_2$ are uncorrelated?
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 15
+
+Let $X_1,\dots,X_N$ be iid $\text{Normal}(\mu,\sigma^2)$. Consider the estimators
+$$\hat\mu_1=\overline X+\frac1N,\qquad \hat\mu_2=\frac{X_1+X_N}{2},\qquad \hat\mu_3=\frac{N}{N+1}\overline X.$$
+
+1. For each, compute the bias, the variance and the MSE.
+1. Which are consistent? Which are unbiased?
+1. For which values of $\mu$ does $\hat\mu_3$ have a smaller MSE than $\overline X$? Evaluate your answer for $N=10$.
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 16
+
+In a poll of $N=400$ voters, $216$ support a ballot measure.
+
+1. Estimate the proportion $q$ who support the measure, and compute its standard error from the data.
+1. Compute an approximate 95% confidence interval for $q$.
+1. How many voters would need to be polled for the 95% confidence interval to be $\hat q\pm0.02$? (Use your estimate of $q$.)
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 17
+
+A school offers an optional tutoring program. Students who chose to attend have final grades $8$ points higher, on average, than students who did not.
+
+1. Is this a randomized controlled trial or a cohort study? Name a plausible confounder.
+1. A regression with final grade as the response and attendance ($0/1$) and prior GPA as the predictors gives a coefficient of $3$ on attendance. Students who attended had prior GPAs $0.5$ higher, on average. Use the omitted variable bias formula to find the coefficient on prior GPA.
+1. Describe a study design in which the single-predictor comparison would estimate the effect of tutoring, and explain using the omitted variable bias formula why it works.
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 18
+
+A regression with daily bike rentals $Y$ (hundreds) as the response and temperature (°C) and season as the predictors, with winter as the baseline, gives:
+
+```text
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+const         10.0000      1.200      8.333      0.000       7.648      12.352
+temp           1.5000      0.080     18.750      0.000       1.343       1.657
+spring         4.0000      1.100      3.636      0.000       1.844       6.156
+summer         6.5000      1.250      5.200      0.000       4.050       8.950
+fall           5.0000      1.150      4.348      0.000       2.746       7.254
+```
+
+1. Why are there three season variables and not four?
+1. Predict the rentals on a summer day at $20$°C.
+1. What is the expected difference between a summer day and a fall day at the same temperature?
+1. If summer were used as the baseline instead, what would the constant and the coefficients on winter, spring, fall and temperature be?
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 19
+
+Two standardized predictors $X_1,X_2$ have correlation $\rho$, and $Y=\beta_1X_1+\beta_2X_2+\epsilon$ with $\sigma_\epsilon=2$ and $N=100$. For this model $\text{se}(\hat\beta_1)=\sigma_\epsilon/\sqrt{N(1-\rho^2)}$ and $\text{corr}(\hat\beta_1,\hat\beta_2)=-\rho$.
+
+1. Compute $\text{se}(\hat\beta_1)$ for $\rho=0$, $0.8$ and $0.99$.
+1. Sketch the sample distribution of $(\hat\beta_1,\hat\beta_2)$ for $\rho=0$ and for $\rho=0.8$.
+1. For $\rho=0.99$, a colleague finds that neither coefficient is significant and concludes that neither predictor is related to $Y$. Explain why this can be wrong, and which combination of the coefficients is still estimated precisely.
+1. Which combination is estimated precisely when $\rho=-0.8$?
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 20
+
+A random walk is $Y_t=Y_{t-1}+\epsilon_t$ with $Y_0=0$ and independent $\epsilon_t\sim\text{Normal}(0,\sigma_\epsilon^2)$.
+
+1. Compute $\operatorname{var}(Y_t)$ as a function of $t$. What happens to it as $t\to\infty$? Does the random walk have a stationary distribution?
+1. For comparison, take the AR(1) process $Y_t=\rho Y_{t-1}+\epsilon_t$ with $\lvert\rho\rvert<1$ and $Y_0=0$. Compute $\operatorname{var}(Y_t)$ and its limit as $t\to\infty$.
+1. For the log price of bitcoin, the slope of the regression with response $Y_t$ and predictor $Y_{t-1}$ is about $0.9996$. What does this suggest about the process?
+1. Let $D_t=Y_t-Y_{t-1}$ be the daily changes of a random walk. What is the distribution of $D_t$, and does it change with $t$? What is the slope of the regression with response $D_t$ and predictor $D_{t-1}$?
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 21
+
+The diagram shows a regression with response $Y$ and predictors $X_1$, $X_2$ and $X_3$. The arrows into $Y$ are the coefficients in the model with all three predictors. The arrows from $X_1$ to $X_2$ and $X_3$ are the slopes of single-predictor regressions with $X_1$ as the predictor and $X_2$ or $X_3$ as the response.
+
+<img src="{{ '/public/exam_practice/midterm2_ovb_1.svg' | relative_url }}" alt="Diagram with predictors X1, X2, X3 stacked vertically and response Y. Arrows into Y: from X1 labeled 2, from X2 labeled 3, from X3 labeled -1. Arrows from X1 to X2 labeled 0.5 and from X1 to X3 labeled 2." style="width: 100%; max-width: 480px;">
+
+1. Compute the slope $\beta_1'$ of the regression with response $Y$ and $X_1$ as the only predictor.
+1. Which left-out predictor changes the coefficient on $X_1$ the most?
+1. If the coefficient on $X_3$ were $-3$ instead of $-1$, what would $\beta_1'$ be? What is this an example of?
+1. For what value of the slope from $X_1$ to $X_3$ would $\beta_1'=0$?
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 22
+
+The diagram shows a model for exam scores, with arrows as in Problem 21.
+
+<img src="{{ '/public/exam_practice/midterm2_ovb_2.svg' | relative_url }}" alt="Diagram with predictors hours studied (X1), prior GPA (X2) and hours of sleep (X3) stacked vertically and response exam score (Y). Arrows into exam score: from hours studied labeled 2, from prior GPA labeled 10, from hours of sleep labeled 1. Arrows from hours studied to prior GPA labeled 0.1 and to hours of sleep labeled -0.5." style="width: 100%; max-width: 560px;">
+
+1. A study records only hours studied and exam scores. What slope will it find for hours studied?
+1. Students who study more tend to have higher prior GPAs but sleep less. Explain how each of these changes the coefficient on hours studied.
+1. Does the study overstate or understate the effect of an extra hour of studying, holding prior GPA and sleep fixed?
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 23
+
+The diagram shows a regression with four predictors, with arrows as in Problem 21.
+
+<img src="{{ '/public/exam_practice/midterm2_ovb_3.svg' | relative_url }}" alt="Diagram with predictors X1, X2, X3, X4 stacked vertically and response Y. Arrows into Y: from X1 labeled 1, from X2 labeled 4, from X3 labeled -2, from X4 labeled 5. Arrows from X1 to X2 labeled 0.5, to X3 labeled 1, and to X4 labeled 0." style="width: 100%; max-width: 480px;">
+
+1. Compute the slope $\beta_1'$ of the regression with response $Y$ and $X_1$ as the only predictor.
+1. Your answer should equal the coefficient on $X_1$ in the full model, even though $X_2$, $X_3$ and $X_4$ all affect $Y$. Explain why $X_4$ contributes nothing, and what happens with $X_2$ and $X_3$.
+1. What would $\beta_1'$ be if the slope from $X_1$ to $X_4$ were $0.2$ instead of $0$?
 </div>
 
 
