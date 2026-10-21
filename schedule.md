@@ -37,19 +37,19 @@ Before going through Unit 1, please review [Unit 0]({{ '/unit0/' | relative_url 
 | **Week 6** | | | | |
 | Mon Oct 19 | [Unit 4]({{ '/unit4/' | relative_url }}) | Omitted variables in AR processes; 4.5 Categorical predictors | [Slides]({{ '/unit4/slides-10-19.pdf' | relative_url }}) | |
 | Wed Oct 21 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.2 cont.: leaving out predictors; 4.4 Sample distribution and collinearity | [Slides]({{ '/unit4/slides-10-21.pdf' | relative_url }}) | Last day of Midterm 2 material |
-| Fri Oct 23 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.1 Interactions and residual plots | [Slides]({{ '/unit5/slides-10-23.pdf' | relative_url }}) | |
+| Fri Oct 23 | [Unit 4]({{ '/unit4/' | relative_url }}) | More examples of multiple-predictor regression | [Slides]({{ '/unit4/slides-10-23.pdf' | relative_url }}) |  |
 | **Week 7** | | | | |
 | Mon Oct 26 | | Review for Midterm 2 | | Come with questions! |
 | Wed Oct 28 | | **Midterm 2**  | [Slides]({{ '/unit5/slides-10-28.pdf' | relative_url }}) |  |
-| Fri Oct 30 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.2 Feature maps for nonlinear models | [Slides]({{ '/unit5/slides-10-30.pdf' | relative_url }}) | Assignment 3 due on canvas|
+| Fri Oct 30 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.1 Interactions and residual plots | [Slides]({{ '/unit5/slides-10-30.pdf' | relative_url }}) | Assignment 3 due on canvas |
 | **Week 8** | | | | |
-| Mon Nov 2 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.3 Cross-validation and the bias-variance tradeoff | [Slides]({{ '/unit5/slides-11-02.pdf' | relative_url }}) | |
-| Wed Nov 4 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.4 Orthogonality and Fourier features | [Slides]({{ '/unit5/slides-11-04.pdf' | relative_url }}) | |
-| Fri Nov 6 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.1 Bayesian inference: simple examples | [Slides]({{ '/unit6/slides-11-06.pdf' | relative_url }}) | |
+| Mon Nov 2 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.2 Feature maps for nonlinear models | [Slides]({{ '/unit5/slides-11-02.pdf' | relative_url }}) |  |
+| Wed Nov 4 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.3 Cross-validation and the bias-variance tradeoff | [Slides]({{ '/unit5/slides-11-04.pdf' | relative_url }}) |  |
+| Fri Nov 6 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.4 Orthogonality and Fourier features | [Slides]({{ '/unit5/slides-11-06.pdf' | relative_url }}) |  |
 | **Week 9** | | | | |
-| Mon Nov 9 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.2 Bayesian linear regression | [Slides]({{ '/unit6/slides-11-09.pdf' | relative_url }}) | |
-| Wed Nov 11 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.3 Regularization view of priors | [Slides]({{ '/unit6/slides-11-11.pdf' | relative_url }}) | |
-| Fri Nov 13 | | TBD | | Assignment 4 due on canvas |
+| Mon Nov 9 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.1 Bayesian inference: simple examples | [Slides]({{ '/unit6/slides-11-09.pdf' | relative_url }}) |  |
+| Wed Nov 11 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.2 Bayesian linear regression | [Slides]({{ '/unit6/slides-11-11.pdf' | relative_url }}) |  |
+| Fri Nov 13 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.3 Regularization view of priors | [Slides]({{ '/unit6/slides-11-13.pdf' | relative_url }}) | Assignment 4 due on canvas |
 | **Week 10** | | | | |
 | Mon Nov 16 | | Review for the final; [Unit 7]({{ '/unit7/' | relative_url }}) topics if time allows | | Come with questions! |
 
