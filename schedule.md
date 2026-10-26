@@ -39,7 +39,7 @@ Before going through Unit 1, please review [Unit 0]({{ '/unit0/' | relative_url 
 | Wed Oct 21 | [Unit 4]({{ '/unit4/' | relative_url }}) | 4.2 cont.: leaving out predictors; 4.4 Sample distribution and collinearity | [Slides]({{ '/unit4/slides-10-21.pdf' | relative_url }}) | Last day of Midterm 2 material |
 | Fri Oct 23 | [Unit 4]({{ '/unit4/' | relative_url }}) | More examples of multiple-predictor regression | [Slides]({{ '/unit4/slides-10-23.pdf' | relative_url }}) |  |
 | **Week 7** | | | | |
-| Mon Oct 26 | | Review for Midterm 2 | | Come with questions! |
+| Mon Oct 26 | | Review for Midterm 2 | [Slides]({{ '/unit4/slides-10-26.pdf' | relative_url }}) | Come with questions! |
 | Wed Oct 28 | | **Midterm 2**  | |  |
 | Fri Oct 30 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.1 Interactions and residual plots | [Slides]({{ '/unit5/slides-10-30.pdf' | relative_url }}) | Assignment 3 due on canvas |
 | **Week 8** | | | | |
