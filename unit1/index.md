@@ -200,7 +200,7 @@ Two random variables $X, Y$ are <span class="term">[independent](https://en.wiki
 
 $$ P(X=x, Y=y) = P(X=x) P(Y=y) $$
 
-for all $x \in S_X$ and $y \in S_Y$. This will make more sense once we introduce conditional probability, below.
+for all $x \in S_X$ and $y \in S_Y$.
 
 <div class="example" markdown="1">
 #### Example (gene model)
@@ -232,10 +232,6 @@ $$ P(x) = P_X(x) = \sum_{y \in S_Y} P(x,y). $$
 Notice that for independent variables,
 
 $$ \sum_{y \in S_Y} P(x,y) = P(x) \sum_{y \in S_Y} P(y) = P(x). $$
-
-The table below starts out as the gene-mutation joint distribution from the example above. Its margins are the sums $P(y_A)=\sum_{y_B}P(y_A,y_B)$; conditioning divides a row by its margin, which is the definition $P(y_A\mid y_B)=P(y_A,y_B)/P(y_B)$ in table form. Before clicking anything, try computing $P(Y_A=1)$, $P(Y_B=0)$ and $P(Y_A=1 \mid Y_B=0)$ yourself, then check your answers, You can regenerate the table for a fresh one to practice on.
-
-{% include_relative demos/joint.html %}
 
 <div class="example" markdown="1">
 #### Example (calculating probabilities from a specified joint distribution)
@@ -311,6 +307,10 @@ It's useful to write this in terms of joint and marginal probabilities. If $N(E)
 
 $$ P(Y_A=1 \mid Y_B=0) = \frac{N(Y_A=1, Y_B=0)}{N(Y_B=0)} = \frac{N(Y_A=1,Y_B=0)/n}{N(Y_B=0)/n} = \frac{P(Y_A=1, Y_B=0)}{P(Y_B=0)}. $$
 
+The table below starts out as the gene-mutation joint distribution from the example above. Its margins are the sums $P(y_A)=\sum_{y_B}P(y_A,y_B)$; conditioning divides a row by its margin, which is the definition $P(y_A\mid y_B)=P(y_A,y_B)/P(y_B)$ in table form. Before clicking anything, try computing $P(Y_A=1)$, $P(Y_B=0)$ and $P(Y_A=1 \mid Y_B=0)$ yourself, then check your answers, You can regenerate the table for a fresh one to practice on.
+
+{% include_relative demos/joint.html %}
+
 <div class="example" markdown="1">
 #### Example (gene model, continued)
 
@@ -358,7 +358,7 @@ $$ P(x\mid y) = \frac{P(y\mid x)P(x)}{P(y)}. $$
 <div class="example" markdown="1">
 #### Example (colon cancer, continued: conditioning the other way)
 
-In Section 1.1 we computed $P(C=1\mid G=M) \approx 0.0043$: the chance of an early diagnosis, given someone is male. Bayes' formula lets us flip the conditioning around and ask the reverse question &mdash; given someone was diagnosed before $50$, what's the chance they're male?
+In Section 1.1 we asked whether knowing someone's gender changes their risk. Now we can compute $P(C=1\mid G=M) = P(C=1,G=M)/P(G=M) = 0.0021/0.492 \approx 0.0043$: the chance of an early diagnosis, given someone is male. Bayes' formula lets us flip the conditioning around and ask the reverse question &mdash; given someone was diagnosed before $50$, what's the chance they're male?
 
 $$ P(G=M \mid C=1) = \frac{P(C=1\mid G=M)\,P(G=M)}{P(C=1)} = \frac{0.0043 \times 0.492}{0.004} \approx 0.53, $$
 

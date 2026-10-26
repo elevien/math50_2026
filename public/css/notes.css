@@ -631,4 +631,6 @@ footer.page-footer a { color: var(--link); }
 
   h1, h2, h3, h4 { break-after: avoid; }
   pre, svg, img { break-inside: avoid; }
+  /* Wide code output (e.g. regression tables) is cut off at full size on paper. */
+  pre { font-size: 0.72em; }
 }

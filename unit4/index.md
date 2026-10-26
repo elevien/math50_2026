@@ -6,7 +6,7 @@ unit_subtitle: "Study design, multiple predictors, covariance matrices, collinea
 toc:
   - {href: "#sec-4-1", label: "4.1 Study design & confounding"}
   - {href: "#sec-4-2", label: "4.2 Multiple-predictor regression"}
-  - {href: "#sec-4-3", label: "4.3 Covariance matrix & estimation"}
+  - {href: "#sec-4-3", label: "4.3 Covariance matrix & estimation", optional: true}
   - {href: "#sec-4-4", label: "4.4 Sample distribution & collinearity"}
   - {href: "#sec-4-5", label: "4.5 Categorical predictors"}
   - {href: "#problems", label: "Problems"}
@@ -57,11 +57,7 @@ Recall the population of people from Unit 1, who differ in eye color and whether
 <img src="{{ '/unit4/fig/people_by_eye.svg' | relative_url }}" alt="Twenty-four cartoon people in two groups of twelve, blue-eyed and brown-eyed. Seven of the twelve blue-eyed people smile; five of the twelve brown-eyed people smile." style="width: 100%; max-width: 640px;">
 </figure>
 
-Blue-eyed people smile more often: $P(Y=1\mid X=1)=7/12$ but $P(Y=1\mid X=0)=5/12$. Do blue eyes make people smile? Now also record $X_2=1$ if a person has ears and $X_2=0$ if they do not:
-
-<figure style="margin: 1em 0;">
-<img src="{{ '/unit4/fig/people_by_ears.svg' | relative_url }}" alt="The same people sorted by ears and eye color. Among people with ears, 6 of 8 blue-eyed and 3 of 4 brown-eyed people smile. Among people without ears, 1 of 4 blue-eyed and 2 of 8 brown-eyed people smile." style="width: 100%; max-width: 640px;">
-</figure>
+Blue-eyed people smile more often: $P(Y=1\mid X=1)=7/12$ but $P(Y=1\mid X=0)=5/12$. Do blue eyes make people smile? Now let $X_2=1$ if a person has ears and $X_2=0$ if not. Among people with ears, $6$ of the $8$ blue-eyed and $3$ of the $4$ brown-eyed people smile; among people without ears, $1$ of the $4$ blue-eyed and $2$ of the $8$ brown-eyed people smile.
 
 Among people with the *same* ears, eye color makes no difference: $3/4$ smile with ears and $1/4$ without, whatever their eyes. Blue-eyed people are simply more likely to have ears ($8/12$ vs. $4/12$), and ears go with smiling. So $X_2$ is a confounder, meaning it produces an association between eye color and smiling even though, among people with the same ears, there is none. In regression form (see the next section), the conditional averages are
 
@@ -183,7 +179,7 @@ where I'm using the shorthand $E[Y\mid X] = E[Y\mid(X_1,X_2)]$ to mean the expec
 
 The demo below slices the surface both ways: the orange line holds $X_2$ fixed and varies $X_1$, the blue line holds $X_1$ fixed and varies $X_2$. Drag either slider and watch its own line's *slope* stay put while only its height moves &mdash; that invariance is exactly what the statement above says.
 
-Notice that even though we're conditioning on both variables, the slope $\beta_1$ doesn't depend on which value of $X_2$ we condition on &mdash; we get the interpretation of $\beta_2$ by swapping the roles of $X_1,X_2$. This is a consequence of linearity, and it's one of the core assumptions of multiple-predictor regression that we didn't encounter with a single predictor: the "effect" of $X_1$ doesn't depend on the value of $X_2$ (and vice versa).
+Notice that even though we're conditioning on both variables, the slope $\beta_1$ doesn't depend on which value of $X_2$ we condition on &mdash; we get the interpretation of $\beta_2$ by swapping the roles of $X_1,X_2$. This is a consequence of linearity.
 
 {% include_relative demos/plane.html %}
 
@@ -355,7 +351,7 @@ Now $\beta_{j,K}$ is a coefficient in a *multiple* regression (of $X_K$ on all t
 
 $$ E[X_iY]=\sum_{j=1}^{K-1}\beta_jE[X_iX_j]+\beta_K E[X_iX_K]=\sum_{j=1}^{K-1}\big(\beta_j+\beta_{j,K}\beta_K\big)E[X_iX_j], $$
 
-where we used $E[X_iX_K]=\sum_{j=1}^{K-1}\beta_{j,K}E[X_iX_j]$ (multiply the regression of $X_K$ by $X_i$). The coefficients $\beta_j^{\prime}$ of the regression of $Y$ on $X_1,\dots,X_{K-1}$ satisfy the same equations, $E[X_iY]=\sum_{j=1}^{K-1}\beta_j^{\prime}E[X_iX_j]$ for $i=1,\dots,K-1$. These are the covariance equations of [Section 4.3](#sec-4-3), which have a unique solution, so $\beta_j^{\prime}=\beta_j+\beta_{j,K}\beta_K$.
+where we used $E[X_iX_K]=\sum_{j=1}^{K-1}\beta_{j,K}E[X_iX_j]$ (multiply the regression of $X_K$ by $X_i$). The coefficients $\beta_j^{\prime}$ of the regression of $Y$ on $X_1,\dots,X_{K-1}$ satisfy the same equations, $E[X_iY]=\sum_{j=1}^{K-1}\beta_j^{\prime}E[X_iX_j]$ for $i=1,\dots,K-1$. These equations have a unique solution as long as no kept predictor is an exact linear combination of the others, so $\beta_j^{\prime}=\beta_j+\beta_{j,K}\beta_K$. (The optional [Section 4.3](#sec-4-3) writes these covariance equations in matrix form and uses them to estimate the coefficients.)
 
 **The general rule.** Both results are special cases of one statement. Split the predictors into ones we keep and ones we leave out. For each left-out $X_k$, regress $X_k$ on all the kept predictors, and let $\beta_{j,k}$ be the coefficient on the kept predictor $X_j$. Then for each kept $j$,
 
@@ -403,8 +399,7 @@ The key point: the error term $\epsilon^{\prime}$ in the reduced (single-predict
 
 $$ \operatorname{var}(\epsilon') = \operatorname{var}(Y\mid X_1) = \operatorname{var}(\beta_1X_1+\beta_2X_2+\epsilon\mid X_1) = \beta_2^2\,\operatorname{var}(X_2\mid X_1)+\sigma_\epsilon^2 \ge \sigma_\epsilon^2, $$
 
-hence $R^2\_{2\,\text{pred}} \ge R^2\_{1\,\text{pred}}$, with equality only when the extra term vanishes: either $\beta_2=0$ ($X_2$ has no effect on $Y$) or $\text{var}(X_2\mid X_1)=0$ ($X_2$ is already determined by $X_1$). So adding predictors either improves the fit or leaves it unchanged &mdash; never worse.
-
+hence $R^2\_{2\,\text{pred}} \ge R^2\_{1\,\text{pred}}$, with equality only when the extra term vanishes: either $\beta_2=0$ ($X_2$ has no effect on $Y$) or $\text{var}(X_2\mid X_1)=0$ ($X_2$ is already determined by $X_1$). So adding predictors either improves the fit or leaves it unchanged. 
 
 <details class="practice-section" markdown="1">
 <summary><h3>Drill</h3></summary>
@@ -481,24 +476,40 @@ In the model $Y=\beta_0+\beta_1X_1+\beta_2X_2+\beta_3X_3+\epsilon$, the predicto
 </ol>
 </div>
 
+<div class="exercise" markdown="1">
+#### Recovering the correlation between predictors
+
+Three regressions are fit to the same data: $Y$ on $X_1$ alone gives slope $\beta_1^{\prime}=3.2$, $Y$ on $X_2$ alone gives slope $\beta_2^{\prime}=4.8$, and $Y$ on both predictors gives $\beta_1=2$ and $\beta_2=3$.
+
+<ol type="a">
+  <li>Use $\beta_1^{\prime}=\beta_1+\beta_2\beta_{1,2}$ to find $\beta_{1,2}$, the slope from regressing $X_2$ on $X_1$.</li>
+  <li>Swap the roles of $X_1$ and $X_2$ to find $\beta_{2,1}$, the slope from regressing $X_1$ on $X_2$.</li>
+  <li>Show that $\beta_{1,2}\beta_{2,1}=\rho_{1,2}^2$, where $\rho_{1,2}$ is the correlation between $X_1$ and $X_2$. Use this to find $\rho_{1,2}$, including its sign.</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Omitted variable bias with nonzero means
+
+Take $Y=\beta_0+\beta_1X_1+\beta_2X_2+\epsilon$ with $E[\epsilon]=0$ and $\text{cov}(X_1,\epsilon)=0$, but with $\beta_0$, $E[X_1]$ and $E[X_2]$ arbitrary.
+
+<ol type="a">
+  <li>Starting from $\text{cov}(X_1,Y)=E\big[(X_1-E[X_1])(Y-E[Y])\big]$, show that $\text{cov}(X_1,Y)=\beta_1\sigma_{X_1}^2+\beta_2\,\text{cov}(X_1,X_2)$. Why does $\beta_0$ drop out?</li>
+  <li>Conclude that $\beta_1^{\prime}=\beta_1+\beta_2\beta_{1,2}$ still holds.</li>
+  <li>Write the regression of $X_2$ on $X_1$ as $X_2=\gamma_0+\beta_{1,2}X_1+\delta$. Using $\beta_0^{\prime}=E[Y]-\beta_1^{\prime}E[X_1]$, show that the single-predictor intercept is $\beta_0^{\prime}=\beta_0+\beta_2\gamma_0$.</li>
+</ol>
+</div>
+
 </details>
 
-## 4.3 Covariance matrix and estimation of regression coefficients {#sec-4-3}
+<details class="optional-section" id="sec-4-3" open markdown="1">
+<summary><h2>4.3 Covariance matrix and estimation of regression coefficients</h2> <span class="optional-badge">(optional)</span></summary>
 
-Here we derive formulas for the regression coefficients in terms of the covariances between predictors and between predictors and the response. This (1) clarifies the relationship between single- and multi-predictor coefficients, and (2) gives us an estimator for the multi-predictor case. We're generalizing the single-predictor relationship $\text{cov}(X,Y)=\beta_1\sigma_X^2$.
+Here we write the regression coefficients in terms of the covariances between predictors and between predictors and the response, and use this to estimate the coefficients from data in the multi-predictor case. We're generalizing the single-predictor relationship $\text{cov}(X,Y)=\beta_1\sigma_X^2$.
 
-Consider a two-predictor model, and set $\beta_0=E[X_1]=E[X_2]=0$ for simplicity (these cancel out in the end &mdash; check for yourself that everything still works when they're not zero!). Then $\text{cov}(X_1,Y)=E[X_1Y]$, and just as in the single-predictor case (but now conditioning on *both* predictors in the tower property),
+Consider a two-predictor model. In the proof of the omitted variable bias formula ([Section 4.2](#sec-4-2)) we showed, using bilinearity of covariance, that
 
-$$
-\begin{aligned}
-\text{cov}(X_1,Y)
-&= E[X_1Y] \\
-&= E[X_1E[Y\mid X_1,X_2]] \\
-&= E[X_1(\beta_1X_1+\beta_2X_2)] \\
-&= \beta_1E[X_1^2]+\beta_2E[X_1X_2] \\
-&= \beta_1\sigma_{X_1}^2 + \beta_2\,\text{cov}(X_1,X_2).
-\end{aligned}
-$$
+$$ \text{cov}(X_1,Y)=\beta_1\sigma_{X_1}^2+\beta_2\,\text{cov}(X_1,X_2). $$
 
 Doing the same for $X_2$ gives two equations:
 
@@ -512,7 +523,7 @@ as
 
 $$ \begin{bmatrix} \text{cov}(X_1,Y) \\ \text{cov}(X_2,Y) \end{bmatrix} = \Sigma \begin{bmatrix} \beta_1 \\ \beta_2 \end{bmatrix}. $$
 
-This is consistent with the formula above: dividing the first equation by $\text{var}(X_1)$ recovers $\beta_1^{\prime} = \beta_1+\beta_2\beta_{1,2}$, where $\beta_{1,2}=\text{cov}(X_1,X_2)/\text{var}(X_1)$ is the (single-predictor) regression coefficient of $X_1$ with $X_2$ as the response. This generalizes to many predictors: in general, $\Sigma$ is a $K\times K$ matrix with entries $\Sigma_{i,j}=\text{cov}(X_i,X_j)$.
+(Dividing the first equation by $\text{var}(X_1)$ is exactly the omitted variable bias formula $\beta_1^{\prime}=\beta_1+\beta_2\beta_{1,2}$.) This generalizes to many predictors: in general, $\Sigma$ is a $K\times K$ matrix with entries $\Sigma_{i,j}=\text{cov}(X_i,X_j)$.
 
 Letting $\Sigma^{-1}$ denote the matrix inverse ($\Sigma^{-1}\Sigma=I$), we can solve for the coefficients:
 
@@ -557,7 +568,7 @@ with $b\in[0,1]$. Note $b=\beta_{1,2}$: the single-predictor regression coeffici
 <ol type="a">
 <li>By definition $\text{var}(X_1)=1$, and $\text{var}(X_2)=b^2\text{var}(X_1)+(1-b^2)=1$; also $\text{cov}(X_1,X_2)=b\,\text{var}(X_1)=b$.</li>
 <li>Substituting into the formula above, $\beta_1 = \dfrac{\text{cov}(X_1,Y)-\text{cov}(X_2,Y)b}{1-b^2}$.</li>
-<li>The single-predictor slope of $Y$ on $X_1$ is $\beta_1+b\beta_2$.</li>
+<li>By the omitted variable bias formula of [Section 4.2](#sec-4-2), the single-predictor slope of $Y$ on $X_1$ is $\beta_1+b\beta_2$.</li>
 </ol>
 </div>
 
@@ -603,30 +614,6 @@ Suppose $\sigma_{X_1}^2=\sigma_{X_2}^2=1$, $\text{cov}(X_1,X_2)=0.5$, $\text{cov
 </div>
 
 <div class="exercise" markdown="1">
-#### Recovering the correlation between predictors
-
-Three regressions are fit to the same data: $Y$ on $X_1$ alone gives slope $\beta_1^{\prime}=3.2$, $Y$ on $X_2$ alone gives slope $\beta_2^{\prime}=4.8$, and $Y$ on both predictors gives $\beta_1=2$ and $\beta_2=3$.
-
-<ol type="a">
-  <li>Use $\beta_1^{\prime}=\beta_1+\beta_2\beta_{1,2}$ to find $\beta_{1,2}$, the slope from regressing $X_2$ on $X_1$.</li>
-  <li>Swap the roles of $X_1$ and $X_2$ to find $\beta_{2,1}$, the slope from regressing $X_1$ on $X_2$.</li>
-  <li>Show that $\beta_{1,2}\beta_{2,1}=\rho_{1,2}^2$, where $\rho_{1,2}$ is the correlation between $X_1$ and $X_2$. Use this to find $\rho_{1,2}$, including its sign.</li>
-</ol>
-</div>
-
-<div class="exercise" markdown="1">
-#### Omitted variable bias with nonzero means
-
-Above we set $\beta_0=E[X_1]=E[X_2]=0$. Now take $Y=\beta_0+\beta_1X_1+\beta_2X_2+\epsilon$ with $E[\epsilon]=0$ and $\text{cov}(X_1,\epsilon)=0$, but with $\beta_0$, $E[X_1]$ and $E[X_2]$ arbitrary.
-
-<ol type="a">
-  <li>Starting from $\text{cov}(X_1,Y)=E\big[(X_1-E[X_1])(Y-E[Y])\big]$, show that $\text{cov}(X_1,Y)=\beta_1\sigma_{X_1}^2+\beta_2\,\text{cov}(X_1,X_2)$. Why does $\beta_0$ drop out?</li>
-  <li>Conclude that $\beta_1^{\prime}=\beta_1+\beta_2\beta_{1,2}$ still holds.</li>
-  <li>Write the regression of $X_2$ on $X_1$ as $X_2=\gamma_0+\beta_{1,2}X_1+\delta$. Using $\beta_0^{\prime}=E[Y]-\beta_1^{\prime}E[X_1]$, show that the single-predictor intercept is $\beta_0^{\prime}=\beta_0+\beta_2\gamma_0$.</li>
-</ol>
-</div>
-
-<div class="exercise" markdown="1">
 #### Reading a statsmodels fit
 
 Consider the following <code>statsmodels</code> fit:
@@ -644,6 +631,8 @@ beta = fit.params
   <li>Use <code>fit.summary()</code> to identify the estimated coefficient, standard error, and $p$-value for each predictor.</li>
 </ol>
 </div>
+
+</details>
 
 </details>
 
@@ -675,13 +664,16 @@ Recall that in a single-predictor regression the standard error of the slope is 
 
 When $b$ is negative, the points lie near the line $X_1=-X_2$. Now they are spread out along $v$ and have little spread along $u$, so the first view fans out and the second stays tight. In terms of the coefficients, for $b$ near $-1$ the difference $\hat\beta_1-\hat\beta_2$ is well determined and the sum $\hat\beta_1+\hat\beta_2$ is not.
 
-### Sample distribution formula
+<details class="optional-section" open markdown="1">
+<summary><h3>Sample distribution formula</h3> <span class="optional-badge">(optional)</span></summary>
 
 It can be shown that, assuming the covariance matrix $\Sigma$ is known, $\hat\beta$ has a multivariate Normal distribution:
 
 $$ \hat\beta \sim \operatorname{Normal}_K\Big(\beta,\ \frac{\sigma_\epsilon^2}{N}\Sigma^{-1}\Big). $$
 
 If $\Sigma=I$, this reduces to the sample distribution we found in the single-predictor case.
+
+</details>
 
 
 <details class="practice-section" markdown="1">
@@ -769,7 +761,7 @@ $$ E[Y\mid\text{White}]-E[Y\mid\text{Hispanic}] = \big(\beta_0+\beta_{\text{whit
 <div class="exercise" markdown="1">
 #### Counting dummy variables
 
-A predictor records the season a measurement was taken: winter, spring, summer, or fall.
+A predictor gives the season a measurement was taken: winter, spring, summer, or fall.
 
 <ol type="a">
   <li>How many dummy variables go into the model, and why not one per category?</li>

@@ -617,6 +617,81 @@ The diagram shows a regression with four predictors, with arrows as in Problem 2
 1. What would $\beta_1'$ be if the slope from $X_1$ to $X_4$ were $0.2$ instead of $0$?
 </div>
 
+<div class="exercise" markdown="1">
+#### Problem 24
+
+A commodity's daily price $Y_t$ (in dollars) follows
+
+$$ Y_{t+1}=50+0.8\,(Y_t-50)+\epsilon_{t+1}, $$
+
+where the $\epsilon_t\sim\text{Normal}(0,1)$ are independent of each other and of past prices. Today's price is $Y_t=60$.
+
+1. What are the average predicted prices tomorrow and two days from today?
+1. What is the approximate conditional variance of the price $10$ years from now, given today's price?
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 25
+
+Two research groups measure a sensor's output $Y$ at different values of $X$. Each takes $100$ measurements. The same model $Y=\beta_0+\beta_1X+\epsilon$ holds for both groups, with independent Normal errors of the same variance.
+
+```text
+Group A: N = 100    R-squared = 0.140    Residual std dev = 5.00
+                 coef    std err          t      P>|t|
+const           10.00       0.50      20.00      0.000
+X                2.00       0.50       4.00      0.000
+
+Group B: N = 100    R-squared = 0.395    Residual std dev = 5.00
+                 coef    std err          t      P>|t|
+const           10.00       0.50      20.00      0.000
+X                2.00       0.25       8.00      0.000
+```
+
+1. Which group sampled a wider range of $X$?
+1. By what factor do the standard deviations of the sampled $X$ values differ?
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 26
+
+The data is generated from the model
+
+$$ Y=2+3X_1+4X_2+\epsilon,\qquad \epsilon\sim\text{Normal}(0,4), $$
+
+with $\epsilon$ independent of the predictors. Both predictors are binary, with $P(X_1=1)=1/2$ and
+
+| | $P(X_2=0\mid X_1)$ | $P(X_2=1\mid X_1)$ |
+|---|---|---|
+| $X_1=0$ | $0.75$ | $0.25$ |
+| $X_1=1$ | $0.25$ | $0.75$ |
+
+A researcher observes only $X_1$ and $Y$ and fits $Y=\beta_0'+\beta_1'X_1+\epsilon'$.
+
+1. What is $\beta_1'$?
+1. Does the single-predictor model satisfy the assumptions of the linear regression model?
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 27
+
+A company delivers by bicycle, van or drone. $Y$ is the delivery time in minutes, $X_{\rm van}$ is $1$ for a van delivery and $0$ otherwise, and $X_{\rm drone}$ is $1$ for a drone delivery and $0$ otherwise. Each delivery uses exactly one method. The fitted model is
+
+$$ E[Y\mid X_{\rm van},X_{\rm drone}]=18+6X_{\rm van}-8X_{\rm drone}. $$
+
+1. Interpret the three regression coefficients.
+1. What is the average delivery time for each method?
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 28
+
+Suppose $Y=\beta_0+\beta_1X_1+\beta_2X_2+\epsilon$ with $E[\epsilon\mid X_1,X_2]=0$. The graphs show exact population regression lines, and the marked coordinates lie on those lines.
+
+<img src="{{ '/public/exam_practice/midterm2_coefficient_graphs.png' | relative_url }}" alt="Three line graphs. Left: mean of Y against X1 alone, through (0, 3) and (2, 13). Middle: mean of X2 against X1, through (0, 0.25) and (2, 1.25). Right: mean of Y against X2 with X1 = 1 fixed, through (0, 5) and (2, 13)." style="width: 100%; max-width: 720px;">
+
+1. Find $\beta_0$, $\beta_1$ and $\beta_2$.
+</div>
+
 
 ---
 

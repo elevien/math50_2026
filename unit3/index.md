@@ -704,7 +704,7 @@ $$ Y_t = Y_{t-1}+\epsilon_t = Y_{t-2}+\epsilon_{t-1}+\epsilon_t=\cdots=\sum_{s=1
 
 This is a <span class="term">[random walk](https://en.wikipedia.org/wiki/Random_walk)</span> (compare Problem 3.4): the noise is never forgotten, and the variance grows forever instead of settling down. With $\hat\beta_1\approx0.9996$, the log price of bitcoin is very close to a random walk.
 
-### Why least squares is biased: the Hurwicz bias
+### Why least squares is biased: the Hurwicz bias <span class="optional-badge">(optional)</span>
 
 In [Section 3.4](#sec-3-4) we saw that $\hat\beta_1$ is an unbiased estimator of $\beta_1$. For the AR(1) model this is no longer true. Take $\mu=0$ for simplicity and fit $Y_t=\rho Y_{t-1}+\epsilon_t$ by least squares with no intercept. Substituting the model into the estimator,
 

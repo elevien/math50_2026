@@ -1,0 +1,109 @@
+<div class="demo" id="demo-res">
+  <div class="demo-label">Interactive demo</div>
+  <h4>The right and wrong way to plot residuals</h4>
+  <div class="demo-controls">
+    <label>$\beta_2$ = <input id="res-b2" type="range" min="1" max="30" step="1" value="3"><span id="res-b2-val">3</span></label>
+    <label>$\sigma$ = <input id="res-sigma" type="range" min="0.5" max="3" step="0.25" value="1"><span id="res-sigma-val">1.00</span></label>
+    <button id="res-newdata">New dataset</button>
+  </div>
+  <div style="display:flex; gap:1em; flex-wrap:wrap;">
+    <svg id="res-chart-left" viewBox="0 0 240 220" style="flex:1 1 220px; min-width:200px;"></svg>
+    <svg id="res-chart-right" viewBox="0 0 240 220" style="flex:1 1 220px; min-width:200px;"></svg>
+  </div>
+</div>
+
+<script>
+(function () {
+  const mk = NotesUtils.svg;
+  const b2Slider = document.getElementById('res-b2');
+  const sigmaSlider = document.getElementById('res-sigma');
+  const b2Val = document.getElementById('res-b2-val');
+  const sigmaVal = document.getElementById('res-sigma-val');
+  const chartLeft = document.getElementById('res-chart-left');
+  const chartRight = document.getElementById('res-chart-right');
+
+  const BETA1 = 0.2, N = 150;
+  let X1 = [], X2 = [], EPS = [];
+
+  function b2() { return parseFloat(b2Slider.value); }
+  function sigma() { return parseFloat(sigmaSlider.value); }
+
+  function genData() {
+    X1 = []; X2 = []; EPS = [];
+    for (let i = 0; i < N; i++) {
+      X1.push(NotesUtils.gaussianRandom(0, 1));
+      X2.push(NotesUtils.gaussianRandom(0, 1));
+      EPS.push(NotesUtils.gaussianRandom(0, 1));
+    }
+  }
+
+  function ols2(x1, x2, y) {
+    const x1Bar = NotesUtils.mean(x1), x2Bar = NotesUtils.mean(x2), yBar = NotesUtils.mean(y);
+    let s11 = 0, s22 = 0, s12 = 0, c1 = 0, c2 = 0;
+    for (let i = 0; i < x1.length; i++) {
+      const d1 = x1[i] - x1Bar, d2 = x2[i] - x2Bar, dy = y[i] - yBar;
+      s11 += d1 * d1; s22 += d2 * d2; s12 += d1 * d2; c1 += d1 * dy; c2 += d2 * dy;
+    }
+    const det = s11 * s22 - s12 * s12;
+    const beta1 = (c1 * s22 - c2 * s12) / det;
+    const beta2 = (c2 * s11 - c1 * s12) / det;
+    const beta0 = yBar - beta1 * x1Bar - beta2 * x2Bar;
+    return { beta0, beta1, beta2 };
+  }
+
+  function lsLine(xs, ys) {
+    const xBar = NotesUtils.mean(xs), yBar = NotesUtils.mean(ys);
+    let num = 0, den = 0;
+    for (let i = 0; i < xs.length; i++) { num += (xs[i] - xBar) * (ys[i] - yBar); den += (xs[i] - xBar) ** 2; }
+    const slope = den === 0 ? 0 : num / den;
+    return { slope, intercept: yBar - slope * xBar };
+  }
+
+  function scatterPanel(container, xs, ys, xLabel) {
+    const width = 240, height = 220, margin = { top: 10, right: 8, bottom: 26, left: 30 };
+    const innerW = width - margin.left - margin.right, innerH = height - margin.top - margin.bottom;
+    const xDomain = [Math.min(...xs), Math.max(...xs)], yDomain = [Math.min(...ys), Math.max(...ys)];
+    const xPad = (xDomain[1] - xDomain[0]) * 0.08 || 1, yPad = (yDomain[1] - yDomain[0]) * 0.08 || 1;
+    xDomain[0] -= xPad; xDomain[1] += xPad; yDomain[0] -= yPad; yDomain[1] += yPad;
+    NotesUtils.clear(container);
+    const g = mk('g', { transform: `translate(${margin.left},${margin.top})` });
+    container.appendChild(g);
+    const xToPx = (x) => ((x - xDomain[0]) / (xDomain[1] - xDomain[0])) * innerW;
+    const yToPx = (y) => innerH - ((y - yDomain[0]) / (yDomain[1] - yDomain[0])) * innerH;
+    g.appendChild(mk('line', { x1: 0, y1: yToPx(0), x2: innerW, y2: yToPx(0), stroke: '#b08a2a', 'stroke-width': 1, 'stroke-dasharray': '4,3' }));
+    g.appendChild(mk('line', { x1: 0, y1: innerH, x2: innerW, y2: innerH, stroke: '#9b9e91' }));
+    g.appendChild(mk('line', { x1: 0, y1: 0, x2: 0, y2: innerH, stroke: '#9b9e91' }));
+    xs.forEach((x, i) => g.appendChild(mk('circle', { cx: xToPx(x), cy: yToPx(ys[i]), r: 2.4, fill: '#1f5a6b', opacity: 0.55 })));
+    const fit = lsLine(xs, ys);
+    g.appendChild(mk('line', {
+      x1: xToPx(xDomain[0]), y1: yToPx(fit.intercept + fit.slope * xDomain[0]),
+      x2: xToPx(xDomain[1]), y2: yToPx(fit.intercept + fit.slope * xDomain[1]),
+      stroke: '#b08a2a', 'stroke-width': 2,
+    }));
+    const lbl = mk('text', { x: innerW / 2, y: innerH + 18, 'text-anchor': 'middle', 'font-size': 11, fill: '#565a4e' });
+    lbl.textContent = xLabel;
+    g.appendChild(lbl);
+  }
+
+  function render() {
+    const B2 = b2(), s = sigma();
+    const Y = X1.map((x1, i) => BETA1 * x1 + B2 * X2[i] + s * EPS[i]);
+    const fit = ols2(X1, X2, Y);
+    const resid = X1.map((x1, i) => Y[i] - (fit.beta0 + fit.beta1 * x1 + fit.beta2 * X2[i]));
+    const yhat = X1.map((x1, i) => fit.beta0 + fit.beta1 * x1 + fit.beta2 * X2[i]);
+
+    scatterPanel(chartLeft, yhat, resid, 'ε̂ᵢ vs. ŷᵢ  (correct)');
+    scatterPanel(chartRight, Y, resid, 'ε̂ᵢ vs. Yᵢ  (incorrect)');
+  }
+
+  document.getElementById('res-newdata').addEventListener('click', () => { genData(); render(); });
+  [b2Slider, sigmaSlider].forEach((s) => s.addEventListener('input', () => {
+    b2Val.textContent = b2().toFixed(0);
+    sigmaVal.textContent = sigma().toFixed(2);
+    render();
+  }));
+
+  genData();
+  render();
+})();
+</script>
