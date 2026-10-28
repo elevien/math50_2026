@@ -7,7 +7,7 @@ toc:
   - {href: "#sec-5-1", label: "5.1 Interaction terms"}
   - {href: "#sec-5-2", label: "5.2 Feature maps for nonlinear models"}
   - {href: "#sec-5-3", label: "5.3 Cross-validation & the bias-variance tradeoff"}
-  - {href: "#sec-5-4", label: "5.4 Orthogonality & Fourier features"}
+  - {href: "#sec-5-4", label: "5.4 Orthogonality & Fourier features", optional: true}
   - {href: "#problems", label: "Problems"}
 ---
 
@@ -112,7 +112,7 @@ hs_iq         -0.4843      0.162     -2.985      0.003      -0.803      -0.165
 </ul>
 </div>
 
-The example above shows that adding an interaction term can make the interpretation of the coefficients a bit clunky &mdash; even for coefficients not directly involved in the interaction. In particular, $\beta_0$ and $\beta_{\text{hs}}$ describe mothers with IQ zero, so they have no useful interpretation. To fix this, define the centered predictor
+As we saw in the example above, adding an interaction term can make the interpretation of the coefficients a bit clunky &mdash; even for coefficients not directly involved in the interaction. In particular, $\beta_0$ and $\beta_{\text{hs}}$ describe mothers with IQ zero, so they have no useful interpretation. To fix this, define the centered predictor
 
 $$ \Delta_{\text{iq}} = X_{\text{iq}} - \overline X_{\text{iq}}, $$
 
@@ -135,9 +135,9 @@ The basic idea of <span class="term">[residual](https://en.wikipedia.org/wiki/Re
 
 $$ \hat\epsilon_j = Y_j - \hat\beta_0 - \sum_{k=1}^K \hat\beta_kX_{k,j}, $$
 
-(note the hat: $\hat\epsilon_j$ is the *residual* we can compute from the fitted model, as opposed to the unobservable noise $\epsilon_j$ in the model itself) in a way that reveals disagreement between the model and the data. With a single predictor, we can just plot $\hat\epsilon_j$ vs. $X$ &mdash; if the residuals don't look Normal, or their variance/mean changes with $X$, we should be skeptical of the model. **With multiple predictors, what do we plot on the horizontal axis?** The answer: plot $\hat\epsilon_j$ against the *fitted value* $\hat y_j=\hat\beta_0+\sum_k\hat\beta_kX_{k,j}$, not against any single predictor (and, importantly, not against $Y_j$ itself). The demo below puts the two side by side for a two-predictor model, with the least-squares trend drawn through each cloud. On the left, against $\hat y_j$, the points form a random horizontal band and the trend stays flat however you move the sliders; on the right, against $Y_j$, the same residuals tilt.
+(note the hat: $\hat\epsilon_j$ is the *residual* we can compute from the fitted model, as opposed to the unobservable noise $\epsilon_j$ in the model itself) in a way that reveals disagreement between the model and the data. With a single predictor, we can just plot $\hat\epsilon_j$ vs. $X$ &mdash; if the residuals don't look Normal, or their variance/mean changes with $X$, we should be skeptical of the model. **With multiple predictors, what do we plot on the horizontal axis?** The answer: plot $\hat\epsilon_j$ against the *fitted value* $\hat y_j=\hat\beta_0+\sum_k\hat\beta_kX_{k,j}$, not against any single predictor (and, importantly, not against $Y_j$ itself). In the figure below, the two are shown side by side for simulated data from a two-predictor model, with the least-squares trend line through each cloud. Against $\hat y_j$ (left), the residuals form a flat horizontal band. Against $Y_j$ (right), the same residuals tilt upward. The reason is that $Y_j=\hat y_j+\hat\epsilon_j$. When $Y_j$ is on the horizontal axis instead of $\hat y_j$, each point is shifted sideways by its own residual, so points with positive residuals end up further right and points with negative residuals further left (orange arrows).
 
-{% include_relative demos/res.html %}
+<img src="{{ '/unit5/fig/resid_why.svg' | relative_url }}" alt="Two residual plots of the same simulated data. Left: residuals vs. fitted values form a flat horizontal band and the trend line has slope 0. Right: the same residuals vs. the observed Y tilt upward with trend slope 0.42; arrows show points with positive residuals shifted right and points with negative residuals shifted left." style="width: 100%; max-width: 760px;">
 
 <div class="example" markdown="1">
 #### Example (residual plots)
@@ -212,7 +212,7 @@ You fit a model with four predictors and want a residual plot.
 
 ## 5.2 Feature maps for nonlinear models {#sec-5-2}
 
-We now discuss how to build more complex models and directly assess their predictive power on out-of-sample data. With interactions, we already saw one way to extend a model: define a new predictor $X_3=X_1X_2$. More generally, defining a new predictor as *any* function of the existing ones lets us build very complex, flexible models that can still be analyzed within the linear regression framework. Let's formalize this for a single predictor.
+We now discuss how to build more complex models and directly assess their predictive power on out-of-sample data. With interactions, we already saw one way to extend a model: define a new predictor $X_3=X_1X_2$. More generally, defining a new predictor as *any* function of the existing ones lets us build very complex, flexible models that can still be analyzed within the linear regression framework.
 
 The linear regression framework lets us fit models of the form
 
@@ -224,7 +224,7 @@ $$ f(X) = \sum_{i=1}^K \beta_i\phi_i(X). $$
 
 (An intercept is included by taking one of the features to be constant, $\phi_1(x)=1$.)
 
-The requirement is that $f$ is **linear in the parameters**: a weighted sum of the features, with the unknown $\beta_i$ as the weights. The features $\phi_i$ must be *known* functions (no unknown parameters inside them), but they can be as nonlinear in $X$ as we like. So $\beta_0+\beta_1x+\beta_2x^2$ fits in this framework, even though it is not linear in $x$, while $\beta_0e^{\beta_1x}$ does not, because the parameter $\beta_1$ sits inside a nonlinear function. A common mistake is to think the model must be linear in $x$; it only has to be linear in the $\beta_i$.
+The requirement is that $f$ is **linear in the parameters**: a weighted sum of the features, with the unknown $\beta_i$ as the weights. The features $\phi_i$ must be *known* functions.  So $\beta_0+\beta_1x+\beta_2x^2$ fits in this framework, even though it is not linear in $x$, while $\beta_0e^{\beta_1x}$ does not, because the parameter $\beta_1$ is inside a nonlinear function. 
 
 The $\phi_i(X)$ are called <span class="term">[basis functions](https://en.wikipedia.org/wiki/Basis_function)</span>, or <span class="term">[features](https://en.wikipedia.org/wiki/Feature_(machine_learning))</span> in machine-learning terminology. We can think of each $\phi_i(X)$ as a new predictor. A common choice is $\phi_i(x)=x^i$, giving <span class="term">[polynomial regression](https://en.wikipedia.org/wiki/Polynomial_regression)</span>.
 
@@ -235,10 +235,75 @@ Consider $f(x)=\beta_0+\beta_1x+\beta_2x^2$ in the model above. This is a linear
 
 <u>Question:</u> (a) generate data from this model, and (b) fit it with `statsmodels`.
 
-<u>Solution:</u> see the companion Colab notebook.
+<u>Solution:</u> the only new step compared with the two-predictor examples in Unit 4 is building the features $X$ and $X^2$ from the single predictor $X$. One this is done, it is an ordinary linear regression.
+
+```python
+import numpy as np
+import statsmodels.api as sm
+
+# --- simulate data ---
+rng = np.random.default_rng(1)
+n = 200
+beta0, beta1, beta2, sigma = 1, 2, 3, 1
+X = rng.uniform(-2, 2, size=n)
+Y = beta0 + beta1*X + beta2*X**2 + rng.normal(scale=sigma, size=n)
+
+# --- fit OLS on the features phi_1(X) = X and phi_2(X) = X^2 ---
+features = np.column_stack([X, X**2])
+results = sm.OLS(Y, sm.add_constant(features)).fit()
+print(results.params)
+```
+
+The fitted coefficients are $\hat\beta_0=0.88$, $\hat\beta_1=1.96$ and $\hat\beta_2=3.03$ (standard errors $0.09$, $0.06$ and $0.06$), close to the true values $1$, $2$ and $3$.
+
+<img src="{{ '/unit5/fig/nonlinear_fit.svg' | relative_url }}" alt="Left: scatter of 200 simulated points following a parabola, with the fitted quadratic curve lying almost exactly on the true curve. Right: the fitted curve drawn as the sum of three pieces: the constant 0.88, the straight line 1.96 x, and the parabola 3.03 x squared." style="width: 100%; max-width: 760px;">
+
+The fitted curve is a parabola in $x$ (left), but the regression only had to find the three weights in front of the known features $1$, $x$ and $x^2$ (right): the fit is linear in the parameters.
 </div>
 
-Which functions $\phi$ should we use? It depends on the problem &mdash; we might know something about the underlying physics of the data, or we might choose $\phi$ so the parameters have a clean interpretation (as with plain linear regression). The Mauna Loa CO$_2$ dataset from a previous class is one such example, where a linear trend plus a yearly cycle are natural features to include (see the companion Colab notebook).
+Which functions $\phi$ should we use? It depends on the problem &mdash; we might know something about the underlying physics of the data, or we might choose $\phi$ so the parameters have a clean interpretation (as with plain linear regression).
+
+<div class="example" markdown="1">
+#### Example (Mauna Loa CO$_2$)
+
+The monthly mean CO$_2$ concentration measured at the Mauna Loa observatory is shown below. A linear fit can capture the trend over many years, but to predict monthly CO$_2$ values, we need a nonlinear model.
+
+<img src="{{ '/unit5/fig/co2_data.svg' | relative_url }}" alt="Left: monthly mean CO2 at Mauna Loa from 2011 to 2025 with a straight-line fit. The data rise from about 390 to 428 ppm, and the line follows the long-term rise. Right: the same data for 2023 and 2024 only. The monthly values go above the line in spring and below it in autumn, by about 3 ppm." style="width: 100%; max-width: 760px;">
+
+<u>Question:</u> Build a model which fits this data well from 2011 to 2025. 
+
+<u>Solution:</u>
+
+
+We use the features $\phi_1(t)=t$ for the overall trend and $\phi_2(t)=\sin(2\pi t)$ and $\phi_3(t)=\cos(2\pi t)$ for a cycle that repeats every year ($t$ in years):
+
+$$ f(t)=\beta_0+\beta_1t+\beta_2\sin(2\pi t)+\beta_3\cos(2\pi t). $$
+
+The motivation for using both the sin and cos terms is so that the peak can occur any time during the year. 
+
+```python
+import numpy as np
+import pandas as pd
+import statsmodels.api as sm
+
+url = "https://gml.noaa.gov/webdata/ccgg/trends/co2/co2_mm_mlo.csv"
+co2 = pd.read_csv(url, comment="#")
+co2 = co2[(co2["year"] >= 2011) & (co2["year"] <= 2025)]
+t = co2["decimal date"].to_numpy() - 2011     # years since 2011
+Y = co2["average"].to_numpy()                 # CO2 in ppm
+
+features = np.column_stack([t, np.sin(2*np.pi*t), np.cos(2*np.pi*t)])
+results = sm.OLS(Y, sm.add_constant(features)).fit()
+print(results.params)
+```
+
+The fitted coefficients are $\hat\beta_0=390.2$, $\hat\beta_1=2.51$, $\hat\beta_2=2.84$ and $\hat\beta_3=-0.87$, with $R^2=0.994$. So CO$_2$ rose by about $2.5$ ppm per year over this period, and the yearly cycle goes up and down by $\sqrt{\hat\beta_2^2+\hat\beta_3^2}\approx3.0$ ppm around the trend.
+
+<img src="{{ '/unit5/fig/co2_fit.svg' | relative_url }}" alt="Left: monthly mean CO2 at Mauna Loa from 2011 to 2025, rising from about 390 to 428 ppm with a yearly up-and-down pattern. The fitted curve follows the data closely, and the dashed trend line rises 2.5 ppm per year. Right: the data with the trend removed, plotted vs. the time of year; the points follow the fitted sine curve, about 3 ppm above zero in spring and 3 ppm below in autumn." style="width: 100%; max-width: 760px;">
+
+</div>
+
+
 
 Next, we'll see that the linear regression framework can fit very complicated nonlinear data &mdash; but we need to be careful when adding new features, since it's possible to "overshoot" and make the model too complex. That's the subject of the rest of this unit.
 
@@ -260,7 +325,7 @@ Which of the following can be fit with the linear regression machinery of this u
 </div>
 
 <div class="exercise" markdown="1">
-#### Building the design matrix
+#### Building the design matrix <span class="optional-badge">(optional)</span>
 
 Take features $\phi_1(x)=1$, $\phi_2(x)=x$, $\phi_3(x)=x^2$ and the three predictor values $x=0,1,2$.
 
@@ -274,9 +339,38 @@ Take features $\phi_1(x)=1$, $\phi_2(x)=x$, $\phi_3(x)=x^2$ and the three predic
 
 ## 5.3 Cross-validation & the bias-variance tradeoff {#sec-5-3}
 
-$R^2$ isn't very helpful for deciding how complex to make a model, since it's possible to explain *all* the variation in $Y$ with a model that's too complex. To address this, we use <span class="term">[cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics))</span>: split the data into a <span class="term">[training set](https://en.wikipedia.org/wiki/Training,_validation,_and_test_data_sets)</span>, used to fit the model, and a <span class="term">[testing set](https://en.wikipedia.org/wiki/Training,_validation,_and_test_data_sets)</span>, used to evaluate the fitted model's predictions. The two sets must be **disjoint**: no data point is used both to fit the model and to test it, so the test error measures predictions on data the model has not seen.
+$R^2$ isn't very helpful for deciding how complex to make a model, since it's possible to explain *all* the variation in $Y$ with a model that's too complex.
 
-Some notation: let $D=(X,Y)=\lbrace(X_1,Y_1),\dots,(X_N,Y_N)\rbrace$ denote the entire dataset, and $D^{\text{train}}=(X^{\text{train}},Y^{\text{train}})$, $D^{\text{test}}=(X^{\text{test}},Y^{\text{test}})$ the training/testing subsets, with $D=D^{\text{train}}\cup D^{\text{test}}$, $D^{\text{train}}\cap D^{\text{test}}=\emptyset$, and $N_{\text{train}},N_{\text{test}}$ points in each. Let $\hat y(x,D)=\sum_i\hat\beta_i\phi_i(x)$ denote the prediction of $E[Y\mid X{=}x]$ using coefficients fit on dataset $D$.
+<div class="example" markdown="1">
+#### Example ($R^2$ for polynomial regression)
+
+Take the quadratic model $f(x)=1+2x+3x^2$ with noise standard deviation $1.5$, and simulate $N=40$ points with $X\sim\text{Uniform}(-1,1)$. Fit a polynomial of degree $K$ to these points, for $K=1,2,\dots,39$.
+
+<u>Question:</u> how does $R^2$ change as $K$ increases?
+
+<u>Solution:</u> the simulated data are shown below.
+
+<img src="{{ '/unit5/fig/poly_data.svg' | relative_url }}" alt="Scatter plot of 40 simulated points with x between -1 and 1. The points follow a U-shaped trend with a lot of noise, with y between about -1 and 8." style="width: 100%; max-width: 420px;">
+
+In the top row of the next figure, the fits for $K=1$, $2$, $10$ and $20$ are drawn through the data. Their values of $R^2$ are marked on the curve of $R^2$ vs. $K$ in the bottom panel.
+
+<img src="{{ '/unit5/fig/r2_complexity.svg' | relative_url }}" alt="Top row: the 40 points with polynomial fits of degree 1, 2, 10 and 20, with R squared 0.60, 0.79, 0.84 and 0.91. The straight line misses the curvature, the quadratic follows the trend, and the degree 10 and 20 fits bend to pass close to individual points and shoot off near the ends of the interval. Bottom: R squared vs. K from 1 to 39, increasing from 0.60 to 1, with the four fits marked." style="width: 100%; max-width: 760px;">
+
+$R^2$ goes up with every term we add. The fits with $K=10$ and $K=20$ have higher $R^2$, but the fitted curve bends to pass close to individual points and shoots up or down near the ends of the interval. At $K=39$ the polynomial has $40$ coefficients, one for each data point, so the curve passes through every point and $R^2=1$ (we have an many equations as unknowns). That model explains all the variation in this dataset, but the fit is not useful if our goal is to predict new data points from the existing ones (which is arguably always the goal of modeling).  This illustrates the idea of overfitting.
+
+</div>
+
+In order to avoid overfitting, we introduce the idea of <span class="term">[cross-validation](https://en.wikipedia.org/wiki/Cross-validation_(statistics))</span>: split the data into a <span class="term">[training set](https://en.wikipedia.org/wiki/Training,_validation,_and_test_data_sets)</span>, used to fit the model, and a <span class="term">[testing set](https://en.wikipedia.org/wiki/Training,_validation,_and_test_data_sets)</span>, used to evaluate the fitted model's predictions. The two sets must be **disjoint**: no data point is used both to fit the model and to test it, so the test error measures predictions on data the model has not seen.
+
+Some notation. The entire dataset is
+
+$$ D=(X,Y)=\lbrace(X_1,Y_1),\dots,(X_N,Y_N)\rbrace, $$
+
+and the training and testing subsets are
+
+$$ D^{\text{train}}=(X^{\text{train}},Y^{\text{train}}),\qquad D^{\text{test}}=(X^{\text{test}},Y^{\text{test}}), $$
+
+with $D=D^{\text{train}}\cup D^{\text{test}}$, $D^{\text{train}}\cap D^{\text{test}}=\emptyset$, and $N_{\text{train}}$ and $N_{\text{test}}$ points in each. Let $\hat y(x,D)=\sum_i\hat\beta_i\phi_i(x)$ denote the prediction of $E[Y\mid X{=}x]$ using coefficients fit on dataset $D$.
 
 The <span class="term">[training error](https://en.wikipedia.org/wiki/Errors_and_residuals)</span> is
 
@@ -297,9 +391,13 @@ $$ \hat\sigma_{\text{test}}^2 = \frac{1}{N_{\text{test}}}\sum_{i=1}^{N_{\text{te
 <div class="example" markdown="1">
 #### Example (cross-validation on a polynomial model)
 
-Continuing the quadratic example above: plot the training and test error as a function of the number of parameters.
+Return to the $40$ points from the $R^2$ example above. Split them at random into $N_{\text{train}}=25$ training points and $N_{\text{test}}=15$ test points, fit a polynomial of degree $K$ to the training points, and plot the training and test error as functions of $K$.
 
-<u>Solution:</u> see the companion Colab notebook.
+<u>Solution:</u>
+
+<img src="{{ '/unit5/fig/cv_poly.svg' | relative_url }}" alt="Training and test error vs. polynomial degree K from 1 to 15, on a log scale. The training error decreases steadily from 2.8 to 0.4. The test error is 2.9 at K = 1, smallest at K = 2 with 1.9, stays between 2 and 3 up to K = 10, and then rises quickly to about 260 at K = 15." style="width: 100%; max-width: 560px;">
+
+The training error goes down as $K$ increases, just as $R^2$ went up: a more flexible model always fits the training points at least as well. The test error behaves differently. It is $2.9$ at $K=1$, where a straight line cannot follow the curve (underfitting). It is smallest at the true degree $K=2$, and it grows again for larger $K$, slowly at first and then very fast from $K=11$ on. Those high-degree fits follow the noise in the $25$ training points, so they predict new points badly (overfitting). The bias-variance tradeoff below explains this U-shape.
 </div>
 
 ### Overfitting
@@ -338,7 +436,11 @@ In practice we only observe a single dataset, but by resampling the training dat
 
 Continuing the polynomial cross-validation example: try to illustrate the bias-variance tradeoff by computing (approximations to) the bias and variance separately.
 
-<u>Solution:</u> see the companion Colab notebook.
+<u>Solution:</u> we can't average over datasets with real data, but in a simulation we can. Take the true function $f(x)=1+2x+3x^2$, $N=40$ points with $X\sim\text{Uniform}(-1,1)$ and noise standard deviation $1.5$, and generate many independent datasets $D$. Fitting a degree-$K$ polynomial to each gives many curves $\hat y(x,D)$. At each $x$, the average of these curves estimates $E_D[\hat y(x,D)]$, so its distance from $f(x)$ is the bias, and their spread is the variance. Averaging over $x$ gives the two terms in the decomposition above.
+
+<img src="{{ '/unit5/fig/bias_var.svg' | relative_url }}" alt="Top: fits from 20 simulated datasets for polynomial degree K = 1, 2 and 7, with the true quadratic curve and the average fit. For K = 1 the fits are straight lines that all miss the curve the same way; for K = 2 they cluster tightly around the curve; for K = 7 their average matches the curve but the individual fits wiggle far apart, especially near the ends. Bottom: bias squared, variance and MSE averaged over x, vs. K from 1 to 7. Bias squared is large at K = 1 and near zero afterwards; variance grows with K; the MSE is U-shaped with its minimum at K = 2." style="width: 100%; max-width: 760px;">
+
+With $K=1$ a straight line cannot follow the curve, so every fit misses it in the same way. The bias is high and the variance is low. With $K=2$ the model has the same form as the truth, so the bias is essentially zero and the variance is still small. For larger $K$ the bias stays near zero, because a higher-degree polynomial can still represent a quadratic. But each fit also follows the noise in its own dataset, so the variance grows quickly. The MSE, the sum of the two, is smallest at $K=2$. This is the same U-shape as the test error in the cross-validation example. (Code in the companion Colab notebook.)
 </div>
 
 Summarizing what we've seen:
@@ -347,10 +449,6 @@ Summarizing what we've seen:
 - Unlike the training error, the test error $\hat\sigma_{\text{test}}^2$ doesn't simply keep decreasing as the model gets more complex &mdash; it has a **U-shape**. There's an optimal model size at which predictions on *new* data are best.
 - A model that is too simple <span class="term">[underfits](https://en.wikipedia.org/wiki/Overfitting#Underfitting)</span>: it misses real structure, so both the training and the test error are high. A model that is too complex <span class="term">[overfits](https://en.wikipedia.org/wiki/Overfitting)</span>: it fits the noise in the training data, so its training error is low but its test error is high.
 - The U-shape is explained by bias and variance: the MSE (the "math world" version of $\hat\sigma_{\text{test}}^2$) decomposes into a variance term (how much the model's predictions vary across different training sets) and a bias term (how far its predictions are, on average, from the truth).
-
-The demo below draws two independent datasets from the *same* true function and fits a degree-$K$ polynomial to each. At low $K$ both fits miss the curve in the same way &mdash; high bias, low variance. Raise $K$ and they track their own data closely while disagreeing wildly with *each other* between the data points &mdash; low bias, high variance.
-
-{% include_relative demos/bias_var.html %}
 
 <details class="practice-section" markdown="1">
 <summary><h3>Drill</h3></summary>
@@ -415,9 +513,10 @@ Suppose we evaluate a polynomial model on a test set that, by mistake, contains 
 
 </details>
 
-## 5.4 Orthogonality & Fourier features {#sec-5-4}
+<details class="optional-section" id="sec-5-4" open markdown="1">
+<summary><h2>5.4 Orthogonality & Fourier features</h2> <span class="optional-badge">(optional)</span></summary>
 
-Sometimes we have a specific hypothesis about which features contribute to a signal &mdash; e.g. for CO$_2$ data, we might suspect a linear trend plus a yearly cycle, since weather follows an annual pattern. But if we lack such prior knowledge, how should we choose the $\phi_i$? It's often advantageous to pick basis functions so the resulting predictors are *uncorrelated*: thinking of $\phi_i(X),\phi_j(X)$ as random variables (randomness coming from $X$), we'd like them uncorrelated with each other.
+Sometimes we have a specific hypothesis about which features contribute to a signal &mdash; e.g. for CO$_2$ data, we might suspect a linear trend plus a yearly cycle, since weather follows an annual pattern. But if we lack such prior knowledge, how should we choose the $\phi_i$? It's often advantageous to pick features so the resulting predictors are *uncorrelated*: thinking of $\phi_i(X),\phi_j(X)$ as random variables (randomness coming from $X$), we'd like them uncorrelated with each other.
 
 Assume $E[\phi_i(X)]=0$ throughout (easy to arrange by subtracting means). We'd like
 
@@ -507,6 +606,8 @@ Suppose centered predictors $X_1$ and $X_2$ are orthogonal in the observed data,
   <li>What part of this argument fails when $\sum_iX_{1i}X_{2i}\ne0$?</li>
 </ol>
 </div>
+
+</details>
 
 </details>
 
