@@ -41,11 +41,11 @@ Before going through Unit 1, please review [Unit 0]({{ '/unit0/' | relative_url 
 | **Week 7** | | | | |
 | Mon Oct 26 | | Review for Midterm 2 | [Slides]({{ '/unit4/slides-10-26.pdf' | relative_url }}) | Come with questions! |
 | Wed Oct 28 | | **Midterm 2**  | |  |
-| Fri Oct 30 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.1 Interactions and residual plots | [Slides]({{ '/unit5/slides-10-30.pdf' | relative_url }}) | Assignment 3 due on canvas |
+| Fri Oct 30 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.1 Interactions | [Slides]({{ '/unit5/slides-10-30.pdf' | relative_url }}) | Assignment 3 due on canvas. Reading: [ISLP](https://www.statlearning.com/) §3.3.2 (interaction terms) |
 | **Week 8** | | | | |
-| Mon Nov 2 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.2 Feature maps for nonlinear models | [Slides]({{ '/unit5/slides-11-02.pdf' | relative_url }}) |  |
-| Wed Nov 4 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.3 Cross-validation and the bias-variance tradeoff | [Slides]({{ '/unit5/slides-11-04.pdf' | relative_url }}) |  |
-| Fri Nov 6 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.4 Orthogonality and Fourier features | [Slides]({{ '/unit5/slides-11-06.pdf' | relative_url }}) |  |
+| Mon Nov 2 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.1 Residual plots; 5.2 Feature maps for nonlinear models | [Slides]({{ '/unit5/slides-11-02.pdf' | relative_url }}) | Reading: [ISLP](https://www.statlearning.com/) §2.1 (prediction and inference), §3.3.3 (residual plots), §7.1 (polynomial regression) |
+| Wed Nov 4 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.3 Cross-validation and the bias-variance tradeoff | [Slides]({{ '/unit5/slides-11-04.pdf' | relative_url }}) | Reading: [ISLP](https://www.statlearning.com/) §2.2 (model accuracy and the bias-variance trade-off), §5.1 (cross-validation) |
+| Fri Nov 6 | [Unit 5]({{ '/unit5/' | relative_url }}) | More examples | [Slides]({{ '/unit5/slides-11-06.pdf' | relative_url }}) |  |
 | **Week 9** | | | | |
 | Mon Nov 9 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.1 Bayesian inference: simple examples | [Slides]({{ '/unit6/slides-11-09.pdf' | relative_url }}) |  |
 | Wed Nov 11 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.2 Bayesian linear regression | [Slides]({{ '/unit6/slides-11-11.pdf' | relative_url }}) |  |
