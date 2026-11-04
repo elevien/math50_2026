@@ -208,6 +208,32 @@ You fit a model with four predictors and want a residual plot.
 </ol>
 </div>
 
+<div class="exercise" markdown="1">
+#### Residual plot from a model
+
+In each part, data are generated from the given model and then fit to the linear regression model $\hat y=\hat\beta_0+\hat\beta_1X$, with many data points. Take $\epsilon\sim\text{Normal}(0,\sigma_\epsilon^2)$ independent of $X$. Sketch the residuals $r_j=Y_j-\hat y_j$ vs. the fitted values $\hat y_j$, with approximate numbers on both axes.
+
+<ol type="a">
+  <li>$Y=1+2X+\epsilon$, where $\sigma_\epsilon=1$ and $X$ is uniform between $0$ and $4$.</li>
+  <li>$Y=8-X+X\epsilon$, where $\sigma_\epsilon=1$ and $X$ is uniform between $0$ and $4$. At which end of the horizontal axis are the residuals most spread out?</li>
+  <li>$Y=5-X^2+\epsilon$, where $\sigma_\epsilon=0.25$ and $X$ is uniform between $0$ and $2$. The fitted line is $\hat y\approx5.67-2X$. First find the average residual at $X=0$, $X=1$ and $X=2$.</li>
+  <li>$Y=1+4X+(2-X)\epsilon$, where $\sigma_\epsilon=1$ and $X$ is binary, equal to $0$ or $1$ with equal probability.</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Residual plot from a picture
+
+Each dataset below is shown with its fitted line $\hat y=\hat\beta_0+\hat\beta_1X$.
+
+<img src="{{ '/unit5/fig/resid_sketch_drill.svg' | relative_url }}" alt="Four scatter plots of Y vs. X with X between 0 and 10, each with a fitted straight line. Dataset A: points rise quickly and then level off, curving around the line. Dataset B: points fall with X and their vertical spread grows with X. Dataset C: points rise along two parallel bands with a jump upward at X = 5. Dataset D: points rise with X, most lying slightly below the line and a few lying far above it." style="width: 100%; max-width: 760px;">
+
+<ol type="a">
+  <li>For each dataset, sketch the residuals $r_j$ vs. the fitted values $\hat y_j$, with approximate numbers on both axes.</li>
+  <li>For each dataset, state in one sentence which assumption of the linear regression model fails.</li>
+</ol>
+</div>
+
 </details>
 
 ## 5.2 Feature maps for nonlinear models {#sec-5-2}
