@@ -45,7 +45,7 @@ Before going through Unit 1, please review [Unit 0]({{ '/unit0/' | relative_url 
 | **Week 8** | | | | |
 | Mon Nov 2 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.1 Residual plots | [Slides]({{ '/unit5/slides-11-02.pdf' | relative_url }}) | Reading: [ISLP](https://www.statlearning.com/) §3.3.3 (residual plots) |
 | Wed Nov 4 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.2 Feature maps for nonlinear models | [Slides]({{ '/unit5/slides-11-04.pdf' | relative_url }}) | Reading: [ISLP](https://www.statlearning.com/) §2.1 (prediction and inference), §7.1 (polynomial regression) |
-| Fri Nov 6 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.3 Overfitting, cross-validation and the bias-variance tradeoff | [Slides]({{ '/unit5/slides-11-06.pdf' | relative_url }}) | Reading: [ISLP](https://www.statlearning.com/) §2.2 (model accuracy and the bias-variance trade-off), §5.1 (cross-validation) |
+| Fri Nov 6 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.3 Overfitting, cross-validation and the bias-variance tradeoff | [Slides]({{ '/unit5/slides-11-06.pdf' | relative_url }}), [Animation]({{ '/unit5/fig/poly_fit_movie.gif' | relative_url }}) | Reading: [ISLP](https://www.statlearning.com/) §2.2 (model accuracy and the bias-variance trade-off), §5.1 (cross-validation) |
 | **Week 9** | | | | |
 | Mon Nov 9 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.1 Bayesian inference: simple examples | [Slides]({{ '/unit6/slides-11-09.pdf' | relative_url }}) |  |
 | Wed Nov 11 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.2 Bayesian linear regression | [Slides]({{ '/unit6/slides-11-11.pdf' | relative_url }}) |  |
