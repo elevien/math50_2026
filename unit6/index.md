@@ -128,15 +128,11 @@ where $Y=\sum_i X_i$ &mdash; again, the $q$-dependence uniquely determines the d
 $$ q\mid X_1,\dots,X_N \sim \text{Beta}(Y{+}a,\ N{-}Y{+}a). $$
 With $N=5,Y=5,a\approx47.5$:
 $$ E[q\mid X_1,\dots,X_N] = \frac{Y+a}{N+2a} = \frac{5+47.5}{5+2\times47.5} \approx 0.52. $$
-Compare: the usual estimator gives $\hat q=1$; a uniform prior with the posterior mean gave $\hat q_L=6/7\approx0.86$ (Laplace's rule of succession example above); the Beta-prior posterior gives $\approx0.52$ &mdash; much closer to our prior belief that the coin is fair. (Yet another option would be the posterior mode instead of the mean.)</li>
+</li>
 </ol>
 </div>
 
 </details>
-
-The demo below puts a prior, a likelihood and a posterior on the same axes. The prior $q\sim\text{Beta}(a,a)$ is centred at $1/2$, and larger $a$ makes it narrower &mdash; a stronger belief that the coin is fair. After $Y$ heads in $N$ flips the posterior is $\text{Beta}(Y{+}a,\ N{-}Y{+}a)$, with its mean marked against the frequentist estimate $\hat q = Y/N$. Two things worth trying: hold $N$ small and raise $a$, then hold $a$ fixed and raise $N$.
-
-{% include_relative demos/posterior.html %}
 
 ### Bayesian inference for a Normal mean
 
@@ -317,23 +313,32 @@ Consider $\big(\sigma/\tau_i\big)^2\bar\beta_i + \sum_{j=1}^K \Omega_{i,j}\bar\b
 
 ## 6.3 Regularization view of priors {#sec-6-3}
 
-Recall that ordinary least squares finds the coefficients minimizing the sum of squared residuals. This is the value of $\beta$ that minimizes the <span class="term">[loss function](https://en.wikipedia.org/wiki/Loss_function)</span>
+Recall that ordinary least squares finds the coefficients that minimize the training error. Writing $\hat y(x,D^{\text{train}})=\sum_{j=1}^K\beta_j\phi_j(x)$, this is the value of $\beta$ that minimizes the <span class="term">[loss function](https://en.wikipedia.org/wiki/Loss_function)</span>
 
-$$ L(\beta) = \sum_{j=1}^N \big(\hat y(X_j,D)-Y_j\big)^2. $$
+$$ L(\beta) = \hat\sigma_{\text{train}}^2 = \frac{1}{N_{\text{train}}}\sum_{i=1}^{N_{\text{train}}}\big(\hat y(X_i^{\text{train}},D^{\text{train}})-Y_i^{\text{train}}\big)^2. $$
 
-Setting $\partial L/\partial\beta_i = 0$ for each $i$:
+Here the data from Section 6.2 play the role of the training set, so $N_{\text{train}}=N$, and $\Omega_{j,l}=\sum_{i}\phi_j(X_i^{\text{train}})\phi_l(X_i^{\text{train}})$. Setting $\partial L/\partial\beta_j = 0$ for each $j$:
 
-$$ \frac{\partial L}{\partial\beta_i} = \sum_{z=1}^N 2\big(\hat y(X_z,D)-Y_z\big)\phi_i(X_z) = 2\sum_{j=1}^K \beta_j\Omega_{i,j} - 2\sum_{z=1}^N Y_z\phi_i(X_z) = 0 $$
+$$
+\begin{aligned}
+\frac{\partial L}{\partial\beta_j} &= \frac{2}{N_{\text{train}}}\sum_{i=1}^{N_{\text{train}}}\big(\hat y(X_i^{\text{train}},D^{\text{train}})-Y_i^{\text{train}}\big)\phi_j(X_i^{\text{train}})\\
+&= \frac{2}{N_{\text{train}}}\Big(\sum_{l=1}^K \Omega_{j,l}\beta_l - \sum_{i=1}^{N_{\text{train}}}Y_i^{\text{train}}\,\phi_j(X_i^{\text{train}})\Big) = 0
+\end{aligned}
+$$
 
-Solving these $K$ equations for $\beta_1,\dots,\beta_K$ recovers the least-squares estimate $\hat\beta$. These are the posterior-mean equations above, but *without* the prior term $(\sigma/\tau_i)^2\bar\beta_i$.
+Solving these $K$ equations for $\beta_1,\dots,\beta_K$ recovers the least-squares estimate $\hat\beta$. These are the posterior-mean equations above, but *without* the prior term $(\sigma/\tau_j)^2\bar\beta_j$.
 
 The regularization view of priors starts with the loss function. Instead of thinking of that extra term as coming from a prior, we add a term to the loss function that penalizes overly flexible models. A common choice is
 
-$$ L(\beta) = \sum_{j=1}^N \big(\hat y(X_j,D)-Y_j\big)^2 + \lambda\sum_{j=1}^K \beta_j^2. $$
+$$ L(\beta) = \hat\sigma_{\text{train}}^2 + \lambda\sum_{j=1}^K \beta_j^2. $$
 
-This $L$ is not the same function as the $L$ above: it is the least-squares loss plus the penalty $\lambda\sum_j\beta_j^2$, so its minimizer is not $\hat\beta$. Minimizing it is called <span class="term">[ridge regression](https://en.wikipedia.org/wiki/Ridge_regression)</span>, with $\lambda$ controlling how large a penalty we place on large $\beta_j$. Working out the derivative and setting it to zero recovers exactly the posterior-mean equations with $\sigma/\tau_i=\sqrt\lambda$. More generally, with a separate penalty for each coefficient, the loss (again a different function, with a different minimizer)
+This $L$ is not the same function as the $L$ above. It is the training error plus the penalty $\lambda\sum_j\beta_j^2$, so its minimizer is not $\hat\beta$. Minimizing it is called <span class="term">[ridge regression](https://en.wikipedia.org/wiki/Ridge_regression)</span>, with $\lambda$ controlling how large a penalty we place on large $\beta_j$. Setting its derivative to zero gives
 
-$$ L(\beta) = \sum_{j=1}^N \big(\hat y(X_j,D)-Y_j\big)^2 + \sum_{j=1}^K \Big(\frac{\sigma}{\tau_j}\Big)^2\beta_j^2 $$
+$$ N_{\text{train}}\lambda\,\beta_j + \sum_{l=1}^K \Omega_{j,l}\beta_l = \sum_{i=1}^{N_{\text{train}}}Y_i^{\text{train}}\,\phi_j(X_i^{\text{train}}), $$
+
+which are exactly the posterior-mean equations with $(\sigma/\tau_j)^2=N_{\text{train}}\lambda$. More generally, with a separate penalty for each coefficient, the loss (again a different function, with a different minimizer)
+
+$$ L(\beta) = \hat\sigma_{\text{train}}^2 + \frac{1}{N_{\text{train}}}\sum_{j=1}^K \Big(\frac{\sigma}{\tau_j}\Big)^2\beta_j^2 $$
 
 recovers the posterior-mean equations exactly, for arbitrary per-coefficient priors $\tau_j$.
 
@@ -343,11 +348,11 @@ recovers the posterior-mean equations exactly, for arbitrary per-coefficient pri
 <div class="exercise" markdown="1">
 #### Translating a prior into a penalty
 
-Ridge regression adds the penalty $\lambda\sum_j\beta_j^2$ to the least-squares loss.
+Ridge regression adds the penalty $\lambda\sum_j\beta_j^2$ to the training error $\hat\sigma_{\text{train}}^2$.
 
 <ol type="a">
-  <li>Write $\lambda$ in terms of $\sigma$ and $\tau$.</li>
-  <li>Compute $\lambda$ when $\sigma=2$ and $\tau=0.5$.</li>
+  <li>Write $\lambda$ in terms of $\sigma$, $\tau$ and $N_{\text{train}}$.</li>
+  <li>Compute $\lambda$ when $\sigma=2$, $\tau=0.5$ and $N_{\text{train}}=16$.</li>
   <li>A colleague doubles $\lambda$. What did they implicitly assume about the coefficients?</li>
 </ol>
 </div>
@@ -355,13 +360,7 @@ Ridge regression adds the penalty $\lambda\sum_j\beta_j^2$ to the least-squares 
 <div class="exercise" markdown="1">
 #### Ridge regression and Laplace's rule of succession
 
-Laplace's rule of succession estimates the probability of a success by $\hat q_L=(Y+1)/(N+2)$ in place of $Y/N$.
-
-<ol type="a">
-  <li>Both Laplace's rule and ridge regression move the estimate away from what the data alone would give. Toward what value does each one move it?</li>
-  <li>Both come from a prior. Which prior gives Laplace's rule, and which prior gives the ridge penalty?</li>
-  <li>As $N$ grows with $\lambda$ fixed, what happens to the effect of the $+1$ and $+2$ in Laplace's rule, and to the effect of the penalty in ridge regression? Explain conceptually, without calculations.</li>
-</ol>
+In words, describe how Laplace's rule of succession is doing the same thing as regularization.
 </div>
 
 </details>
