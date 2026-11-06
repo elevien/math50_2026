@@ -238,7 +238,7 @@ Each dataset below is shown with its fitted line $\hat y=\hat\beta_0+\hat\beta_1
 
 ## 5.2 Feature maps for nonlinear models {#sec-5-2}
 
-We now discuss how to build more complex models and directly assess their predictive power on out-of-sample data. With interactions, we already saw one way to extend a model: define a new predictor $X_3=X_1X_2$. More generally, defining a new predictor as *any* function of the existing ones lets us build very complex, flexible models that can still be analyzed within the linear regression framework.
+We now discuss how to build more complex models and directly assess their predictive power on out-of-sample data. With interactions, we already saw one way to extend a model: define a new predictor $X_3=X_1X_2$. More generally, defining a new predictor as *any* function of the existing ones lets us build very complex, flexible models that can still be fit within the linear regression framework.
 
 The linear regression framework lets us fit models of the form
 
@@ -472,9 +472,9 @@ With $K=1$ a straight line cannot follow the curve, so every fit misses it in th
 Summarizing what we've seen:
 
 - As we add coefficients, a regression model becomes more flexible &mdash; it can fit more different datasets with a high $R^2$ / low training error. With enough features, a model can perfectly interpolate the data, $\hat y(X_i,D)=Y_i$ for every point.
-- Unlike the training error, the test error $\hat\sigma_{\text{test}}^2$ doesn't simply keep decreasing as the model gets more complex &mdash; it has a **U-shape**. There's an optimal model size at which predictions on *new* data are best.
-- A model that is too simple <span class="term">[underfits](https://en.wikipedia.org/wiki/Overfitting#Underfitting)</span>: it misses real structure, so both the training and the test error are high. A model that is too complex <span class="term">[overfits](https://en.wikipedia.org/wiki/Overfitting)</span>: it fits the noise in the training data, so its training error is low but its test error is high.
-- The U-shape is explained by bias and variance: the MSE (the "math world" version of $\hat\sigma_{\text{test}}^2$) decomposes into a variance term (how much the model's predictions vary across different training sets) and a bias term (how far its predictions are, on average, from the truth).
+- Unlike the training error, the test error $\hat\sigma_{\text{test}}^2$ doesn't simply keep decreasing as the model gets more complex. Rather, it has a **U shape**. There's an optimal model size at which predictions on *new* data are best.
+- A model <span class="term">[underfits](https://en.wikipedia.org/wiki/Overfitting#Underfitting)</span> when it is not complex enough, and as a result is systematically biased. A model <span class="term">[overfits](https://en.wikipedia.org/wiki/Overfitting)</span> when it is too complex and interpolates the noise.
+- The U shape can be decomposed into the bias and the variance: the MSE decomposes into a variance term (how much the model's predictions vary across different training sets) and a bias term (how far its predictions are, on average, from the truth).
 
 <details class="practice-section" markdown="1">
 <summary><h3>Drill</h3></summary>

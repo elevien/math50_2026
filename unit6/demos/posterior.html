@@ -1,0 +1,120 @@
+<div class="demo" id="demo-posterior">
+  <div class="demo-label">Interactive demo</div>
+  <h4>How the prior and the data combine into the posterior</h4>
+  <div class="demo-controls">
+    <label>prior strength $a$ (prior is $\text{Beta}(a,a)$) = <input id="po-a" type="range" min="1" max="60" step="1" value="5"><span id="po-a-val">5</span></label>
+  </div>
+  <div class="demo-controls">
+    <label>$N$ flips = <input id="po-n" type="range" min="0" max="60" step="1" value="10"><span id="po-n-val">10</span></label>
+    <label>observed fraction of heads = <input id="po-p" type="range" min="0" max="1" step="0.05" value="0.8"><span id="po-p-val">0.80</span></label>
+  </div>
+  <svg id="po-chart"></svg>
+</div>
+
+<script>
+(function () {
+  const mk = NotesUtils.svg;
+  const aSlider = document.getElementById('po-a');
+  const nSlider = document.getElementById('po-n');
+  const pSlider = document.getElementById('po-p');
+  const aVal = document.getElementById('po-a-val');
+  const nVal = document.getElementById('po-n-val');
+  const pVal = document.getElementById('po-p-val');
+  const chart = document.getElementById('po-chart');
+
+  const GRID = 400;
+
+  // Unnormalized Beta density on a grid, normalized numerically (avoids needing a gamma function).
+  function betaDensity(a, b) {
+    const xs = [], raw = [];
+    for (let i = 0; i <= GRID; i++) {
+      const q = i / GRID;
+      // work in logs for stability with large a, b
+      const lq = q <= 0 ? -Infinity : Math.log(q);
+      const l1q = q >= 1 ? -Infinity : Math.log(1 - q);
+      let lg = (a - 1) * lq + (b - 1) * l1q;
+      if (!isFinite(lg)) lg = -Infinity;
+      xs.push(q); raw.push(lg);
+    }
+    const maxLog = Math.max(...raw.filter((v) => isFinite(v)));
+    const vals = raw.map((v) => (isFinite(v) ? Math.exp(v - maxLog) : 0));
+    let area = 0;
+    for (let i = 1; i <= GRID; i++) area += ((vals[i] + vals[i - 1]) / 2) * (1 / GRID);
+    return { xs, ys: vals.map((v) => v / area) };
+  }
+
+  function render() {
+    const a = parseInt(aSlider.value, 10);
+    const N = parseInt(nSlider.value, 10);
+    const frac = parseFloat(pSlider.value);
+    const Y = Math.round(frac * N);
+
+    const prior = betaDensity(a, a);
+    const post = betaDensity(Y + a, N - Y + a);
+    const postMean = (Y + a) / (N + 2 * a);
+
+    const width = 480, height = 300, margin = { top: 16, right: 12, bottom: 34, left: 40 };
+    const innerW = width - margin.left - margin.right, innerH = height - margin.top - margin.bottom;
+    const yMax = Math.max(...prior.ys, ...post.ys) * 1.12 || 1;
+
+    NotesUtils.clear(chart);
+    chart.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    chart.setAttribute('width', '100%');
+    const g = mk('g', { transform: `translate(${margin.left},${margin.top})` });
+    chart.appendChild(g);
+
+    const xToPx = (x) => x * innerW;
+    const yToPx = (y) => innerH - (y / yMax) * innerH;
+
+    g.appendChild(mk('line', { x1: 0, y1: innerH, x2: innerW, y2: innerH, stroke: '#9b9e91' }));
+    g.appendChild(mk('line', { x1: 0, y1: 0, x2: 0, y2: innerH, stroke: '#9b9e91' }));
+
+    [0, 0.25, 0.5, 0.75, 1].forEach((t) => {
+      g.appendChild(mk('line', { x1: xToPx(t), y1: innerH, x2: xToPx(t), y2: innerH + 4, stroke: '#9b9e91' }));
+      const lab = mk('text', { x: xToPx(t), y: innerH + 16, 'text-anchor': 'middle', 'font-size': 10, fill: '#7c7f72' });
+      lab.textContent = t;
+      g.appendChild(lab);
+    });
+    const xlab = mk('text', { x: innerW / 2, y: innerH + 30, 'text-anchor': 'middle', 'font-size': 11, fill: '#565a4e' });
+    xlab.textContent = 'q';
+    g.appendChild(xlab);
+
+    function path(d) {
+      return d.xs.map((x, i) => `${i === 0 ? 'M' : 'L'} ${xToPx(x).toFixed(1)} ${yToPx(d.ys[i]).toFixed(1)}`).join(' ');
+    }
+    g.appendChild(mk('path', { d: path(prior), fill: 'none', stroke: '#8b8e81', 'stroke-width': 1.8, 'stroke-dasharray': '6,4' }));
+    g.appendChild(mk('path', { d: path(post), fill: 'none', stroke: '#1f5a6b', 'stroke-width': 2.5 }));
+
+    // posterior mean tick
+    g.appendChild(mk('line', { x1: xToPx(postMean), y1: innerH, x2: xToPx(postMean), y2: innerH - 18, stroke: '#1f5a6b', 'stroke-width': 2.5 }));
+    // frequentist estimate tick (undefined when N = 0)
+    if (N > 0) {
+      g.appendChild(mk('line', { x1: xToPx(Y / N), y1: innerH, x2: xToPx(Y / N), y2: innerH - 12, stroke: '#b08a2a', 'stroke-width': 2.5 }));
+    }
+
+    const legend = [
+      { color: '#8b8e81', dash: '6,4', text: 'prior' },
+      { color: '#1f5a6b', dash: null, text: `posterior (Y = ${Y} of ${N})` },
+    ];
+    legend.forEach((item, i) => {
+      const y = 6 + i * 15;
+      g.appendChild(mk('line', {
+        x1: 8, y1: y, x2: 32, y2: y, stroke: item.color, 'stroke-width': 2,
+        ...(item.dash ? { 'stroke-dasharray': item.dash } : {}),
+      }));
+      const t = mk('text', { x: 38, y: y + 3.5, 'font-size': 10, fill: '#565a4e' });
+      t.textContent = item.text;
+      g.appendChild(t);
+    });
+  }
+
+  [aSlider, nSlider, pSlider].forEach((sl) => sl.addEventListener('input', () => {
+    aVal.textContent = aSlider.value;
+    nVal.textContent = nSlider.value;
+    pVal.textContent = parseFloat(pSlider.value).toFixed(2);
+    render();
+  }));
+
+  render();
+})();
+</script>

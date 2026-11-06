@@ -47,9 +47,9 @@ Before going through Unit 1, please review [Unit 0]({{ '/unit0/' | relative_url 
 | Wed Nov 4 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.2 Feature maps for nonlinear models | [Slides]({{ '/unit5/slides-11-04.pdf' | relative_url }}) | Reading: [ISLP](https://www.statlearning.com/) §2.1 (prediction and inference), §7.1 (polynomial regression) |
 | Fri Nov 6 | [Unit 5]({{ '/unit5/' | relative_url }}) | 5.3 Overfitting, cross-validation and the bias-variance tradeoff | [Slides]({{ '/unit5/slides-11-06.pdf' | relative_url }}), [Animation]({{ '/unit5/fig/poly_fit_movie.gif' | relative_url }}) | Reading: [ISLP](https://www.statlearning.com/) §2.2 (model accuracy and the bias-variance trade-off), §5.1 (cross-validation) |
 | **Week 9** | | | | |
-| Mon Nov 9 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.1 Bayesian inference: simple examples | [Slides]({{ '/unit6/slides-11-09.pdf' | relative_url }}) |  |
-| Wed Nov 11 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.2 Bayesian linear regression | [Slides]({{ '/unit6/slides-11-11.pdf' | relative_url }}) |  |
-| Fri Nov 13 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.3 Regularization view of priors | [Slides]({{ '/unit6/slides-11-13.pdf' | relative_url }}) | Assignment 4 due on canvas |
+| Mon Nov 9 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.3 Regularization: ridge regression | [Slides]({{ '/unit6/slides-11-09.pdf' | relative_url }}) | Reading: [ISLP](https://www.statlearning.com/) §6.2.1 (ridge regression). In §6.3 of the notes, ignore the discussion of priors for now |
+| Wed Nov 11 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.1 Bayesian inference: simple examples | [Slides]({{ '/unit6/slides-11-11.pdf' | relative_url }}) |  |
+| Fri Nov 13 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.2 Bayesian linear regression | [Slides]({{ '/unit6/slides-11-13.pdf' | relative_url }}) | Assignment 4 due on canvas |
 | **Week 10** | | | | |
 | Mon Nov 16 | | Review for the final; [Unit 7]({{ '/unit7/' | relative_url }}) topics if time allows | | Come with questions! |
 

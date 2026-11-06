@@ -1,0 +1,163 @@
+<div class="demo" id="demo-ridge">
+  <div class="demo-label">Interactive demo</div>
+  <h4>How the prior width controls the fit</h4>
+  <div class="demo-controls">
+    <label>prior on the coefficients:
+      <select id="rg-prior">
+        <option value="const" selected>constant $\tau_i=\tau_0$</option>
+        <option value="decay">decaying $\tau_i=\tau_0/i$</option>
+      </select>
+    </label>
+  </div>
+  <div class="demo-controls">
+    <label>$\log_{10}\tau_0$ = <input id="rg-tau" type="range" min="-3" max="1" step="0.1" value="0"><span id="rg-tau-val">0.0</span></label>
+    <label>$\sigma$ = <input id="rg-sigma" type="range" min="0.05" max="0.8" step="0.05" value="0.3"><span id="rg-sigma-val">0.30</span></label>
+    <button id="rg-newdata">New dataset</button>
+  </div>
+  <svg id="rg-chart"></svg>
+</div>
+
+<script>
+(function () {
+  const mk = NotesUtils.svg;
+  const priorSel = document.getElementById('rg-prior');
+  const tauSlider = document.getElementById('rg-tau');
+  const sigmaSlider = document.getElementById('rg-sigma');
+  const tauVal = document.getElementById('rg-tau-val');
+  const sigmaVal = document.getElementById('rg-sigma-val');
+  const chart = document.getElementById('rg-chart');
+
+  const N = 40, K = 12, NFEAT = 2 * K + 1;
+  const BIG = 1e6; // effectively no penalty on the intercept
+  let X = [], EPS = [];
+
+  function trueF(x) { return Math.sin(2 * Math.PI * 2 * x) + 1.2 * x; }
+
+  // features: [1, sin(2*pi*i*x), cos(2*pi*i*x) for i = 1..K]
+  function features(x) {
+    const out = [1];
+    for (let i = 1; i <= K; i++) {
+      out.push(Math.sin(2 * Math.PI * i * x));
+      out.push(Math.cos(2 * Math.PI * i * x));
+    }
+    return out;
+  }
+
+  // prior standard deviation for each feature
+  function taus(tau0, mode) {
+    const out = [BIG]; // intercept
+    for (let i = 1; i <= K; i++) {
+      const t = mode === 'decay' ? tau0 / i : tau0;
+      out.push(t); out.push(t);
+    }
+    return out;
+  }
+
+  function solve(A, b) {
+    const n = b.length;
+    const M = A.map((row, i) => row.slice().concat([b[i]]));
+    for (let col = 0; col < n; col++) {
+      let piv = col;
+      for (let r = col + 1; r < n; r++) if (Math.abs(M[r][col]) > Math.abs(M[piv][col])) piv = r;
+      if (Math.abs(M[piv][col]) < 1e-12) continue;
+      const tmp = M[col]; M[col] = M[piv]; M[piv] = tmp;
+      for (let r = 0; r < n; r++) {
+        if (r === col) continue;
+        const f = M[r][col] / M[col][col];
+        if (!f) continue;
+        for (let c = col; c <= n; c++) M[r][c] -= f * M[col][c];
+      }
+    }
+    return M.map((row, i) => (Math.abs(row[i]) < 1e-12 ? 0 : row[n] / row[i]));
+  }
+
+  function genData() {
+    X = Array.from({ length: N }, (_, i) => i / (N - 1));
+    EPS = X.map(() => NotesUtils.gaussianRandom(0, 1));
+  }
+
+  function render() {
+    const tau0 = Math.pow(10, parseFloat(tauSlider.value));
+    const s = parseFloat(sigmaSlider.value);
+    const mode = priorSel.value;
+
+    const Y = X.map((x, i) => trueF(x) + s * EPS[i]);
+    const A = X.map((x) => features(x));
+    const tau = taus(tau0, mode);
+
+    // M = A^T A + sigma^2 * Lambda_0^{-1};  rhs = A^T y
+    const M = Array.from({ length: NFEAT }, () => new Array(NFEAT).fill(0));
+    const rhs = new Array(NFEAT).fill(0);
+    for (let i = 0; i < NFEAT; i++) {
+      for (let j = 0; j < NFEAT; j++) {
+        let acc = 0;
+        for (let k = 0; k < N; k++) acc += A[k][i] * A[k][j];
+        M[i][j] = acc;
+      }
+      M[i][i] += (s * s) / (tau[i] * tau[i]);
+      let acc = 0;
+      for (let k = 0; k < N; k++) acc += A[k][i] * Y[k];
+      rhs[i] = acc;
+    }
+    const beta = solve(M, rhs);
+    const predict = (x) => features(x).reduce((acc, f, i) => acc + f * beta[i], 0);
+
+    const width = 480, height = 300, margin = { top: 14, right: 12, bottom: 30, left: 38 };
+    const innerW = width - margin.left - margin.right, innerH = height - margin.top - margin.bottom;
+    const xDomain = [-0.02, 1.02];
+    const yVals = Y.concat([0, 2.6]);
+    const yDomain = [Math.min(...yVals) - 0.4, Math.max(...yVals) + 0.4];
+
+    NotesUtils.clear(chart);
+    chart.setAttribute('viewBox', `0 0 ${width} ${height}`);
+    chart.setAttribute('width', '100%');
+    const g = mk('g', { transform: `translate(${margin.left},${margin.top})` });
+    chart.appendChild(g);
+
+    const xToPx = (x) => ((x - xDomain[0]) / (xDomain[1] - xDomain[0])) * innerW;
+    const yToPxRaw = (y) => innerH - ((y - yDomain[0]) / (yDomain[1] - yDomain[0])) * innerH;
+    const yToPx = (y) => Math.max(-800, Math.min(1600, yToPxRaw(y)));
+
+    g.appendChild(mk('line', { x1: 0, y1: innerH, x2: innerW, y2: innerH, stroke: '#9b9e91' }));
+    g.appendChild(mk('line', { x1: 0, y1: 0, x2: 0, y2: innerH, stroke: '#9b9e91' }));
+
+    const nPts = 300;
+    function curvePath(fn) {
+      return Array.from({ length: nPts + 1 }, (_, i) => {
+        const x = xDomain[0] + ((xDomain[1] - xDomain[0]) * i) / nPts;
+        return `${i === 0 ? 'M' : 'L'} ${xToPx(x).toFixed(1)} ${yToPx(fn(x)).toFixed(1)}`;
+      }).join(' ');
+    }
+
+    g.appendChild(mk('path', { d: curvePath(trueF), fill: 'none', stroke: '#2b2e27', 'stroke-width': 1.5, 'stroke-dasharray': '5,4' }));
+    g.appendChild(mk('path', { d: curvePath(predict), fill: 'none', stroke: '#1f5a6b', 'stroke-width': 2.5 }));
+    X.forEach((x, i) => g.appendChild(mk('circle', { cx: xToPx(x), cy: yToPx(Y[i]), r: 3, fill: '#3a3a34', opacity: 0.7 })));
+
+    const legend = [
+      { color: '#2b2e27', dash: '5,4', text: 'true f(x)' },
+      { color: '#1f5a6b', dash: null, text: 'posterior mean fit' },
+    ];
+    legend.forEach((item, i) => {
+      const y = 6 + i * 15;
+      g.appendChild(mk('line', {
+        x1: innerW - 152, y1: y, x2: innerW - 128, y2: y, stroke: item.color, 'stroke-width': 2,
+        ...(item.dash ? { 'stroke-dasharray': item.dash } : {}),
+      }));
+      const t = mk('text', { x: innerW - 122, y: y + 3.5, 'font-size': 10, fill: '#565a4e' });
+      t.textContent = item.text;
+      g.appendChild(t);
+    });
+  }
+
+  document.getElementById('rg-newdata').addEventListener('click', () => { genData(); render(); });
+  priorSel.addEventListener('change', render);
+  [tauSlider, sigmaSlider].forEach((sl) => sl.addEventListener('input', () => {
+    tauVal.textContent = parseFloat(tauSlider.value).toFixed(1);
+    sigmaVal.textContent = parseFloat(sigmaSlider.value).toFixed(2);
+    render();
+  }));
+
+  genData();
+  render();
+})();
+</script>
