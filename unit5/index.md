@@ -133,9 +133,9 @@ How do we identify when it's appropriate to add an interaction term? With two pr
 
 The basic idea of <span class="term">[residual](https://en.wikipedia.org/wiki/Residual_(statistics)) plots</span>: plot the difference between the observed $y$ values and the model's prediction,
 
-$$ \hat\epsilon_j = Y_j - \hat\beta_0 - \sum_{k=1}^K \hat\beta_kX_{k,j}, $$
+$$ r_j = Y_j - \hat\beta_0 - \sum_{k=1}^K \hat\beta_kX_{k,j}, $$
 
-(note the hat: $\hat\epsilon_j$ is the *residual* we can compute from the fitted model, as opposed to the unobservable noise $\epsilon_j$ in the model itself) in a way that reveals disagreement between the model and the data. With a single predictor, we can just plot $\hat\epsilon_j$ vs. $X$ &mdash; if the residuals don't look Normal, or their variance/mean changes with $X$, we should be skeptical of the model. **With multiple predictors, what do we plot on the horizontal axis?** The answer: plot $\hat\epsilon_j$ against the *fitted value* $\hat y_j=\hat\beta_0+\sum_k\hat\beta_kX_{k,j}$, not against any single predictor (and, importantly, not against $Y_j$ itself). In the figure below, the two are shown side by side for simulated data from a two-predictor model, with the least-squares trend line through each cloud. Against $\hat y_j$ (left), the residuals form a flat horizontal band. Against $Y_j$ (right), the same residuals tilt upward. The reason is that $Y_j=\hat y_j+\hat\epsilon_j$. When $Y_j$ is on the horizontal axis instead of $\hat y_j$, each point is shifted sideways by its own residual, so points with positive residuals end up further right and points with negative residuals further left (orange arrows).
+(here $r_j$ is the *residual* we can compute from the fitted model, as opposed to the unobservable noise $\epsilon_j$ in the model itself) in a way that reveals disagreement between the model and the data. With a single predictor, we can just plot $r_j$ vs. $X$ &mdash; if the residuals don't look Normal, or their variance/mean changes with $X$, we should be skeptical of the model. **With multiple predictors, what do we plot on the horizontal axis?** The answer: plot $r_j$ against the *fitted value* $\hat y_j=\hat\beta_0+\sum_k\hat\beta_kX_{k,j}$, not against any single predictor (and, importantly, not against $Y_j$ itself). In the figure below, the two are shown side by side for simulated data from a two-predictor model, with the least-squares trend line through each cloud. Against $\hat y_j$ (left), the residuals form a flat horizontal band. Against $Y_j$ (right), the same residuals tilt upward. The reason is that $Y_j=\hat y_j+r_j$. When $Y_j$ is on the horizontal axis instead of $\hat y_j$, each point is shifted sideways by its own residual, so points with positive residuals end up further right and points with negative residuals further left (orange arrows).
 
 <img src="{{ '/unit5/fig/resid_why.svg' | relative_url }}" alt="Two residual plots of the same simulated data. Left: residuals vs. fitted values form a flat horizontal band and the trend line has slope 0. Right: the same residuals vs. the observed Y tilt upward with trend slope 0.42; arrows show points with positive residuals shifted right and points with negative residuals shifted left." style="width: 100%; max-width: 760px;">
 
@@ -144,16 +144,16 @@ $$ \hat\epsilon_j = Y_j - \hat\beta_0 - \sum_{k=1}^K \hat\beta_kX_{k,j}, $$
 
 Consider a two-predictor model with true parameters $\beta_0=0,\beta_1=0.2,\beta_2=20,\sigma=1$.
 
-<u>Question:</u> compare two ways of plotting the residuals: (a) $\hat\epsilon_j$ vs. $\hat y_j$, and (b) $\hat\epsilon_j$ vs. $Y_j$. Why does (b) show an apparent bias toward high $\hat\epsilon_j$ for large $Y_j$ that's absent from (a)?
+<u>Question:</u> compare two ways of plotting the residuals: (a) $r_j$ vs. $\hat y_j$, and (b) $r_j$ vs. $Y_j$. Why does (b) show an apparent bias toward high $r_j$ for large $Y_j$ that's absent from (a)?
 
 <u>Solution:</u> see the companion Colab notebook.
 </div>
 
 To see why, recall
 
-$$ \hat\epsilon_j \approx Y_j - \underbrace{E[Y\mid(X_1,\dots,X_K)=(X_{1,j},\dots,X_{K,j})]}_{\approx\ \hat\beta_0+\sum_k\hat\beta_kX_{k,j}}, $$
+$$ r_j \approx Y_j - \underbrace{E[Y\mid(X_1,\dots,X_K)=(X_{1,j},\dots,X_{K,j})]}_{\approx\ \hat\beta_0+\sum_k\hat\beta_kX_{k,j}}, $$
 
-so $\hat\epsilon_j$ is approximately $\text{Normal}(0,\sigma^2)$. This tells us how the points should be spread in the *vertical* direction &mdash; it says nothing about their spread in the horizontal direction, which is determined by the distribution of the predictors. So we expect a plot that's symmetric around $\hat\epsilon_j=0$ for every value of $\hat y_j$, but any spread horizontally is fine. Now compare plotting $Y_j$ on the horizontal axis instead of $\hat y_j$: by the approximation above, $\hat\epsilon_j$ and $Y_j$ are correlated (in fact $\text{cov}(\hat\epsilon_j,Y_j)=\text{var}(\hat\epsilon_j)>0$ always, by the orthogonality of least-squares residuals to the fitted values) &mdash; which is exactly the bias we see for small/large $Y_j$ in the example above.
+so $r_j$ is approximately $\text{Normal}(0,\sigma^2)$. This tells us how the points should be spread in the *vertical* direction &mdash; it says nothing about their spread in the horizontal direction, which is determined by the distribution of the predictors. So we expect a plot that's symmetric around $r_j=0$ for every value of $\hat y_j$, but any spread horizontally is fine. Now compare plotting $Y_j$ on the horizontal axis instead of $\hat y_j$: by the approximation above, $r_j$ and $Y_j$ are correlated (in fact $\text{cov}(r_j,Y_j)=\text{var}(r_j)>0$ always, by the orthogonality of least-squares residuals to the fitted values) &mdash; which is exactly the bias we see for small/large $Y_j$ in the example above.
 
 <details class="practice-section" markdown="1">
 <summary><h3>Drill</h3></summary>

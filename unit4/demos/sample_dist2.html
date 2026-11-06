@@ -8,12 +8,6 @@
     <button id="sd2-reset">Clear</button>
   </div>
   <svg id="sd2-chart"></svg>
-  <div class="demo-controls">
-    <span>spread of $u$: <span id="sd2-su" class="demo-value">&mdash;</span></span>
-    <span>spread of $v$: <span id="sd2-sv" class="demo-value">&mdash;</span></span>
-    <span>se of slope along $u$: <span id="sd2-seu" class="demo-value">&mdash;</span></span>
-    <span>along $v$: <span id="sd2-sev" class="demo-value">&mdash;</span></span>
-  </div>
 </div>
 
 <script>
@@ -115,17 +109,6 @@
     const g3 = mk('g', { transform: `translate(${26 + 2 * (size + gap)},${top})` });
     chart.appendChild(g3);
     viewPanel(g3, size, (a, b) => (a - b) / S2, (f) => (f.b1 - f.b2) / S2, 'v = (X₁−X₂)/√2', (B1 - B2) / S2);
-
-    // ---------- readouts ----------
-    if (current) {
-      const U = current.X1.map((a, i) => (a + current.X2[i]) / S2), V = current.X1.map((a, i) => (a - current.X2[i]) / S2);
-      document.getElementById('sd2-su').textContent = Math.sqrt(NotesUtils.variance(U)).toFixed(2);
-      document.getElementById('sd2-sv').textContent = Math.sqrt(NotesUtils.variance(V)).toFixed(2);
-    }
-    const all = fits.concat(current ? [current.fit] : []);
-    const sdOf = (arr) => (arr.length > 2 ? Math.sqrt(NotesUtils.variance(arr)).toFixed(3) : '—');
-    document.getElementById('sd2-seu').textContent = sdOf(all.map((f) => (f.b1 + f.b2) / S2));
-    document.getElementById('sd2-sev').textContent = sdOf(all.map((f) => (f.b1 - f.b2) / S2));
   }
 
   document.getElementById('sd2-new').addEventListener('click', () => { newDataset(); render(); });

@@ -9,12 +9,6 @@
     <button id="sd-reset">Reset</button>
   </div>
   <svg id="sd-chart"></svg>
-  <div class="demo-controls">
-    <span>replicates: <span id="sd-count" class="demo-value">0</span></span>
-    <span>$\text{se}(\hat\beta_1)$: <span id="sd-se1" class="demo-value">&mdash;</span></span>
-    <span>$\text{se}(\hat\beta_1+\hat\beta_2)$: <span id="sd-sesum" class="demo-value">&mdash;</span></span>
-    <span>$\text{se}(\hat\beta_1-\hat\beta_2)$: <span id="sd-sediff" class="demo-value">&mdash;</span></span>
-  </div>
 </div>
 
 <script>
@@ -158,14 +152,6 @@
     [B1 - 1, B1, B1 + 1].forEach((v) => text(g3, hx(v), size + 15, v.toFixed(1), { 'font-size': 13 }));
     text(g3, w3 / 2, size + 32, 'β̂₁');
     text(g3, w3 / 2, -6, 'histogram of β̂₁', { 'font-size': 15, fill: '#3a3a34' });
-
-    // ---------- readouts: simulated (formula) ----------
-    const sd = (arr) => Math.sqrt(NotesUtils.variance(arr));
-    const fmt = (sim, thr) => (est.length > 2 ? `${sim.toFixed(3)} (formula ${thr.toFixed(3)})` : `— (formula ${thr.toFixed(3)})`);
-    document.getElementById('sd-count').textContent = est.length;
-    document.getElementById('sd-se1').textContent = fmt(sd(est.map((e) => e.b1)), th.se1);
-    document.getElementById('sd-sesum').textContent = fmt(sd(est.map((e) => e.b1 + e.b2)), th.seSum);
-    document.getElementById('sd-sediff').textContent = fmt(sd(est.map((e) => e.b1 - e.b2)), th.seDiff);
   }
 
   function stop() { if (timer) { clearInterval(timer); timer = null; playBtn.textContent = 'Play'; } }

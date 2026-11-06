@@ -361,7 +361,7 @@ In $\beta_{j,k}$ the first index is always a kept predictor and the second a lef
 
 ### Simpson's paradox
 
-In the example above, $\beta_1^{\prime}$ and $\beta_1$ can even have different signs, depending on the relationship between the predictors. This effect is called <span class="term">[Simpson's "paradox"](https://en.wikipedia.org/wiki/Simpson%27s_paradox)</span> &mdash; not really a paradox, just a consequence of correlation between predictors shifting the single-predictor coefficient, as illustrated above.
+In the example above, $\beta_1^{\prime}$ and $\beta_1$ can even have different signs, depending on the relationship between the predictors. This effect is called <span class="term">[Simpson's "paradox"](https://en.wikipedia.org/wiki/Simpson%27s_paradox)</span>. It's not actually paradox (like many paradoxes), but rather a consequence of the omitted variable bias formulas we have already established.
 
 <div class="example" markdown="1">
 #### Example (Simpson's paradox with two binary predictors)
@@ -638,11 +638,12 @@ beta = fit.params
 
 ## 4.4 Sample distribution and collinearity {#sec-4-4}
 
-Just as before, we want to understand the sample distribution of the coefficients &mdash; but now we need the *joint* distribution of $(\hat\beta_1,\hat\beta_2,\dots,\hat\beta_K)$. We'll focus on the two-predictor case. In the demo below, each replicate is a fresh dataset of $N$ points from $Y=\beta_1X_1+\beta_2X_2+\epsilon$ with $\beta_1=1$, $\beta_2=0.5$, $\sigma_\epsilon=1$, and standardized predictors with the chosen correlation. The left panel shows the predictors of the latest replicate; the middle panel shows $(\hat\beta_1,\hat\beta_2)$ for every replicate so far (the latest in red), on fixed axes, with the $95\%$ region predicted by the formula below (dashed); the right panel is the histogram of $\hat\beta_1$ alone. Start at correlation $0$ and press Play: the cloud is round. Then raise the correlation toward $1$: the predictors line up along $X_1=X_2$, and the cloud stretches along the line $\hat\beta_1+\hat\beta_2=\text{const}$, so $\hat\beta_1$ on its own becomes much less precise even though the sum $\hat\beta_1+\hat\beta_2$ stays precise. A negative correlation stretches the cloud the other way, so the difference is precise and the sum is not. The readouts compare the simulated standard errors with the formula.
+Just as before, we want to understand the sample distribution of the coefficients &mdash; but now we need the *joint* distribution of $(\hat\beta_1,\hat\beta_2,\dots,\hat\beta_K)$. We'll focus on the two-predictor case. In the demo below, each replicate is a new dataset of $N$ points from $Y=\beta_1X_1+\beta_2X_2+\epsilon$ with $\beta_1=1$, $\beta_2=0.5$, $\sigma_\epsilon=1$, and standardized predictors with the chosen correlation. The left panel shows the predictors of the latest replicate. The middle panel shows $(\hat\beta_1,\hat\beta_2)$ for every replicate so far (the latest in red), on fixed axes, with the $95\%$ region predicted by the formula below (dashed). The right panel is the histogram of $\hat\beta_1$ alone. 
 
 {% include_relative demos/sample_dist.html %}
 
-To build intuition, imagine $X_1,X_2$ are very highly correlated (if perfectly correlated, we say they're <span class="term">[collinear](https://en.wikipedia.org/wiki/Multicollinearity)</span>). Then
+What you should notice is how the correlation between $(\hat\beta_1,\hat\beta_2)$ and their overall spread changes with the correlation of the predictors. 
+To build anintuition for what is happening, imagine $X_1,X_2$ are very highly correlated (if perfectly correlated, we say they're <span class="term">[collinear](https://en.wikipedia.org/wiki/Multicollinearity)</span>). Then
 
 $$ Y = \beta_1X_1+\beta_2X_2+\epsilon \approx \beta_1X_1+\beta_2X_1+\epsilon = (\beta_1+\beta_2)X_1+\epsilon. $$
 
