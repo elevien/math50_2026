@@ -526,6 +526,17 @@ As a model gains parameters, say whether each of the following typically increas
 </div>
 
 <div class="exercise" markdown="1">
+#### Test error at one point
+
+A polynomial model is fit to many simulated training sets $D$. At $x_0$ the fits $\hat y(x_0,D)$ have mean $1.4$ and standard deviation $0.3$. The true value is $f(x_0)=2$ and the noise has $\sigma_\epsilon=0.5$.
+
+<ol type="a">
+  <li>Compute the squared bias, the variance and the noise at $x_0$, and the expected squared error $E\big[(\hat y(x_0,D)-Y)^2\big]$ for a new point at $x_0$.</li>
+  <li>A simpler model has fits with mean $1.2$ and standard deviation $0.15$ at $x_0$. Is its expected squared error at $x_0$ larger or smaller?</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
 #### When the training and test sets overlap
 
 Suppose we evaluate a polynomial model on a test set that, by mistake, contains some of the training points.

@@ -317,6 +317,8 @@ Recall that ordinary least squares finds the coefficients that minimize the trai
 
 $$ L(\beta) = \hat\sigma_{\text{train}}^2 = \frac{1}{N_{\text{train}}}\sum_{i=1}^{N_{\text{train}}}\big(\hat y(X_i^{\text{train}},D^{\text{train}})-Y_i^{\text{train}}\big)^2. $$
 
+A loss function is just any function of the parameters that we minimize to fit a model. Often it comes from some measure of how far the data are from the model's predictions. In the case of linear regression and least squares, this measure is actually a consequence of the underlying probability model. With Normal noise, the coefficients that make the observed data most likely are the ones that minimize the sum of squared residuals.
+
 Here the data from Section 6.2 play the role of the training set, so $N_{\text{train}}=N$, and $\Omega_{j,l}=\sum_{i}\phi_j(X_i^{\text{train}})\phi_l(X_i^{\text{train}})$. Setting $\partial L/\partial\beta_j = 0$ for each $j$:
 
 $$
@@ -330,15 +332,15 @@ Solving these $K$ equations for $\beta_1,\dots,\beta_K$ recovers the least-squar
 
 The regularization view of priors starts with the loss function. Instead of thinking of that extra term as coming from a prior, we add a term to the loss function that penalizes overly flexible models. A common choice is
 
-$$ L(\beta) = \hat\sigma_{\text{train}}^2 + \lambda\sum_{j=1}^K \beta_j^2. $$
+$$ L_\lambda(\beta) = \hat\sigma_{\text{train}}^2 + \lambda\sum_{j=1}^K \beta_j^2. $$
 
-This $L$ is not the same function as the $L$ above. It is the training error plus the penalty $\lambda\sum_j\beta_j^2$, so its minimizer is not $\hat\beta$. Minimizing it is called <span class="term">[ridge regression](https://en.wikipedia.org/wiki/Ridge_regression)</span>, with $\lambda$ controlling how large a penalty we place on large $\beta_j$. Setting its derivative to zero gives
+We write $L_\lambda$ to distinguish it from the least-squares loss $L$. It is the training error plus the penalty $\lambda\sum_j\beta_j^2$, so its minimizer is not $\hat\beta$, and $L_0=L$. Minimizing $L_\lambda$ is called <span class="term">[ridge regression](https://en.wikipedia.org/wiki/Ridge_regression)</span>, with $\lambda$ controlling how large a penalty we place on large $\beta_j$. Setting $\partial L_\lambda/\partial\beta_j=0$ gives
 
 $$ N_{\text{train}}\lambda\,\beta_j + \sum_{l=1}^K \Omega_{j,l}\beta_l = \sum_{i=1}^{N_{\text{train}}}Y_i^{\text{train}}\,\phi_j(X_i^{\text{train}}), $$
 
-which are exactly the posterior-mean equations with $(\sigma/\tau_j)^2=N_{\text{train}}\lambda$. More generally, with a separate penalty for each coefficient, the loss (again a different function, with a different minimizer)
+which are exactly the posterior-mean equations with $(\sigma/\tau_j)^2=N_{\text{train}}\lambda$. More generally, with a separate penalty for each coefficient, minimizing
 
-$$ L(\beta) = \hat\sigma_{\text{train}}^2 + \frac{1}{N_{\text{train}}}\sum_{j=1}^K \Big(\frac{\sigma}{\tau_j}\Big)^2\beta_j^2 $$
+$$ L(\beta) + \frac{1}{N_{\text{train}}}\sum_{j=1}^K \Big(\frac{\sigma}{\tau_j}\Big)^2\beta_j^2 $$
 
 recovers the posterior-mean equations exactly, for arbitrary per-coefficient priors $\tau_j$.
 
@@ -361,6 +363,46 @@ Ridge regression adds the penalty $\lambda\sum_j\beta_j^2$ to the training error
 #### Ridge regression and Laplace's rule of succession
 
 In words, describe how Laplace's rule of succession is doing the same thing as regularization.
+</div>
+
+<div class="exercise" markdown="1">
+#### From code to a loss function
+
+```python
+x = np.random.normal(0, 1, 1000)
+y = 3*x + np.random.normal(0, 1, 1000)
+lam = 2
+b = np.sum(x*y) / (np.sum(x**2) + 1000*lam)
+```
+
+<ol type="a">
+  <li>Approximately what is <code>b</code>?</li>
+  <li>Write down the loss $L_\lambda(b)$ that <code>b</code> minimizes.</li>
+  <li>Approximately what would <code>b</code> be with <code>lam = 0</code>?</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Choosing $\lambda$ from a table
+
+A ridge regression model is fit to a training set for several values of $\lambda$ and scored on a test set:
+
+<table class="prob-table">
+<tr><th>$\lambda$</th><th>$\hat\sigma^2_{\text{train}}$</th><th>$\hat\sigma^2_{\text{test}}$</th></tr>
+<tr><td>$10^{-4}$</td><td>0.21</td><td>0.95</td></tr>
+<tr><td>$10^{-3}$</td><td>0.25</td><td>0.62</td></tr>
+<tr><td>$10^{-2}$</td><td>0.31</td><td>0.48</td></tr>
+<tr><td>$10^{-1}$</td><td>0.52</td><td>0.55</td></tr>
+<tr><td>$1$</td><td>0.98</td><td>1.05</td></tr>
+<tr><td>$10$</td><td>1.80</td><td>1.86</td></tr>
+</table>
+
+<ol type="a">
+  <li>Which $\lambda$ would you choose, and why?</li>
+  <li>Why does $\hat\sigma^2_{\text{train}}$ only go up as $\lambda$ grows?</li>
+  <li>Which rows show overfitting, and which show underfitting?</li>
+  <li>What does the smallest $\hat\sigma^2_{\text{test}}$ tell you, approximately, about $\sigma_\epsilon^2$?</li>
+</ol>
 </div>
 
 </details>
@@ -458,4 +500,44 @@ Consider a Bayesian Normal model where we also place a prior on $\sigma^2$. We c
 $$ \ln\sigma \sim \text{Normal}(l,\gamma^2), \qquad \mu \sim \text{Normal}(m,s^2), \qquad X_i\mid\mu,\sigma \sim \text{Normal}(\mu,\sigma^2), $$
 
 with $\ln\sigma$ and $\mu$ independent under the prior. Pick values for $l$ and $\gamma^2$ and write code to sample from the marginal distribution of $\overline X$. Is it Normal? Compare it to a Normal density with the same mean and variance.
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 6.6 &mdash; Ridge regression with one predictor
+
+Consider the model $Y_i=\beta X_i+\epsilon_i$ with a mean-zero predictor and no intercept, and the ridge loss
+
+$$ L_\lambda(\beta) = \frac1N\sum_{i=1}^N\big(Y_i-\beta X_i\big)^2 + \lambda\beta^2. $$
+
+<ol type="a">
+<li>Show that the minimizer of $L_\lambda$ is $\hat\beta\,\dfrac{\hat\sigma_X^2}{\hat\sigma_X^2+\lambda}$, where $\hat\beta=\sum_iX_iY_i\big/\sum_iX_i^2$ is the least-squares estimate and $\hat\sigma_X^2=\frac1N\sum_iX_i^2$.</li>
+<li>Compute it when $\hat\beta=2$, $\hat\sigma_X^2=1$ and $\lambda=0.25$.</li>
+<li>Compare it to the posterior mean of $\beta$ in the single-predictor case of Section 6.2. For which $\lambda$ are they equal? Write your answer in terms of $\sigma_\epsilon$, $\tau$ and $N$.</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 6.7 &mdash; Bias and standard error of a ridge estimate
+
+Let $Y_1,\dots,Y_N$ be iid $\text{Normal}(\mu,\sigma^2)$, and consider the ridge loss for $\mu$,
+
+$$ L_\lambda(\mu) = \frac1N\sum_{i=1}^N(\mu-Y_i)^2+\lambda\mu^2. $$
+
+<ol type="a">
+<li>Show that the minimizer of $L_\lambda$ is $\overline Y/(1+\lambda)$.</li>
+<li>Compute the bias and $\text{se}^2$ of this estimator in terms of $\mu$, $\sigma$, $N$ and $\lambda$. For which value of $\mu$ is it unbiased?</li>
+<li>Is it a consistent estimator of $\mu$ when $\lambda$ is fixed? How could $\lambda$ depend on $N$ so that it is consistent?</li>
+</ol>
+</div>
+
+<div class="exercise" markdown="1">
+#### Problem 6.8 &mdash; When does regularization help?
+
+Continue Problem 6.6 with $\sigma_\epsilon^2=4$, $N=100$, $\hat\sigma_X^2=1$ and $\lambda=0.25$. Recall that the least-squares estimate has the sample distribution $\hat\beta\sim\text{Normal}\big(\beta,\ \sigma_\epsilon^2/(N\hat\sigma_X^2)\big)$.
+
+<ol type="a">
+<li>Find the bias and the variance of the ridge estimate from Problem 6.6 in terms of $\beta$.</li>
+<li>Compute the MSE of the ridge estimate and of $\hat\beta$ when $\beta=1$, and again when $\beta=0.1$.</li>
+<li>In which case does regularization give the smaller MSE? Explain why in terms of bias and variance.</li>
+</ol>
 </div>
