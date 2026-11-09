@@ -405,6 +405,20 @@ A ridge regression model is fit to a training set for several values of $\lambda
 </ol>
 </div>
 
+<div class="exercise" markdown="1">
+#### Completing the square for the ridge loss of a mean
+
+For the model $Y=\mu+\epsilon$, the ridge loss is
+
+$$ L_\lambda(\mu)=\frac{1}{N_{\text{train}}}\sum_{i=1}^{N_{\text{train}}}\big(\mu-Y_i^{\text{train}}\big)^2+\lambda\mu^2. $$
+
+Derive
+
+$$ L_\lambda(\mu)=(1+\lambda)\Big(\mu-\frac{\overline Y}{1+\lambda}\Big)^2+\hat\sigma_Y^2+\frac{\lambda\,\overline Y^{\,2}}{1+\lambda}, $$
+
+where $\hat\sigma_Y^2=\frac{1}{N_{\text{train}}}\sum_{i=1}^{N_{\text{train}}}\big(Y_i^{\text{train}}-\overline Y\big)^2$.
+</div>
+
 </details>
 
 <details class="optional-section" id="sec-6-4" open markdown="1">
