@@ -334,7 +334,7 @@ The regularization view of priors starts with the loss function. Instead of thin
 
 $$ L_\lambda(\beta) = \hat\sigma_{\text{train}}^2 + \lambda\sum_{j=1}^K \beta_j^2. $$
 
-We write $L_\lambda$ to distinguish it from the least-squares loss $L$. It is the training error plus the penalty $\lambda\sum_j\beta_j^2$, so its minimizer is not $\hat\beta$, and $L_0=L$. Minimizing $L_\lambda$ is called <span class="term">[ridge regression](https://en.wikipedia.org/wiki/Ridge_regression)</span>, with $\lambda$ controlling how large a penalty we place on large $\beta_j$. Setting $\partial L_\lambda/\partial\beta_j=0$ gives
+We write $L_\lambda$ to distinguish it from the least-squares loss $L$. It is the training error plus the penalty $\lambda\sum_j\beta_j^2$, and we write $\hat\beta^{\lambda}=(\hat\beta^{\lambda}_1,\dots,\hat\beta^{\lambda}_K)$ for its minimizer, the regularized (ridge) coefficients. Since $L_0=L$, $\hat\beta^{0}=\hat\beta$, but for $\lambda>0$ the minimizer is not $\hat\beta$. Minimizing $L_\lambda$ is called <span class="term">[ridge regression](https://en.wikipedia.org/wiki/Ridge_regression)</span>, with $\lambda$ controlling how large a penalty we place on large $\beta_j$. Setting $\partial L_\lambda/\partial\beta_j=0$ gives
 
 $$ N_{\text{train}}\lambda\,\beta_j + \sum_{l=1}^K \Omega_{j,l}\beta_l = \sum_{i=1}^{N_{\text{train}}}Y_i^{\text{train}}\,\phi_j(X_i^{\text{train}}), $$
 
@@ -510,7 +510,7 @@ Consider the model $Y_i=\beta X_i+\epsilon_i$ with a mean-zero predictor and no 
 $$ L_\lambda(\beta) = \frac1N\sum_{i=1}^N\big(Y_i-\beta X_i\big)^2 + \lambda\beta^2. $$
 
 <ol type="a">
-<li>Show that the minimizer of $L_\lambda$ is $\hat\beta\,\dfrac{\hat\sigma_X^2}{\hat\sigma_X^2+\lambda}$, where $\hat\beta=\sum_iX_iY_i\big/\sum_iX_i^2$ is the least-squares estimate and $\hat\sigma_X^2=\frac1N\sum_iX_i^2$.</li>
+<li>Show that the minimizer of $L_\lambda$ is $\hat\beta^{\lambda}=\hat\beta\,\dfrac{\hat\sigma_X^2}{\hat\sigma_X^2+\lambda}$, where $\hat\beta=\sum_iX_iY_i\big/\sum_iX_i^2$ is the least-squares estimate and $\hat\sigma_X^2=\frac1N\sum_iX_i^2$.</li>
 <li>Compute it when $\hat\beta=2$, $\hat\sigma_X^2=1$ and $\lambda=0.25$.</li>
 <li>Compare it to the posterior mean of $\beta$ in the single-predictor case of Section 6.2. For which $\lambda$ are they equal? Write your answer in terms of $\sigma_\epsilon$, $\tau$ and $N$.</li>
 </ol>
@@ -536,8 +536,8 @@ $$ L_\lambda(\mu) = \frac1N\sum_{i=1}^N(\mu-Y_i)^2+\lambda\mu^2. $$
 Continue Problem 6.6 with $\sigma_\epsilon^2=4$, $N=100$, $\hat\sigma_X^2=1$ and $\lambda=0.25$. Recall that the least-squares estimate has the sample distribution $\hat\beta\sim\text{Normal}\big(\beta,\ \sigma_\epsilon^2/(N\hat\sigma_X^2)\big)$.
 
 <ol type="a">
-<li>Find the bias and the variance of the ridge estimate from Problem 6.6 in terms of $\beta$.</li>
-<li>Compute the MSE of the ridge estimate and of $\hat\beta$ when $\beta=1$, and again when $\beta=0.1$.</li>
+<li>Find the bias and the variance of the ridge estimate $\hat\beta^{\lambda}$ from Problem 6.6 in terms of $\beta$.</li>
+<li>Compute the MSE of $\hat\beta^{\lambda}$ and of $\hat\beta$ when $\beta=1$, and again when $\beta=0.1$.</li>
 <li>In which case does regularization give the smaller MSE? Explain why in terms of bias and variance.</li>
 </ol>
 </div>
