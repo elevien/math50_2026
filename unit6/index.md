@@ -348,18 +348,6 @@ recovers the posterior-mean equations exactly, for arbitrary per-coefficient pri
 <summary><h3>Drill</h3></summary>
 
 <div class="exercise" markdown="1">
-#### Translating a prior into a penalty
-
-Ridge regression adds the penalty $\lambda\sum_j\beta_j^2$ to the training error $\hat\sigma_{\text{train}}^2$.
-
-<ol type="a">
-  <li>Write $\lambda$ in terms of $\sigma$, $\tau$ and $N_{\text{train}}$.</li>
-  <li>Compute $\lambda$ when $\sigma=2$, $\tau=0.5$ and $N_{\text{train}}=16$.</li>
-  <li>A colleague doubles $\lambda$. What did they implicitly assume about the coefficients?</li>
-</ol>
-</div>
-
-<div class="exercise" markdown="1">
 #### Ridge regression and Laplace's rule of succession
 
 In words, describe how Laplace's rule of succession is doing the same thing as regularization.

@@ -708,23 +708,17 @@ The final is **cumulative**: everything on both midterms, plus [Unit 5]({{ '/uni
 - **Feature maps**: writing a nonlinear $f$ as $\sum_i\beta_i\phi_i(x)$, deciding whether a given $f$ can be fit with linear regression machinery, and building the design matrix.
 - **Cross-validation**: training versus test error, why training error only ever decreases, and why test error is U-shaped.
 - **Bias-variance**: computing MSE, the decomposition into variance plus squared bias, and saying which way each term moves as a model gains parameters.
-- **Orthogonal features**: what orthogonality means, that it depends on the distribution of $X$, and why it makes $\hat\beta_j$ insensitive to which other features are included. Fourier features and the periodogram.
 
-**Unit 6.**
+**Unit 6.** We did not cover Bayesian inference this year. The material for the final ends with regularization.
 
-- The conceptual difference between the frequentist and Bayesian treatments of a parameter.
-- Prior, likelihood, posterior, evidence &mdash; be able to name each piece of a given calculation.
-- The Bernoulli model with a Uniform (or Beta) prior, and the Normal model with a Normal prior and known variance. **Do not memorize the formulas.** Understand the derivations; you may be asked about a single step or how to set one up.
-- How the posterior mean interpolates between the prior mean and the data, and what happens in the limits $N\to\infty$, $\tau\to0$ and $\tau\to\infty$.
-- **Ridge regression**, the penalty $\lambda\sum_j\beta_j^2$, and the correspondence $\lambda = (\sigma/\tau)^2$ with a Normal prior.
-- Computing a regularized estimator by hand in a simple case, such as the sample mean.
-
-There may be extra-credit questions drawn from [Unit 7]({{ '/unit7/' | relative_url }}), depending on how much we cover at the end of term.
+- The loss function, and least squares as minimizing the training error $\hat\sigma^2_{\text{train}}$.
+- **Ridge regression**: the penalty $\lambda\sum_j\beta_j^2$, and how $\lambda$ trades bias against variance (training and test error as $\lambda$ changes).
+- Computing a regularized estimator by hand in a simple case, such as the sample mean or a single-predictor model with no intercept.
 
 ### Practice exams
 
-- [Final, 2024]({{ '/public/exam_practice/final_2024C.pdf' | relative_url }}) (ignore the red text in the instructions; do all problems)
-- [Practice final]({{ '/public/exam_practice/final_practice.pdf' | relative_url }})
-- [Additional practice problems]({{ '/public/exam_practice/final_additional_practice_problems.pdf' | relative_url }})
+- [Final, 2024]({{ '/public/exam_practice/final_2024C.pdf' | relative_url }}) (ignore the red text in the instructions). Skip Problem 6 (orthogonality of Fourier features) and Problem 7 (Bayesian priors).
+- [Practice final]({{ '/public/exam_practice/final_practice.pdf' | relative_url }}). Skip Exercise 6 (orthogonality), Exercise 7 (Bayesian posterior) and Exercise 8 (imputation).
+- [Additional practice problems]({{ '/public/exam_practice/final_additional_practice_problems.pdf' | relative_url }}). Skip Exercise 2 (Gaussian processes) and Exercise 8 (Bayesian posterior).
 
-Also work every **Drill** and end-of-unit **Problem** in Units 5 and 6.
+Also work every **Drill** and end-of-unit **Problem** in Unit 5, and in Unit 6 the Section 6.3 drills and Problems 6.6&ndash;6.8 (skip part (c) of Problem 6.6, which uses the posterior mean).
