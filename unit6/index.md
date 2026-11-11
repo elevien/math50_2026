@@ -407,6 +407,27 @@ $$ L_\lambda(\mu)=(1+\lambda)\Big(\mu-\frac{\overline Y}{1+\lambda}\Big)^2+\hat\
 where $\hat\sigma_Y^2=\frac{1}{N_{\text{train}}}\sum_{i=1}^{N_{\text{train}}}\big(Y_i^{\text{train}}-\overline Y\big)^2$.
 </div>
 
+<div class="exercise" markdown="1">
+#### Bias and variance when shrinking toward $b$
+
+Consider the single-predictor model $Y=\beta_1X+\epsilon$ with $E[X]=0$ and no intercept, fit to $N$ points with $\hat\sigma_X^2=\frac1N\sum_{i=1}^NX_i^2$ (treat the $X_i$ as fixed). The least-squares estimate satisfies $\hat\beta_1\approx\text{Normal}\big(\beta_1,\ \sigma_\epsilon^2/(N\hat\sigma_X^2)\big)$. Instead of shrinking toward $0$, minimize
+
+$$ L_\lambda(\beta_1)=\frac1N\sum_{i=1}^N(\beta_1X_i-Y_i)^2+\lambda(\beta_1-b)^2 $$
+
+for a number $b$. The minimizer is
+
+$$ \hat\beta^{\lambda}_1=\frac{\hat\beta_1+(\lambda/\hat\sigma_X^2)\,b}{1+\lambda/\hat\sigma_X^2}. $$
+
+Suppose the true slope is $\beta_1=3$. Give your answers in terms of $\lambda$, $b$, $\hat\sigma_X^2$, $\sigma_\epsilon^2$ and $N$.
+
+<ol type="a">
+  <li>Compute the bias and the variance of $\hat\beta^{\lambda}_1$.</li>
+  <li>Compute the MSE of $\hat\beta^{\lambda}_1$.</li>
+  <li>The fitted model predicts $\hat y(x,D)=\hat\beta^{\lambda}_1x$, and the true function is $f(x)=\beta_1x$. Compute $\text{MSE}_{\hat y(2,D)}=E_D\big[(\hat y(2,D)-f(2))^2\big]$.</li>
+  <li>For a fixed $\lambda>0$, which $b$ gives the smallest MSE? Does the variance depend on $b$?</li>
+</ol>
+</div>
+
 </details>
 
 <details class="optional-section" id="sec-6-4" open markdown="1">

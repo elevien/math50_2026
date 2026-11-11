@@ -511,21 +511,6 @@ A polynomial model of degree $K$ is fit to the same dataset for several $K$:
 </div>
 
 <div class="exercise" markdown="1">
-#### Which term moves which way
-
-As a model gains parameters, say whether each of the following typically increases, decreases, or stays about the same:
-
-<ol type="a">
-  <li>the variance term $E_X\big[\text{var}(\hat y(X,D))\big]$</li>
-  <li>the squared-bias term $E_X\big[(E_D[\hat y(X,D)]-f(X))^2\big]$</li>
-  <li>the noise term $\sigma_\epsilon^2$</li>
-  <li>$R^2$ computed on the training data</li>
-  <li>Use (a)&ndash;(c) to explain why the test error has a U-shape as the number of parameters grows.</li>
-  <li>Why is the most complex model, which has the smallest training error, not the best choice for predicting new data?</li>
-</ol>
-</div>
-
-<div class="exercise" markdown="1">
 #### Test error at one point
 
 A polynomial model is fit to many simulated training sets $D$. At $x_0$ the fits $\hat y(x_0,D)$ have mean $1.4$ and standard deviation $0.3$. The true value is $f(x_0)=2$ and the noise has $\sigma_\epsilon=0.5$.

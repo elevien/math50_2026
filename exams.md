@@ -714,12 +714,13 @@ The final is **cumulative**: everything on both midterms, plus [Unit 5]({{ '/uni
 - The loss function, and least squares as minimizing the training error $\hat\sigma^2_{\text{train}}$.
 - **Ridge regression**: the penalty $\lambda\sum_j\beta_j^2$, and how $\lambda$ trades bias against variance (training and test error as $\lambda$ changes).
 - Computing a regularized estimator by hand in a simple case, such as the sample mean or a single-predictor model with no intercept.
-- **Fourier features**: sines and cosines as features, their orthogonality at equally spaced points, why orthogonal features make each $\hat\beta_k$ independent of which other features are included, the periodogram, and regularizing with a penalty that grows with frequency.
+- Understanding what happens when features are uncorrelated.
 
 ### Practice exams
 
-- [Final, 2024]({{ '/public/exam_practice/final_2024C.pdf' | relative_url }}) (ignore the red text in the instructions). Skip Problem 7 (Bayesian priors).
-- [Practice final]({{ '/public/exam_practice/final_practice.pdf' | relative_url }}). Skip Exercise 7 (Bayesian posterior) and Exercise 8 (imputation).
-- [Additional practice problems]({{ '/public/exam_practice/final_additional_practice_problems.pdf' | relative_url }}). Skip Exercise 2 (Gaussian processes) and Exercise 8 (Bayesian posterior).
+- [Practice problems, 2026]({{ '/public/exam_practice/final_practice_problems_2026.pdf' | relative_url }})
+- [Final, 2024]({{ '/public/exam_practice/final_2024C.pdf' | relative_url }}) (ignore the red text in the instructions). Do NOT do Problem 6 (sines and cosines) or Problem 7 (Bayesian priors).
+- [Practice final]({{ '/public/exam_practice/final_practice.pdf' | relative_url }}). Do NOT do Exercise 7 (Bayesian posterior) or Exercise 8 (imputation).
+- [Additional practice problems]({{ '/public/exam_practice/final_additional_practice_problems.pdf' | relative_url }}). Do NOT do Exercise 1 (multivariate Normal distribution), Exercise 2 (Gaussian processes) or Exercise 8 (Bayesian posterior).
 
 Also work every **Drill** and end-of-unit **Problem** in Unit 5, and in Unit 6 the Section 6.3 drills and Problems 6.6&ndash;6.8 (skip part (c) of Problem 6.6, which uses the posterior mean).
