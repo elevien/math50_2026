@@ -555,7 +555,7 @@ Suppose we evaluate a polynomial model on a test set that, by mistake, contains 
 
 Sometimes we have a specific hypothesis about which features contribute to a signal &mdash; e.g. for CO$_2$ data, we might suspect a linear trend plus a yearly cycle, since weather follows an annual pattern. But if we lack such prior knowledge, how should we choose the $\phi_i$? It's often advantageous to pick features so the resulting predictors are *uncorrelated*: thinking of $\phi_i(X),\phi_j(X)$ as random variables (randomness coming from $X$), we'd like them uncorrelated with each other.
 
-Assume $E[\phi_i(X)]=0$ throughout (easy to arrange by subtracting means). We'd like
+Assume $E[\phi_i(X)]=0$ throughout (we can always achieve this by subtracting the means). We'd like
 
 $$ \text{cov}(\phi_i(X),\phi_j(X)) = 0, \qquad i \ne j. $$
 
