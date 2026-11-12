@@ -723,4 +723,3 @@ The final is **cumulative**: everything on both midterms, plus [Unit 5]({{ '/uni
 - [Practice final]({{ '/public/exam_practice/final_practice.pdf' | relative_url }}). Do NOT do Exercise 7 (Bayesian posterior) or Exercise 8 (imputation).
 - [Additional practice problems]({{ '/public/exam_practice/final_additional_practice_problems.pdf' | relative_url }}). Do NOT do Exercise 1 (multivariate Normal distribution), Exercise 2 (Gaussian processes) or Exercise 8 (Bayesian posterior).
 
-Also work every **Drill** and end-of-unit **Problem** in Unit 5, and in Unit 6 the Section 6.3 drills and Problems 6.6&ndash;6.8 (skip part (c) of Problem 6.6, which uses the posterior mean).
