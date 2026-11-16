@@ -51,6 +51,6 @@ Before going through Unit 1, please review [Unit 0]({{ '/unit0/' | relative_url 
 | Wed Nov 11 | [Unit 6]({{ '/unit6/' | relative_url }}) | 6.3 Regularization (continued): Fourier features | [Slides]({{ '/unit6/slides-11-11.pdf' | relative_url }}) | Additional reading: §5.4 of the [Unit 5 notes]({{ '/unit5/' | relative_url }}#sec-5-4) (orthogonality and Fourier features) |
 | Fri Nov 13 | [Unit 6]({{ '/unit6/' | relative_url }}) | Double descent; 6.2 Bayesian inference | [Slides]({{ '/unit6/slides-11-13.pdf' | relative_url }}) | Assignment 4 due on canvas |
 | **Week 10** | | | | |
-| Mon Nov 16 | | Review for the final; [Unit 7]({{ '/unit7/' | relative_url }}) topics if time allows | | Come with questions! |
+| Mon Nov 16 | | Review for the final | [Slides]({{ '/unit6/slides-11-16.pdf' | relative_url }}) | Final exam Fri Nov 20, 6:30 PM, Rockefeller 1 |
 
 </div>
